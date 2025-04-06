@@ -7,29 +7,70 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
+import { AlertCircle, Mail, Lock, User, Loader2, ArrowRight } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Signup = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isAgreeTerms, setIsAgreeTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !password || !confirmPassword) {
-      toast.error("Please fill in all fields");
-      return;
+  const validateForm = () => {
+    if (!name) {
+      setFormError("Name is required");
+      return false;
+    }
+    
+    if (!email) {
+      setFormError("Email is required");
+      return false;
+    }
+    
+    if (!password) {
+      setFormError("Password is required");
+      return false;
+    }
+    
+    if (!confirmPassword) {
+      setFormError("Please confirm your password");
+      return false;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setFormError("Please enter a valid email address");
+      return false;
+    }
+
+    if (password.length < 8) {
+      setFormError("Password must be at least 8 characters long");
+      return false;
     }
 
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
+      setFormError("Passwords do not match");
+      return false;
     }
 
     if (!isAgreeTerms) {
-      toast.error("Please agree to our terms and conditions");
+      setFormError("Please agree to our terms and conditions");
+      return false;
+    }
+    
+    return true;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError("");
+    
+    if (!validateForm()) {
       return;
     }
 
@@ -55,42 +96,92 @@ const Signup = () => {
           </p>
         </div>
         
-        <Card>
-          <CardContent className="pt-6">
+        <Card className="shadow-lg border-gray-200">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl text-center">Sign up</CardTitle>
+            <CardDescription className="text-center">
+              Enter your information to create an account
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent>
+            {formError && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{formError}</AlertDescription>
+              </Alert>
+            )}
+            
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="your@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
+                <Label htmlFor="name">Full Name</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="John Doe"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="pl-10"
+                    autoComplete="name"
+                    required
+                  />
+                </div>
               </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="your@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10"
+                    autoComplete="email"
+                    required
+                  />
+                </div>
+              </div>
+              
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10"
+                    autoComplete="new-password"
+                    required
+                  />
+                </div>
+                <p className="text-xs text-gray-500">Password must be at least 8 characters long</p>
               </div>
+              
               <div className="space-y-2">
                 <Label htmlFor="confirm-password">Confirm Password</Label>
-                <Input
-                  id="confirm-password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                />
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="confirm-password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="pl-10"
+                    autoComplete="new-password"
+                    required
+                  />
+                </div>
               </div>
+              
               <div className="flex items-center space-x-2">
                 <Checkbox 
                   id="terms" 
@@ -113,15 +204,27 @@ const Signup = () => {
                   </Link>
                 </label>
               </div>
+              
               <Button 
                 type="submit" 
                 className="w-full bg-alchemy-purple hover:bg-alchemy-purple-dark"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Creating account..." : "Create account"}
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating account...
+                  </>
+                ) : (
+                  <>
+                    Create account
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
               </Button>
             </form>
           </CardContent>
+          
           <CardFooter className="flex justify-center border-t p-6">
             <p className="text-sm text-gray-600">
               Already have an account?{" "}

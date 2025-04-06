@@ -6,17 +6,42 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
+import { AlertCircle, Mail, Lock, Loader2, ArrowRight } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
   const navigate = useNavigate();
+
+  const validateForm = () => {
+    if (!email) {
+      setFormError("Email is required");
+      return false;
+    }
+    
+    if (!password) {
+      setFormError("Password is required");
+      return false;
+    }
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setFormError("Please enter a valid email address");
+      return false;
+    }
+    
+    return true;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      toast.error("Please fill in all fields");
+    setFormError("");
+    
+    if (!validateForm()) {
       return;
     }
 
@@ -42,20 +67,40 @@ const Login = () => {
           </p>
         </div>
         
-        <Card>
-          <CardContent className="pt-6">
+        <Card className="shadow-lg border-gray-200">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl text-center">Sign in</CardTitle>
+            <CardDescription className="text-center">
+              Enter your email and password to access your account
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent>
+            {formError && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{formError}</AlertDescription>
+              </Alert>
+            )}
+            
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="your@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="your@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10"
+                    autoComplete="email"
+                    required
+                  />
+                </div>
               </div>
+              
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Password</Label>
@@ -63,24 +108,41 @@ const Login = () => {
                     Forgot password?
                   </Link>
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10"
+                    autoComplete="current-password"
+                    required
+                  />
+                </div>
               </div>
+              
               <Button 
                 type="submit" 
                 className="w-full bg-alchemy-purple hover:bg-alchemy-purple-dark"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Signing in..." : "Sign in"}
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  <>
+                    Sign in
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
               </Button>
             </form>
           </CardContent>
+          
           <CardFooter className="flex justify-center border-t p-6">
             <p className="text-sm text-gray-600">
               Don't have an account?{" "}
