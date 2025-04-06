@@ -13,6 +13,7 @@ import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
+import CreateDynamicLink from "./pages/CreateDynamicLink";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/links" element={<MyLinks />} />
+          <Route path="/dashboard/links/create" element={<CreateDynamicLink />} />
           <Route path="/dashboard/analytics" element={<Analytics />} />
           <Route path="/dashboard/qr-codes" element={<QRCodes />} />
           <Route path="/dashboard/settings" element={<Settings />} />
