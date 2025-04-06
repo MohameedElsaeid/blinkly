@@ -1,14 +1,10 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
 
 User-agent: *
 Allow: /
+
+# Disallow admin and sensitive areas
+Disallow: /dashboard/
+Disallow: /settings/
+
+# Sitemap location
+Sitemap: https://blinkly.app/sitemap.xml
