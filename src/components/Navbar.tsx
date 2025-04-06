@@ -1,11 +1,42 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { Menu, X, LogOut } from "lucide-react";
+import { useState, useEffect } from "react";
+import { authService } from "@/services/api";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Check if user is logged in
+    const checkAuthStatus = () => {
+      const isAuthenticated = authService.isAuthenticated();
+      setIsLoggedIn(isAuthenticated);
+    };
+
+    checkAuthStatus();
+    
+    // Listen for storage events (login/logout)
+    const handleStorageChange = () => {
+      checkAuthStatus();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    authService.logout();
+    setIsLoggedIn(false);
+    setIsMenuOpen(false);
+    // Dispatch storage event to notify other components
+    window.dispatchEvent(new Event('storage'));
+  };
 
   return (
     <nav className="bg-white shadow-sm fixed w-full z-10">
@@ -30,18 +61,29 @@ const Navbar = () => {
             <Link to="/about" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-alchemy-purple transition-colors">
               About
             </Link>
-            <Link to="/dashboard" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-alchemy-purple transition-colors">
-              Dashboard
-            </Link>
+            {isLoggedIn && (
+              <Link to="/dashboard" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-alchemy-purple transition-colors">
+                Dashboard
+              </Link>
+            )}
           </div>
           
           <div className="hidden md:flex items-center">
-            <Button variant="outline" className="mr-3" asChild>
-              <Link to="/login">Log in</Link>
-            </Button>
-            <Button className="bg-alchemy-purple hover:bg-alchemy-purple-dark" asChild>
-              <Link to="/signup">Sign up</Link>
-            </Button>
+            {isLoggedIn ? (
+              <Button variant="outline" className="text-gray-700 hover:text-alchemy-purple" onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Log out
+              </Button>
+            ) : (
+              <>
+                <Button variant="outline" className="mr-3" asChild>
+                  <Link to="/login">Log in</Link>
+                </Button>
+                <Button className="bg-alchemy-purple hover:bg-alchemy-purple-dark" asChild>
+                  <Link to="/signup">Sign up</Link>
+                </Button>
+              </>
+            )}
           </div>
           
           {/* Mobile menu button */}
@@ -82,35 +124,48 @@ const Navbar = () => {
             >
               About
             </Link>
-            <Link 
-              to="/dashboard" 
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-alchemy-purple hover:bg-gray-50"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Dashboard
-            </Link>
+            {isLoggedIn && (
+              <Link 
+                to="/dashboard" 
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-alchemy-purple hover:bg-gray-50"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Dashboard
+              </Link>
+            )}
           </div>
           <div className="pt-4 pb-3 border-t border-gray-200">
-            <div className="flex items-center px-5">
-              <Button variant="outline" className="w-full mb-2" asChild>
-                <Link 
-                  to="/login"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Log in
-                </Link>
-              </Button>
-            </div>
-            <div className="flex items-center px-5">
-              <Button className="w-full bg-alchemy-purple hover:bg-alchemy-purple-dark" asChild>
-                <Link 
-                  to="/signup"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Sign up
-                </Link>
-              </Button>
-            </div>
+            {isLoggedIn ? (
+              <div className="flex items-center px-5">
+                <Button variant="outline" className="w-full" onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Log out
+                </Button>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center px-5">
+                  <Button variant="outline" className="w-full mb-2" asChild>
+                    <Link 
+                      to="/login"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Log in
+                    </Link>
+                  </Button>
+                </div>
+                <div className="flex items-center px-5">
+                  <Button className="w-full bg-alchemy-purple hover:bg-alchemy-purple-dark" asChild>
+                    <Link 
+                      to="/signup"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Sign up
+                    </Link>
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
