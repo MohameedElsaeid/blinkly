@@ -14,10 +14,9 @@ const MyLinks = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-2xl font-semibold text-gray-900">My Links</h1>
-              <Button 
-                as={Link}
-                to="/dashboard/links/create"
+              <Button
                 className="bg-alchemy-purple hover:bg-alchemy-purple-dark"
+                onClick={() => window.location.href = "/dashboard/links/create"}
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Create Dynamic Link

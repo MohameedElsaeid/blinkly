@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
-import { Globe, Smartphone, Desktop, ArrowRight, Upload, Link, Link2, Image as ImageIcon } from "lucide-react";
+import { Globe, Smartphone, Monitor, ArrowRight, Upload, Link, Link2, Image as ImageIcon } from "lucide-react";
 
 const CreateDynamicLink = () => {
   const navigate = useNavigate();
@@ -123,7 +123,7 @@ const CreateDynamicLink = () => {
 
                           <div className="space-y-2">
                             <Label htmlFor="desktop-url" className="flex items-center gap-2 font-medium">
-                              <Desktop className="h-4 w-4" />
+                              <Monitor className="h-4 w-4" />
                               Desktop URL (Optional)
                             </Label>
                             <Input
@@ -353,7 +353,7 @@ const CreateDynamicLink = () => {
                                   
                                   {desktopUrl && (
                                     <div className="flex items-center gap-2">
-                                      <Desktop className="h-4 w-4 text-muted-foreground" />
+                                      <Monitor className="h-4 w-4 text-muted-foreground" />
                                       <span className="text-xs truncate">{desktopUrl}</span>
                                     </div>
                                   )}
