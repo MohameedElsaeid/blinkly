@@ -83,7 +83,7 @@ const Sidebar = ({ className }: SidebarProps) => {
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-center h-16 border-b">
             <div className="text-alchemy-purple-dark font-heading font-bold text-xl">
-              Link<span className="text-alchemy-purple">Alchemy</span>
+              Bli<span className="text-alchemy-purple">nkly</span>
             </div>
           </div>
 
