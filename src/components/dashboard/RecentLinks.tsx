@@ -111,7 +111,6 @@ const RecentLinks = ({ showAllLinks = false }: RecentLinksProps) => {
             className="max-w-[250px]"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            prefix={<Search className="h-4 w-4 text-muted-foreground mr-2" />}
           />
           {showAllLinks && (
             <Button variant="outline" size="sm">
