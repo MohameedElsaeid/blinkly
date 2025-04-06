@@ -4,6 +4,14 @@
   command = "npm run build"
 
 [[redirects]]
+  from = "/api/*"
+  to = "http://localhost:3000/:splat"
+  status = 200
+  force = true
+  headers = {X-From = "Netlify"}
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+

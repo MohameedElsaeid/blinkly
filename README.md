@@ -1,73 +1,80 @@
-# Welcome to your Lovable project
 
-## Project info
+# LinkAlchemy - URL Shortener
 
-**URL**: https://lovable.dev/projects/ed1ba07e-6d51-414b-ba29-44e81b3670ef
+A modern URL shortening service with analytics built with React and NestJS.
 
-## How can I edit this code?
+## Project Structure
 
-There are several ways of editing your application.
+This project is organized as a monorepo containing both frontend and backend code:
 
-**Use Lovable**
+- Frontend: React + Vite + TypeScript + Tailwind CSS
+- Backend: NestJS + TypeScript + PostgreSQL
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/ed1ba07e-6d51-414b-ba29-44e81b3670ef) and start prompting.
+## Development Setup
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js (v18+)
+- npm or yarn
+- Docker and Docker Compose (for running the database and backend)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Running the Backend
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. Start the PostgreSQL database and NestJS backend using Docker Compose:
 
-Follow these steps:
+```bash
+docker-compose up
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+This will start both the database and backend services. The API will be available at http://localhost:3000.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Running the Frontend
 
-# Step 3: Install the necessary dependencies.
-npm i
+1. Install dependencies:
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```bash
+npm install
+```
+
+2. Start the development server:
+
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+This will start the frontend development server at http://localhost:5173.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Environment Variables
 
-**Use GitHub Codespaces**
+### Frontend (.env)
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- `VITE_API_URL`: The URL of the backend API (default: http://localhost:3000)
 
-## What technologies are used for this project?
+### Backend (backend/.env)
 
-This project is built with:
+- `NODE_ENV`: Development or production environment
+- `DB_HOST`: PostgreSQL database host
+- `DB_PORT`: PostgreSQL database port
+- `DB_USERNAME`: PostgreSQL database username
+- `DB_PASSWORD`: PostgreSQL database password
+- `DB_NAME`: PostgreSQL database name
+- `JWT_SECRET`: Secret key for JWT authentication
+- `FRONTEND_URL`: URL of the frontend application for CORS
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Production Deployment
 
-## How can I deploy this project?
+For production deployment, you will need to:
 
-Simply open [Lovable](https://lovable.dev/projects/ed1ba07e-6d51-414b-ba29-44e81b3670ef) and click on Share -> Publish.
+1. Build the frontend:
 
-## Can I connect a custom domain to my Lovable project?
+```bash
+npm run build
+```
 
-Yes it is!
+2. Build and deploy the backend to a suitable hosting platform.
+3. Set up a PostgreSQL database.
+4. Configure the environment variables appropriately.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## License
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+This project is licensed under the MIT License - see the LICENSE file for details.
