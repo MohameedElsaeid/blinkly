@@ -12,12 +12,12 @@ const Landing = () => {
       <Navbar />
       <main className="flex-grow">
         <Hero />
-        <div id="features">
+        <section id="features">
           <FeaturesSection />
-        </div>
-        <div id="pricing">
+        </section>
+        <section id="pricing">
           <PricingSection />
-        </div>
+        </section>
         <CTASection />
       </main>
       <Footer />

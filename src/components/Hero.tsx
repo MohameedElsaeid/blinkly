@@ -26,10 +26,10 @@ const Hero = () => {
                   </Button>
                 </div>
                 <div className="mt-3 sm:mt-0 sm:ml-3">
-                  <Button variant="outline" className="w-full px-8 py-3 md:py-4 md:text-lg md:px-10 border-2 border-white text-white hover:bg-white hover:text-alchemy-purple-dark transition-colors" asChild>
-                    <Link to="#features">
+                  <Button variant="outline" className="w-full px-8 py-3 md:py-4 md:text-lg md:px-10 border-2 border-white text-white bg-transparent hover:bg-white hover:text-alchemy-purple-dark transition-colors" asChild>
+                    <a href="#features">
                       Learn More
-                    </Link>
+                    </a>
                   </Button>
                 </div>
               </div>
@@ -52,7 +52,7 @@ const Hero = () => {
                       </div>
                       <ArrowRight className="w-6 h-6 mx-auto text-alchemy-purple my-2" />
                       <div className="bg-alchemy-purple-light/10 rounded-md p-3">
-                        <p className="text-alchemy-purple font-medium font-mono">blinkly.co/brand</p>
+                        <p className="text-alchemy-purple font-medium font-mono">blinkly.app/brand</p>
                       </div>
                     </div>
                     <div className="flex flex-wrap -mx-2">
