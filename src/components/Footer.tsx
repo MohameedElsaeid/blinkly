@@ -87,7 +87,16 @@ const Footer = () => {
         </div>
         <div className="mt-12 border-t border-gray-200 pt-8">
           <p className="text-base text-gray-400 xl:text-center">
-            &copy; {new Date().getFullYear()} Blinkly. All rights reserved.
+            &copy; {new Date().getFullYear()} Blinkly. All rights reserved. 
+            <br />
+            Created by <a 
+              href="https://www.alphalabs.solutions" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-alchemy-purple-dark hover:underline"
+            >
+              AlphaLabs CO
+            </a>
           </p>
         </div>
       </div>
