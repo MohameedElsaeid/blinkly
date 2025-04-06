@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
 import { ChevronDown } from "lucide-react"
@@ -112,7 +113,6 @@ NavigationMenuIndicator.displayName =
   NavigationMenuPrimitive.Indicator.displayName
 
 export {
-  navigationMenuTriggerStyle,
   NavigationMenu,
   NavigationMenuList,
   NavigationMenuItem,
