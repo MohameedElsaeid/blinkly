@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, 
   PieChart, Pie, Cell, LineChart, Line, AreaChart, Area, 
   Legend, Sector, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis 
 } from "recharts";
@@ -14,7 +14,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 const Analytics = () => {
   const [timeRange, setTimeRange] = useState("week");
   
-  // Sample data - would be replaced with real data from API
   const clicksData = [
     { name: 'Mon', clicks: 12, mobile: 8, desktop: 4 },
     { name: 'Tue', clicks: 19, mobile: 10, desktop: 9 },
@@ -101,7 +100,6 @@ const Analytics = () => {
               </div>
             </div>
             
-            {/* Key metrics cards */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
               {[
                 { title: "Total Clicks", value: "12,345", change: "+12%", description: "vs. previous period" },
@@ -156,11 +154,7 @@ const Analytics = () => {
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
                           <YAxis />
-                          <Tooltip 
-                            content={(props) => {
-                              return <ChartTooltipContent {...props} indicator="line" />;
-                            }}
-                          />
+                          <ChartTooltip content={props => <ChartTooltipContent {...props} indicator="line" />} />
                           <Area 
                             type="monotone" 
                             dataKey="clicks" 
