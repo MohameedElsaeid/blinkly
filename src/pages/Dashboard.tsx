@@ -14,12 +14,14 @@ const Dashboard = () => {
             <h1 className="text-2xl font-semibold text-gray-900 mb-6">Dashboard</h1>
             <StatsCards />
             
-            <div className="mt-8 grid gap-6 md:grid-cols-12">
-              <div className="md:col-span-5">
-                <LinkCreator />
-              </div>
-              <div className="md:col-span-7">
-                <RecentLinks />
+            <div className="mt-8 grid gap-6 grid-cols-1">
+              <div className="grid gap-6 md:grid-cols-12">
+                <div className="md:col-span-5">
+                  <LinkCreator />
+                </div>
+                <div className="md:col-span-7">
+                  <RecentLinks />
+                </div>
               </div>
             </div>
           </div>
