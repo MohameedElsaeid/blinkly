@@ -44,7 +44,7 @@ const FeaturesSection = () => {
             Everything you need to manage your links
           </p>
           <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
-            LinkAlchemy Lab provides powerful tools to create, manage, and analyze your links with precision and ease.
+            Blinkly Lab provides powerful tools to create, manage, and analyze your links with precision and ease.
           </p>
         </div>
 

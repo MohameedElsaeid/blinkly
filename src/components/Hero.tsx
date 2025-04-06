@@ -15,7 +15,7 @@ const Hero = () => {
                 <span className="block text-alchemy-green-light">and Optimize Your Links</span>
               </h1>
               <p className="mt-3 max-w-md mx-auto lg:mx-0 text-lg text-white sm:text-xl md:mt-5">
-                Shorten URLs, create custom branded links, generate QR codes, and get powerful analytics - all in one place.
+                Blink and you'll miss it – share your link in a flash.
               </p>
               <div className="mt-10 sm:flex sm:justify-center lg:justify-start">
                 <div className="rounded-md shadow">
@@ -27,7 +27,7 @@ const Hero = () => {
                 </div>
                 <div className="mt-3 sm:mt-0 sm:ml-3">
                   <Button variant="outline" className="w-full px-8 py-3 md:py-4 md:text-lg md:px-10 border-2 border-white text-white hover:bg-white hover:text-alchemy-purple-dark transition-colors" asChild>
-                    <Link to="/features">
+                    <Link to="#features">
                       Learn More
                     </Link>
                   </Button>
@@ -52,7 +52,7 @@ const Hero = () => {
                       </div>
                       <ArrowRight className="w-6 h-6 mx-auto text-alchemy-purple my-2" />
                       <div className="bg-alchemy-purple-light/10 rounded-md p-3">
-                        <p className="text-alchemy-purple font-medium font-mono">linkalchemy.co/brand</p>
+                        <p className="text-alchemy-purple font-medium font-mono">blinkly.co/brand</p>
                       </div>
                     </div>
                     <div className="flex flex-wrap -mx-2">
@@ -78,30 +78,6 @@ const Hero = () => {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="bg-white">
-        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
-          <p className="text-center text-base font-semibold uppercase text-gray-600 tracking-wider">
-            Trusted by innovative companies worldwide
-          </p>
-          <div className="mt-6 grid grid-cols-2 gap-8 md:grid-cols-5">
-            <div className="col-span-1 flex justify-center md:col-span-1">
-              <div className="h-12 text-gray-400">Company A</div>
-            </div>
-            <div className="col-span-1 flex justify-center md:col-span-1">
-              <div className="h-12 text-gray-400">Company B</div>
-            </div>
-            <div className="col-span-1 flex justify-center md:col-span-1">
-              <div className="h-12 text-gray-400">Company C</div>
-            </div>
-            <div className="col-span-1 flex justify-center md:col-span-1">
-              <div className="h-12 text-gray-400">Company D</div>
-            </div>
-            <div className="col-span-1 flex justify-center md:col-span-1">
-              <div className="h-12 text-gray-400">Company E</div>
             </div>
           </div>
         </div>

@@ -9,7 +9,7 @@ const Footer = () => {
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">
             <div className="text-alchemy-purple-dark font-heading font-bold text-xl">
-              LinkAlchemy<span className="text-alchemy-purple">Lab</span>
+              Blinkly<span className="text-alchemy-purple">Lab</span>
             </div>
             <p className="text-gray-500 text-base">
               Transform your long URLs into powerful, trackable short links. Gain insights and optimize your online presence.
@@ -43,12 +43,12 @@ const Footer = () => {
                 </h3>
                 <ul className="mt-4 space-y-4">
                   <li>
-                    <Link to="/features" className="text-base text-gray-500 hover:text-gray-900">
+                    <Link to="/#features" className="text-base text-gray-500 hover:text-gray-900">
                       Features
                     </Link>
                   </li>
                   <li>
-                    <Link to="/pricing" className="text-base text-gray-500 hover:text-gray-900">
+                    <Link to="/#pricing" className="text-base text-gray-500 hover:text-gray-900">
                       Pricing
                     </Link>
                   </li>
@@ -61,73 +61,39 @@ const Footer = () => {
               </div>
               <div className="mt-12 md:mt-0">
                 <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">
-                  Support
-                </h3>
-                <ul className="mt-4 space-y-4">
-                  <li>
-                    <a href="#" className="text-base text-gray-500 hover:text-gray-900">
-                      Documentation
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="text-base text-gray-500 hover:text-gray-900">
-                      Guides
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="text-base text-gray-500 hover:text-gray-900">
-                      API Status
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="md:grid md:grid-cols-2 md:gap-8">
-              <div>
-                <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">
-                  Company
-                </h3>
-                <ul className="mt-4 space-y-4">
-                  <li>
-                    <a href="#" className="text-base text-gray-500 hover:text-gray-900">
-                      About
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="text-base text-gray-500 hover:text-gray-900">
-                      Blog
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="text-base text-gray-500 hover:text-gray-900">
-                      Careers
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div className="mt-12 md:mt-0">
-                <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">
                   Legal
                 </h3>
                 <ul className="mt-4 space-y-4">
                   <li>
-                    <a href="#" className="text-base text-gray-500 hover:text-gray-900">
+                    <Link to="/privacy" className="text-base text-gray-500 hover:text-gray-900">
                       Privacy
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="text-base text-gray-500 hover:text-gray-900">
+                    <Link to="/terms" className="text-base text-gray-500 hover:text-gray-900">
                       Terms
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">
+                Company
+              </h3>
+              <ul className="mt-4 space-y-4">
+                <li>
+                  <Link to="/about" className="text-base text-gray-500 hover:text-gray-900">
+                    About
+                  </Link>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
         <div className="mt-12 border-t border-gray-200 pt-8">
           <p className="text-base text-gray-400 xl:text-center">
-            &copy; {new Date().getFullYear()} LinkAlchemy Lab. All rights reserved.
+            &copy; {new Date().getFullYear()} Blinkly Lab. All rights reserved.
           </p>
         </div>
       </div>

@@ -20,7 +20,7 @@ const CTASection = () => {
           </div>
           <div className="ml-3 inline-flex rounded-md shadow">
             <Button variant="outline" className="text-alchemy-purple bg-white hover:bg-gray-50 px-5 py-3 text-base font-medium" asChild>
-              <Link to="/features">
+              <Link to="/#features">
                 Learn more
               </Link>
             </Button>

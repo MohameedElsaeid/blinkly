@@ -14,7 +14,7 @@ const Navbar = () => {
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
               <span className="text-alchemy-purple-dark font-heading font-bold text-xl">
-                LinkAlchemy<span className="text-alchemy-purple">Lab</span>
+                Blinkly<span className="text-alchemy-purple">Lab</span>
               </span>
             </Link>
           </div>
@@ -24,10 +24,10 @@ const Navbar = () => {
             <Link to="/" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-alchemy-purple transition-colors">
               Home
             </Link>
-            <Link to="/features" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-alchemy-purple transition-colors">
+            <Link to="/#features" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-alchemy-purple transition-colors">
               Features
             </Link>
-            <Link to="/pricing" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-alchemy-purple transition-colors">
+            <Link to="/#pricing" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-alchemy-purple transition-colors">
               Pricing
             </Link>
             <Link to="/dashboard" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-alchemy-purple transition-colors">
@@ -69,14 +69,14 @@ const Navbar = () => {
               Home
             </Link>
             <Link 
-              to="/features" 
+              to="/#features" 
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-alchemy-purple hover:bg-gray-50"
               onClick={() => setIsMenuOpen(false)}
             >
               Features
             </Link>
             <Link 
-              to="/pricing" 
+              to="/#pricing" 
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-alchemy-purple hover:bg-gray-50"
               onClick={() => setIsMenuOpen(false)}
             >
