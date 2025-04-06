@@ -6,7 +6,8 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, 
   PieChart, Pie, Cell, LineChart, Line, AreaChart, Area, 
-  Legend, Sector, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis 
+  Legend, Sector, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
+  Tooltip as RechartsTooltip
 } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -154,7 +155,7 @@ const Analytics = () => {
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
                           <YAxis />
-                          <ChartTooltip content={props => <ChartTooltipContent {...props} indicator="line" />} />
+                          <ChartTooltip content={<ChartTooltipContent indicator="line" />} />
                           <Area 
                             type="monotone" 
                             dataKey="clicks" 
@@ -210,7 +211,7 @@ const Analytics = () => {
                               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                           </Pie>
-                          <Tooltip />
+                          <RechartsTooltip />
                           <Legend />
                         </PieChart>
                       </ResponsiveContainer>
@@ -234,7 +235,7 @@ const Analytics = () => {
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis type="number" />
                           <YAxis dataKey="name" type="category" />
-                          <Tooltip />
+                          <RechartsTooltip />
                           <Bar dataKey="value" fill="#8884d8">
                             {browserData.map((entry, index) => (
                               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -261,7 +262,7 @@ const Analytics = () => {
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
                           <YAxis />
-                          <Tooltip />
+                          <RechartsTooltip />
                           <Line type="monotone" dataKey="visits" stroke="#0088FE" activeDot={{ r: 8 }} />
                         </LineChart>
                       </ResponsiveContainer>
@@ -294,7 +295,7 @@ const Analytics = () => {
                               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                           </Pie>
-                          <Tooltip />
+                          <RechartsTooltip />
                           <Legend />
                         </PieChart>
                       </ResponsiveContainer>
@@ -314,6 +315,7 @@ const Analytics = () => {
                           <PolarRadiusAxis />
                           <Radar name="Value" dataKey="value" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
                           <Legend />
+                          <RechartsTooltip />
                         </RadarChart>
                       </ResponsiveContainer>
                     </CardContent>
@@ -345,7 +347,7 @@ const Analytics = () => {
                               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                           </Pie>
-                          <Tooltip />
+                          <RechartsTooltip />
                           <Legend />
                         </PieChart>
                       </ResponsiveContainer>
@@ -366,7 +368,7 @@ const Analytics = () => {
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
                           <YAxis />
-                          <Tooltip />
+                          <RechartsTooltip />
                           <Bar dataKey="value" fill="#8884d8">
                             {countryData.map((entry, index) => (
                               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -395,7 +397,7 @@ const Analytics = () => {
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
                           <YAxis />
-                          <Tooltip />
+                          <RechartsTooltip />
                           <Bar dataKey="visits" fill="#0088FE" />
                         </BarChart>
                       </ResponsiveContainer>
@@ -416,7 +418,7 @@ const Analytics = () => {
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
                           <YAxis />
-                          <Tooltip />
+                          <RechartsTooltip />
                           <Bar dataKey="conversion" fill="#00C49F" />
                         </BarChart>
                       </ResponsiveContainer>
