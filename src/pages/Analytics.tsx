@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -157,13 +156,10 @@ const Analytics = () => {
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
                           <YAxis />
-                          <ChartTooltip 
-                            content={props => (
-                              <ChartTooltipContent 
-                                {...props}
-                                indicator="line"
-                              />
-                            )}
+                          <Tooltip 
+                            content={(props) => {
+                              return <ChartTooltipContent {...props} indicator="line" />;
+                            }}
                           />
                           <Area 
                             type="monotone" 
