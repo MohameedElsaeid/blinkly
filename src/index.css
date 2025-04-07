@@ -7,8 +7,8 @@
 
 @layer base {
   :root {
-    --background: 220 44% 98%;     // Very soft gray-blue
-    --foreground: 222 47% 11%;     // Deep gray-blue for text
+    --background: 220 44% 98%;     /* Very soft gray-blue */
+    --foreground: 222 47% 11%;     /* Deep gray-blue for text */
 
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
@@ -16,19 +16,19 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    --primary: 250 69% 75%;        // Soft periwinkle
+    --primary: 250 69% 75%;        /* Soft periwinkle */
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 196 77% 65%;      // Soft azure
+    --secondary: 196 77% 65%;      /* Soft azure */
     --secondary-foreground: 210 40% 98%;
 
     --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
 
-    --accent: 250 50% 95%;         // Very soft lavender
+    --accent: 250 50% 95%;         /* Very soft lavender */
     --accent-foreground: 222 47% 11%;
 
-    --destructive: 0 84% 70%;      // Softer red
+    --destructive: 0 84% 70%;      /* Softer red */
     --destructive-foreground: 210 40% 98%;
 
     --border: 214 32% 91%;
@@ -39,7 +39,7 @@
   }
 
   .dark {
-    // Dark mode colors with soft, muted tones
+    /* Dark mode colors with soft, muted tones */
     --background: 222 47% 11%;
     --foreground: 210 40% 98%;
 
@@ -109,4 +109,3 @@
     @apply bg-blinkly-green text-white hover:bg-blinkly-green-dark transition-colors duration-200;
   }
 }
-
