@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { BadgeDollarSign } from "lucide-react";
 
 const CTASection = () => {
   return (
@@ -16,6 +17,12 @@ const CTASection = () => {
           <div className="mt-8 flex justify-center gap-4 flex-wrap">
             <Button size="lg" className="bg-blinkly-purple text-white hover:bg-blinkly-purple-dark shadow-md" asChild>
               <Link to="/signup" className="text-white">Get started for free</Link>
+            </Button>
+            <Button size="lg" className="bg-blinkly-purple text-white hover:bg-blinkly-purple-dark shadow-md" asChild>
+              <Link to="/contact" className="text-white flex items-center">
+                <BadgeDollarSign className="h-5 w-5 mr-2" />
+                Contact Sales
+              </Link>
             </Button>
           </div>
         </div>

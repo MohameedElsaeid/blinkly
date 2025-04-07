@@ -53,8 +53,7 @@ const pricingTiers: PricingTier[] = [
       "Email support"
     ],
     buttonText: "Start 14-Day Free Trial",
-    buttonLink: "/signup",
-    isPopular: true
+    buttonLink: "/signup"
   },
   {
     name: "Professional",
@@ -72,7 +71,8 @@ const pricingTiers: PricingTier[] = [
       "Priority email support"
     ],
     buttonText: "Start 14-Day Free Trial",
-    buttonLink: "/signup"
+    buttonLink: "/signup",
+    isPopular: true
   }
 ];
 
@@ -187,6 +187,18 @@ const PricingSection = () => {
               See all plans and comparison
             </Link>
           </Button>
+          <div className="flex justify-center mt-6">
+            <Button 
+              className="bg-blinkly-purple text-white hover:bg-blinkly-purple-dark flex items-center"
+              size="lg"
+              asChild
+            >
+              <Link to="/contact">
+                <BadgeDollarSign className="h-5 w-5 mr-2" />
+                Contact Sales
+              </Link>
+            </Button>
+          </div>
           <div className="inline-flex items-center p-4 mt-6 bg-alchemy-purple-light/20 rounded-lg">
             <BadgeDollarSign className="h-6 w-6 text-alchemy-purple mr-2" />
             <span className="text-sm text-gray-700">All paid plans include a <span className="font-semibold">14-day free trial</span> with no credit card required to start</span>
