@@ -12,10 +12,22 @@ export class CreateUserDto {
   password: string;
   
   @IsString()
-  @IsOptional()
-  firstName?: string;
+  @IsNotEmpty()
+  firstName: string;
   
   @IsString()
-  @IsOptional()
-  lastName?: string;
+  @IsNotEmpty()
+  lastName: string;
+  
+  @IsString()
+  @IsNotEmpty()
+  country: string;
+  
+  @IsString()
+  @IsNotEmpty()
+  countryCode: string;
+  
+  @IsString()
+  @IsNotEmpty()
+  phone: string;
 }

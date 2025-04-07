@@ -23,6 +23,9 @@ export class AuthController {
       registerDto.password,
       registerDto.firstName,
       registerDto.lastName,
+      registerDto.country,
+      registerDto.countryCode,
+      registerDto.phone
     );
   }
 

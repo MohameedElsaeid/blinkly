@@ -15,11 +15,20 @@ export class User {
   @Exclude()
   password: string;
 
-  @Column({ nullable: true })
+  @Column()
   firstName: string;
 
-  @Column({ nullable: true })
+  @Column()
   lastName: string;
+  
+  @Column()
+  country: string;
+  
+  @Column()
+  countryCode: string;
+  
+  @Column()
+  phone: string;
 
   @OneToMany(() => Link, (link) => link.user)
   links: Link[];

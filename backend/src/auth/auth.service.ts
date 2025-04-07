@@ -32,17 +32,23 @@ export class AuthService {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
+        country: user.country,
+        countryCode: user.countryCode,
+        phone: user.phone
       },
       access_token: this.jwtService.sign(payload),
     };
   }
 
-  async register(email: string, password: string, firstName?: string, lastName?: string) {
+  async register(email: string, password: string, firstName: string, lastName: string, country: string, countryCode: string, phone: string) {
     const user = await this.usersService.create({
       email,
       password,
       firstName,
       lastName,
+      country,
+      countryCode,
+      phone
     });
     
     const { password: _, ...result } = user;

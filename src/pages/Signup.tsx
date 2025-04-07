@@ -7,12 +7,42 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
-import { AlertCircle, Mail, Lock, User, Loader2, ArrowRight } from "lucide-react";
+import { AlertCircle, Mail, Lock, User, Loader2, ArrowRight, Globe, Phone } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const COUNTRY_OPTIONS = [
+  { value: "us", label: "United States" },
+  { value: "ca", label: "Canada" },
+  { value: "uk", label: "United Kingdom" },
+  { value: "au", label: "Australia" },
+  { value: "fr", label: "France" },
+  { value: "de", label: "Germany" },
+  { value: "jp", label: "Japan" },
+  { value: "cn", label: "China" },
+  { value: "in", label: "India" },
+  { value: "br", label: "Brazil" },
+];
+
+const COUNTRY_CODES = [
+  { value: "+1", label: "+1 (US/CA)" },
+  { value: "+44", label: "+44 (UK)" },
+  { value: "+61", label: "+61 (AU)" },
+  { value: "+33", label: "+33 (FR)" },
+  { value: "+49", label: "+49 (DE)" },
+  { value: "+81", label: "+81 (JP)" },
+  { value: "+86", label: "+86 (CN)" },
+  { value: "+91", label: "+91 (IN)" },
+  { value: "+55", label: "+55 (BR)" },
+];
 
 const Signup = () => {
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("+1");
+  const [country, setCountry] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isAgreeTerms, setIsAgreeTerms] = useState(false);
@@ -21,13 +51,28 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const validateForm = () => {
-    if (!name) {
-      setFormError("Name is required");
+    if (!firstName) {
+      setFormError("First name is required");
+      return false;
+    }
+
+    if (!lastName) {
+      setFormError("Last name is required");
       return false;
     }
     
     if (!email) {
       setFormError("Email is required");
+      return false;
+    }
+    
+    if (!phone) {
+      setFormError("Phone number is required");
+      return false;
+    }
+
+    if (!country) {
+      setFormError("Country is required");
       return false;
     }
     
@@ -45,6 +90,13 @@ const Signup = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setFormError("Please enter a valid email address");
+      return false;
+    }
+
+    // Basic phone validation
+    const phoneRegex = /^\d{6,14}$/;
+    if (!phoneRegex.test(phone)) {
+      setFormError("Please enter a valid phone number (numbers only)");
       return false;
     }
 
@@ -113,20 +165,39 @@ const Signup = () => {
             )}
             
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="John Doe"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="pl-10"
-                    autoComplete="name"
-                    required
-                  />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">First Name</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="firstName"
+                      type="text"
+                      placeholder="John"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="pl-10"
+                      autoComplete="given-name"
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="lastName"
+                      type="text"
+                      placeholder="Doe"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className="pl-10"
+                      autoComplete="family-name"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
               
@@ -144,6 +215,58 @@ const Signup = () => {
                     autoComplete="email"
                     required
                   />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <div className="flex space-x-2">
+                  <div className="w-1/3">
+                    <Select value={countryCode} onValueChange={setCountryCode}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Code" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {COUNTRY_CODES.map((code) => (
+                          <SelectItem key={code.value} value={code.value}>
+                            {code.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="relative w-2/3">
+                    <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="Phone number"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                      className="pl-10"
+                      autoComplete="tel"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="country">Country</Label>
+                <div className="relative">
+                  <Globe className="absolute left-3 top-3 h-4 w-4 text-gray-400 pointer-events-none" />
+                  <Select value={country} onValueChange={setCountry}>
+                    <SelectTrigger className="pl-10">
+                      <SelectValue placeholder="Select your country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {COUNTRY_OPTIONS.map((country) => (
+                        <SelectItem key={country.value} value={country.value}>
+                          {country.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               

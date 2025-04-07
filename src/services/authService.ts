@@ -10,8 +10,11 @@ interface AuthResponse {
 export interface RegisterParams {
   email: string;
   password: string;
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
+  country: string;
+  countryCode: string;
+  phone: string;
 }
 
 export interface LoginParams {

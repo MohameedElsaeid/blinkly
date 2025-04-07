@@ -3,8 +3,11 @@
 export interface User {
   id: string;
   email: string;
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
+  country: string;
+  countryCode: string;
+  phone: string;
 }
 
 // Link types
