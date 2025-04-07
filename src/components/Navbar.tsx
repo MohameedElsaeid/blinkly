@@ -33,40 +33,37 @@ const Navbar = () => {
             </Link>
           </div>
           
-          <div className="hidden md:flex items-center space-x-3">
-            <Button variant="ghost" asChild>
-              <Link to="/#features" className="text-gray-700 font-medium hover:text-blinkly-purple">
-                Features
-              </Link>
-            </Button>
-            <Button variant="ghost" asChild>
-              <Link to="/pricing" className="text-gray-700 font-medium hover:text-blinkly-purple">
-                Pricing
-              </Link>
-            </Button>
-            <Button variant="ghost" asChild>
-              <Link to="/about" className="text-gray-700 font-medium hover:text-blinkly-purple">
-                About
-              </Link>
-            </Button>
-            
-            <div className="ml-4 flex items-center space-x-2">
-              <Button variant="outline" className="text-blinkly-teal border-blinkly-teal hover:bg-blinkly-teal/10" asChild>
-                <Link to="/contact" className="text-blinkly-teal">
-                  Contact
+          <div className="hidden md:flex items-center justify-center flex-grow">
+            <div className="space-x-3">
+              <Button variant="ghost" asChild>
+                <Link to="/#features" className="text-gray-700 font-medium hover:text-blinkly-purple">
+                  Features
                 </Link>
               </Button>
-              <Button variant="outline" className="text-blinkly-purple border-blinkly-purple hover:bg-blinkly-purple/10" asChild>
-                <Link to="/login" className="text-blinkly-purple">
-                  Log in
+              <Button variant="ghost" asChild>
+                <Link to="/pricing" className="text-gray-700 font-medium hover:text-blinkly-purple">
+                  Pricing
                 </Link>
               </Button>
-              <Button className="bg-blinkly-purple hover:bg-blinkly-purple-dark text-white shadow-sm" asChild>
-                <Link to="/signup" className="text-white">
-                  Sign up
+              <Button variant="ghost" asChild>
+                <Link to="/about" className="text-gray-700 font-medium hover:text-blinkly-purple">
+                  About
                 </Link>
               </Button>
             </div>
+          </div>
+          
+          <div className="hidden md:flex items-center space-x-2">
+            <Button variant="outline" className="text-blinkly-purple border-blinkly-purple hover:bg-blinkly-purple/10" asChild>
+              <Link to="/login" className="text-blinkly-purple">
+                Log in
+              </Link>
+            </Button>
+            <Button className="bg-blinkly-purple hover:bg-blinkly-purple-dark text-white shadow-sm" asChild>
+              <Link to="/signup" className="text-white">
+                Sign up
+              </Link>
+            </Button>
           </div>
           
           <div className="md:hidden">
@@ -89,9 +86,6 @@ const Navbar = () => {
                   </Link>
                   <Link to="/about" className="font-semibold text-lg text-blinkly-orange">
                     About
-                  </Link>
-                  <Link to="/contact" className="font-semibold text-lg text-blinkly-green">
-                    Contact
                   </Link>
                   {!user ? (
                     <>
