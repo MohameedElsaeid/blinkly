@@ -1,9 +1,10 @@
+
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const CTASection = () => {
   return (
-    <section className="bg-alchemy-purple py-20">
+    <section className="bg-blinkly-gradient py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-white sm:text-4xl">
@@ -13,7 +14,7 @@ const CTASection = () => {
             Start shortening links for free or contact us to learn more about our enterprise solutions.
           </p>
           <div className="mt-8 flex justify-center gap-4 flex-wrap">
-            <Button size="lg" className="bg-white text-alchemy-purple hover:bg-gray-100" asChild>
+            <Button size="lg" className="bg-blinkly-orange text-white hover:bg-blinkly-orange-dark" asChild>
               <Link to="/signup">Get started for free</Link>
             </Button>
             <Button variant="outline" size="lg" className="border-white text-white hover:bg-white/10" asChild>

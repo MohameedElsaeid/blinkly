@@ -35,39 +35,39 @@ const Navbar = () => {
           
           <div className="hidden md:flex items-center space-x-3">
             <Button variant="ghost" asChild>
-              <Link to="/#features" className="text-blinkly-purple font-medium">
+              <Link to="/#features" className="text-blinkly-purple font-medium hover:text-blinkly-purple-dark">
                 Features
               </Link>
             </Button>
             <Button variant="ghost" asChild>
-              <Link to="/pricing" className="text-blinkly-purple font-medium">
+              <Link to="/pricing" className="text-blinkly-purple font-medium hover:text-blinkly-purple-dark">
                 Pricing
               </Link>
             </Button>
             <Button variant="ghost" asChild>
-              <Link to="/api-docs" className="text-blinkly-purple font-medium">
+              <Link to="/api-docs" className="text-blinkly-purple font-medium hover:text-blinkly-purple-dark">
                 API
               </Link>
             </Button>
             <Button variant="ghost" asChild>
-              <Link to="/about" className="text-blinkly-purple font-medium">
+              <Link to="/about" className="text-blinkly-purple font-medium hover:text-blinkly-purple-dark">
                 About
               </Link>
             </Button>
             <Button variant="ghost" asChild>
-              <Link to="/blog" className="text-blinkly-purple font-medium">
+              <Link to="/blog" className="text-blinkly-purple font-medium hover:text-blinkly-purple-dark">
                 Blog
               </Link>
             </Button>
             
             <div className="ml-4 flex items-center space-x-2">
-              <Button variant="outline" asChild>
-                <Link to="/contact" className="text-blinkly-purple font-medium">
+              <Button variant="outline" className="text-blinkly-teal border-blinkly-teal hover:bg-blinkly-teal hover:text-white" asChild>
+                <Link to="/contact">
                   Contact
                 </Link>
               </Button>
-              <Button variant="outline" asChild>
-                <Link to="/login" className="text-blinkly-purple font-medium">
+              <Button variant="outline" className="text-blinkly-green border-blinkly-green hover:bg-blinkly-green hover:text-white" asChild>
+                <Link to="/login">
                   Log in
                 </Link>
               </Button>
@@ -83,38 +83,38 @@ const Navbar = () => {
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
-                  <Menu className="h-5 w-5 text-gray-500" />
+                  <Menu className="h-5 w-5 text-blinkly-purple" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-full sm:w-64">
                 <div className="flex flex-col space-y-4">
-                  <Link to="/" className="font-semibold text-lg">
+                  <Link to="/" className="font-semibold text-lg text-blinkly-purple">
                     Home
                   </Link>
-                  <Link to="/#features" className="font-semibold text-lg">
+                  <Link to="/#features" className="font-semibold text-lg text-blinkly-purple">
                     Features
                   </Link>
-                  <Link to="/pricing" className="font-semibold text-lg">
+                  <Link to="/pricing" className="font-semibold text-lg text-blinkly-teal">
                     Pricing
                   </Link>
-                  <Link to="/api-docs" className="font-semibold text-lg">
+                  <Link to="/api-docs" className="font-semibold text-lg text-blinkly-teal">
                     API
                   </Link>
-                  <Link to="/about" className="font-semibold text-lg">
+                  <Link to="/about" className="font-semibold text-lg text-blinkly-orange">
                     About
                   </Link>
-                  <Link to="/blog" className="font-semibold text-lg">
+                  <Link to="/blog" className="font-semibold text-lg text-blinkly-orange">
                     Blog
                   </Link>
-                  <Link to="/contact" className="font-semibold text-lg">
+                  <Link to="/contact" className="font-semibold text-lg text-blinkly-green">
                     Contact
                   </Link>
                   {!user ? (
                     <>
-                      <Link to="/login" className="font-semibold text-lg">
+                      <Link to="/login" className="font-semibold text-lg text-blinkly-purple">
                         Log in
                       </Link>
-                      <Link to="/signup" className="font-semibold text-lg">
+                      <Link to="/signup" className="font-semibold text-lg text-blinkly-teal">
                         Sign up
                       </Link>
                     </>
