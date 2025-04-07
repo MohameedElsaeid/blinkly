@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 import tailwindAnimate from "tailwindcss-animate";
 
@@ -69,34 +70,34 @@ export default {
 				},
 				blinkly: {
 					purple: {
-						light: '#AF94FF',
-						DEFAULT: '#7959E3',
-						dark: '#5637BE',
+						light: '#9b87f5',
+						DEFAULT: '#7E69AB',
+						dark: '#6E59A5',
 					},
 					teal: {
-						light: '#9BEFE2',
-						DEFAULT: '#34D1BE',
-						dark: '#1B9E8E',
+						light: '#D3E4FD',
+						DEFAULT: '#33C3F0',
+						dark: '#0FA0CE',
 					},
 					orange: {
-						light: '#FFB894',
-						DEFAULT: '#FF8847',
-						dark: '#E56A24',
+						light: '#FDE1D3',
+						DEFAULT: '#FEC6A1',
+						dark: '#F97316',
 					},
 					green: {
-						light: '#A6EE96',
-						DEFAULT: '#52D13C',
-						dark: '#3C9E2B',
+						light: '#F2FCE2',
+						DEFAULT: '#82C91E',
+						dark: '#5C8F17',
 					},
 					gray: {
 						50: '#F8F9FC',
-						100: '#EEF1F8',
-						200: '#DFE4EF',
+						100: '#F1F1F1',
+						200: '#E5E5E5',
 						300: '#CBD2E2',
 						400: '#9CA8C2',
-						500: '#6B7A9C',
-						600: '#4A577A',
-						700: '#364058',
+						500: '#8E9196',
+						600: '#403E43',
+						700: '#333333',
 						800: '#232A3A',
 						900: '#131722',
 					},
@@ -166,10 +167,11 @@ export default {
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-				'hero-pattern': 'linear-gradient(120deg, #5637BE 0%, #7959E3 50%, #AF94FF 100%)',
-				'blinkly-gradient': 'linear-gradient(135deg, #7959E3 0%, #34D1BE 100%)',
-				'blinkly-orange-gradient': 'linear-gradient(135deg, #FF8847 0%, #FFB894 100%)',
-				'blinkly-green-gradient': 'linear-gradient(135deg, #3C9E2B 0%, #A6EE96 100%)',
+				'hero-pattern': 'linear-gradient(120deg, #6E59A5 0%, #7E69AB 50%, #9b87f5 100%)',
+				'blinkly-gradient': 'linear-gradient(135deg, #7E69AB 0%, #33C3F0 100%)',
+				'blinkly-orange-gradient': 'linear-gradient(135deg, #FEC6A1 0%, #FDE1D3 100%)',
+				'blinkly-green-gradient': 'linear-gradient(135deg, #5C8F17 0%, #F2FCE2 100%)',
+				'soft-blue-gradient': 'linear-gradient(90deg, hsla(186, 33%, 94%, 1) 0%, hsla(216, 41%, 79%, 1) 100%)',
 			},
 		}
 	},

@@ -24,7 +24,7 @@ const Navbar = () => {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+    <header className="bg-white border-b border-gray-100 sticky top-0 z-30 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
@@ -35,44 +35,44 @@ const Navbar = () => {
           
           <div className="hidden md:flex items-center space-x-3">
             <Button variant="ghost" asChild>
-              <Link to="/#features" className="text-blinkly-purple font-medium hover:text-blinkly-purple-dark">
+              <Link to="/#features" className="text-gray-700 font-medium hover:text-blinkly-purple">
                 Features
               </Link>
             </Button>
             <Button variant="ghost" asChild>
-              <Link to="/pricing" className="text-blinkly-purple font-medium hover:text-blinkly-purple-dark">
+              <Link to="/pricing" className="text-gray-700 font-medium hover:text-blinkly-purple">
                 Pricing
               </Link>
             </Button>
             <Button variant="ghost" asChild>
-              <Link to="/api-docs" className="text-blinkly-purple font-medium hover:text-blinkly-purple-dark">
+              <Link to="/api-docs" className="text-gray-700 font-medium hover:text-blinkly-purple">
                 API
               </Link>
             </Button>
             <Button variant="ghost" asChild>
-              <Link to="/about" className="text-blinkly-purple font-medium hover:text-blinkly-purple-dark">
+              <Link to="/about" className="text-gray-700 font-medium hover:text-blinkly-purple">
                 About
               </Link>
             </Button>
             <Button variant="ghost" asChild>
-              <Link to="/blog" className="text-blinkly-purple font-medium hover:text-blinkly-purple-dark">
+              <Link to="/blog" className="text-gray-700 font-medium hover:text-blinkly-purple">
                 Blog
               </Link>
             </Button>
             
             <div className="ml-4 flex items-center space-x-2">
-              <Button variant="outline" className="text-blinkly-teal border-blinkly-teal hover:bg-blinkly-teal hover:text-white" asChild>
-                <Link to="/contact">
+              <Button variant="outline" className="text-blinkly-teal border-blinkly-teal hover:bg-blinkly-teal/10" asChild>
+                <Link to="/contact" className="text-blinkly-teal">
                   Contact
                 </Link>
               </Button>
-              <Button variant="outline" className="text-blinkly-green border-blinkly-green hover:bg-blinkly-green hover:text-white" asChild>
-                <Link to="/login">
+              <Button variant="outline" className="text-blinkly-purple border-blinkly-purple hover:bg-blinkly-purple/10" asChild>
+                <Link to="/login" className="text-blinkly-purple">
                   Log in
                 </Link>
               </Button>
-              <Button className="bg-blinkly-purple hover:bg-blinkly-purple-dark text-white" asChild>
-                <Link to="/signup">
+              <Button className="bg-blinkly-purple hover:bg-blinkly-purple-dark text-white shadow-sm" asChild>
+                <Link to="/signup" className="text-white">
                   Sign up
                 </Link>
               </Button>
@@ -83,15 +83,15 @@ const Navbar = () => {
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
-                  <Menu className="h-5 w-5 text-blinkly-purple" />
+                  <Menu className="h-5 w-5 text-gray-700" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-full sm:w-64">
                 <div className="flex flex-col space-y-4">
-                  <Link to="/" className="font-semibold text-lg text-blinkly-purple">
+                  <Link to="/" className="font-semibold text-lg text-gray-800">
                     Home
                   </Link>
-                  <Link to="/#features" className="font-semibold text-lg text-blinkly-purple">
+                  <Link to="/#features" className="font-semibold text-lg text-gray-800">
                     Features
                   </Link>
                   <Link to="/pricing" className="font-semibold text-lg text-blinkly-teal">
