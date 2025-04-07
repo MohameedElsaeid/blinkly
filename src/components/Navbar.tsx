@@ -35,43 +35,43 @@ const Navbar = () => {
           
           <div className="hidden md:flex items-center space-x-3">
             <Button variant="ghost" asChild>
-              <Link to="/#features" className="text-alchemy-purple font-medium">
+              <Link to="/#features" className="text-blinkly-purple font-medium">
                 Features
               </Link>
             </Button>
             <Button variant="ghost" asChild>
-              <Link to="/pricing" className="text-alchemy-purple font-medium">
+              <Link to="/pricing" className="text-blinkly-purple font-medium">
                 Pricing
               </Link>
             </Button>
             <Button variant="ghost" asChild>
-              <Link to="/api-docs" className="text-alchemy-purple font-medium">
+              <Link to="/api-docs" className="text-blinkly-purple font-medium">
                 API
               </Link>
             </Button>
             <Button variant="ghost" asChild>
-              <Link to="/about" className="text-alchemy-purple font-medium">
+              <Link to="/about" className="text-blinkly-purple font-medium">
                 About
               </Link>
             </Button>
             <Button variant="ghost" asChild>
-              <Link to="/blog" className="text-alchemy-purple font-medium">
+              <Link to="/blog" className="text-blinkly-purple font-medium">
                 Blog
               </Link>
             </Button>
             
             <div className="ml-4 flex items-center space-x-2">
               <Button variant="outline" asChild>
-                <Link to="/contact" className="text-alchemy-purple font-medium">
+                <Link to="/contact" className="text-blinkly-purple font-medium">
                   Contact
                 </Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link to="/login" className="text-alchemy-purple font-medium">
+                <Link to="/login" className="text-blinkly-purple font-medium">
                   Log in
                 </Link>
               </Button>
-              <Button className="bg-alchemy-purple hover:bg-alchemy-purple-dark" asChild>
+              <Button className="bg-blinkly-purple hover:bg-blinkly-purple-dark text-white" asChild>
                 <Link to="/signup">
                   Sign up
                 </Link>

@@ -4,7 +4,7 @@ import React from "react";
 const Logo = () => {
   return (
     <div className="flex items-center">
-      <div className="h-8 w-8 mr-2 bg-alchemy-purple rounded-md flex items-center justify-center">
+      <div className="h-8 w-8 mr-2 bg-blinkly-purple rounded-md flex items-center justify-center">
         <svg 
           viewBox="0 0 24 24" 
           fill="none" 
@@ -27,7 +27,7 @@ const Logo = () => {
           />
         </svg>
       </div>
-      <span className="text-xl font-bold text-alchemy-purple">Blinkly</span>
+      <span className="text-xl font-bold text-blinkly-purple">Blinkly</span>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 import tailwindAnimate from "tailwindcss-animate";
 
@@ -68,7 +67,40 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Custom alchemy theme colors
+				blinkly: {
+					purple: {
+						light: '#AF94FF',
+						DEFAULT: '#7959E3',
+						dark: '#5637BE',
+					},
+					teal: {
+						light: '#9BEFE2',
+						DEFAULT: '#34D1BE',
+						dark: '#1B9E8E',
+					},
+					orange: {
+						light: '#FFB894',
+						DEFAULT: '#FF8847',
+						dark: '#E56A24',
+					},
+					green: {
+						light: '#A6EE96',
+						DEFAULT: '#52D13C',
+						dark: '#3C9E2B',
+					},
+					gray: {
+						50: '#F8F9FC',
+						100: '#EEF1F8',
+						200: '#DFE4EF',
+						300: '#CBD2E2',
+						400: '#9CA8C2',
+						500: '#6B7A9C',
+						600: '#4A577A',
+						700: '#364058',
+						800: '#232A3A',
+						900: '#131722',
+					},
+				},
 				alchemy: {
 					purple: {
 						light: '#9b87f5',
@@ -134,7 +166,10 @@ export default {
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-				'hero-pattern': 'linear-gradient(120deg, #6E59A5 0%, #9b87f5 100%)',
+				'hero-pattern': 'linear-gradient(120deg, #5637BE 0%, #7959E3 50%, #AF94FF 100%)',
+				'blinkly-gradient': 'linear-gradient(135deg, #7959E3 0%, #34D1BE 100%)',
+				'blinkly-orange-gradient': 'linear-gradient(135deg, #FF8847 0%, #FFB894 100%)',
+				'blinkly-green-gradient': 'linear-gradient(135deg, #3C9E2B 0%, #A6EE96 100%)',
 			},
 		}
 	},
