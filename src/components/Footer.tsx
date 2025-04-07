@@ -1,5 +1,6 @@
 
 import { Link } from "react-router-dom";
+import { FileText } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -49,6 +50,12 @@ const Footer = () => {
                   <li>
                     <Link to="/dashboard" className="text-base text-gray-500 hover:text-gray-900">
                       Dashboard
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/api-docs" className="text-base text-gray-500 hover:text-gray-900 flex items-center">
+                      <FileText className="h-4 w-4 mr-1" />
+                      API Docs
                     </Link>
                   </li>
                 </ul>

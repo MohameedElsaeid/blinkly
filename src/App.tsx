@@ -19,6 +19,7 @@ import CreateDynamicLink from "./pages/CreateDynamicLink";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import ApiDocs from "./pages/ApiDocs";
 import CookieConsent from "./components/CookieConsent";
 
 // Create a client
@@ -45,6 +46,7 @@ const App = () => (
               <Route path="/about" element={<About />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
+              <Route path="/api-docs" element={<ApiDocs />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/dashboard/links" element={<MyLinks />} />
               <Route path="/dashboard/links/create" element={<CreateDynamicLink />} />
