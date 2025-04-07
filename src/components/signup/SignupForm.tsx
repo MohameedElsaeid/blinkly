@@ -9,6 +9,7 @@ import { PersonalInfoFields } from "./PersonalInfoFields";
 import { ContactInfoFields } from "./ContactInfoFields";
 import { PasswordFields } from "./PasswordFields";
 import { TermsCheckbox } from "./TermsCheckbox";
+import { useAuth } from "@/hooks";
 
 const SignupForm = () => {
   const [firstName, setFirstName] = useState("");
@@ -23,6 +24,7 @@ const SignupForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
   const navigate = useNavigate();
+  const { register } = useAuth();
 
   const validateForm = () => {
     if (!firstName) {
@@ -92,7 +94,7 @@ const SignupForm = () => {
     return true;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
     
@@ -102,12 +104,24 @@ const SignupForm = () => {
 
     setIsSubmitting(true);
     
-    // Mock signup - in a real app, this would create an account with a backend
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      await register({
+        firstName,
+        lastName,
+        email,
+        password,
+        country,
+        countryCode,
+        phone
+      });
       toast.success("Account created successfully!");
-      navigate("/dashboard");
-    }, 1000);
+      navigate("/login");
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      setFormError(error.response?.data?.message || "Registration failed. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
