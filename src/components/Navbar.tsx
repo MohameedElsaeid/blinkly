@@ -45,18 +45,8 @@ const Navbar = () => {
               </Link>
             </Button>
             <Button variant="ghost" asChild>
-              <Link to="/api-docs" className="text-gray-700 font-medium hover:text-blinkly-purple">
-                API
-              </Link>
-            </Button>
-            <Button variant="ghost" asChild>
               <Link to="/about" className="text-gray-700 font-medium hover:text-blinkly-purple">
                 About
-              </Link>
-            </Button>
-            <Button variant="ghost" asChild>
-              <Link to="/blog" className="text-gray-700 font-medium hover:text-blinkly-purple">
-                Blog
               </Link>
             </Button>
             
@@ -97,14 +87,8 @@ const Navbar = () => {
                   <Link to="/pricing" className="font-semibold text-lg text-blinkly-teal">
                     Pricing
                   </Link>
-                  <Link to="/api-docs" className="font-semibold text-lg text-blinkly-teal">
-                    API
-                  </Link>
                   <Link to="/about" className="font-semibold text-lg text-blinkly-orange">
                     About
-                  </Link>
-                  <Link to="/blog" className="font-semibold text-lg text-blinkly-orange">
-                    Blog
                   </Link>
                   <Link to="/contact" className="font-semibold text-lg text-blinkly-green">
                     Contact

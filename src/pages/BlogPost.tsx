@@ -70,28 +70,18 @@ const BlogPost = () => {
             </p>
             
             <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center">
-                <img 
-                  src={post.author.avatar} 
-                  alt={post.author.name} 
-                  className="h-10 w-10 rounded-full mr-3"
-                />
-                <div>
-                  <p className="font-medium">{post.author.name}</p>
-                  <div className="flex items-center space-x-3 text-sm text-gray-500">
-                    <div className="flex items-center">
-                      <Calendar className="h-4 w-4 mr-1" />
-                      <span>{new Date(post.publishedAt).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'short', 
-                        day: 'numeric' 
-                      })}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Clock className="h-4 w-4 mr-1" />
-                      <span>{post.readingTime}</span>
-                    </div>
-                  </div>
+              <div className="flex items-center space-x-3 text-sm text-gray-500">
+                <div className="flex items-center">
+                  <Calendar className="h-4 w-4 mr-1" />
+                  <span>{new Date(post.publishedAt).toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                  })}</span>
+                </div>
+                <div className="flex items-center">
+                  <Clock className="h-4 w-4 mr-1" />
+                  <span>{post.readingTime}</span>
                 </div>
               </div>
               

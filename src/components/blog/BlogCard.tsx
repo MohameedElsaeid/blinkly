@@ -43,15 +43,6 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, className }) => {
       </CardContent>
       
       <CardFooter className="p-4 pt-0 flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <img 
-            src={post.author.avatar} 
-            alt={post.author.name} 
-            className="h-6 w-6 rounded-full"
-          />
-          <span className="text-sm text-gray-700">{post.author.name}</span>
-        </div>
-        
         <div className="flex items-center space-x-3 text-xs text-gray-500">
           <div className="flex items-center">
             <Calendar className="h-3 w-3 mr-1" />

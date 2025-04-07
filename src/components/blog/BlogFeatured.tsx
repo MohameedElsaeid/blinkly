@@ -37,15 +37,6 @@ const BlogFeatured: React.FC<BlogFeaturedProps> = ({ post }) => {
         </p>
         
         <div className="flex flex-wrap gap-4 items-center">
-          <div className="flex items-center">
-            <img 
-              src={post.author.avatar} 
-              alt={post.author.name} 
-              className="h-10 w-10 rounded-full border-2 border-white mr-3"
-            />
-            <span className="font-medium">{post.author.name}</span>
-          </div>
-          
           <div className="flex items-center space-x-4 text-sm text-gray-300">
             <div className="flex items-center">
               <Calendar className="h-4 w-4 mr-1" />
