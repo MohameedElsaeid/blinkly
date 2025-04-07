@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
-import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuContent, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
+import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuContent, NavigationMenuTrigger, NavigationMenuLink } from "@/components/ui/navigation-menu";
 import { useAuth } from "@/hooks";
 import { useIsMobile } from "@/hooks";
 import Logo from "./Logo";
@@ -38,36 +38,44 @@ const Navbar = () => {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger asChild>
-                    <Button variant="link" className="text-alchemy-purple font-medium">
-                      <Link to="/#features">Features</Link>
-                    </Button>
+                  <NavigationMenuTrigger>
+                    <span className="text-alchemy-purple font-medium">Features</span>
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent />
+                  <NavigationMenuContent>
+                    <Link to="/#features" className="block p-3 hover:bg-gray-100 rounded">
+                      Features
+                    </Link>
+                  </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger asChild>
-                    <Button variant="link" className="text-alchemy-purple font-medium">
-                      <Link to="/pricing">Pricing</Link>
-                    </Button>
+                  <NavigationMenuTrigger>
+                    <span className="text-alchemy-purple font-medium">Pricing</span>
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent />
+                  <NavigationMenuContent>
+                    <Link to="/pricing" className="block p-3 hover:bg-gray-100 rounded">
+                      Pricing
+                    </Link>
+                  </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger asChild>
-                    <Button variant="link" className="text-alchemy-purple font-medium">
-                      <Link to="/api-docs">API</Link>
-                    </Button>
+                  <NavigationMenuTrigger>
+                    <span className="text-alchemy-purple font-medium">API</span>
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent />
+                  <NavigationMenuContent>
+                    <Link to="/api-docs" className="block p-3 hover:bg-gray-100 rounded">
+                      API Documentation
+                    </Link>
+                  </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger asChild>
-                    <Button variant="link" className="text-alchemy-purple font-medium">
-                      <Link to="/about">About</Link>
-                    </Button>
+                  <NavigationMenuTrigger>
+                    <span className="text-alchemy-purple font-medium">About</span>
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent />
+                  <NavigationMenuContent>
+                    <Link to="/about" className="block p-3 hover:bg-gray-100 rounded">
+                      About Us
+                    </Link>
+                  </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
