@@ -43,16 +43,16 @@ const Hero = () => {
             
             <div className="mt-8 grid grid-cols-2 gap-8 md:grid-cols-4">
               <div className="col-span-1 flex justify-center items-center grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-                <img className="h-12" src="/logo-placeholder-1.svg" alt="Company 1" />
+                <img className="h-12" src="https://placeholder.pics/svg/150x50/DEDEDE/555555/LOGO%201" alt="Company 1" />
               </div>
               <div className="col-span-1 flex justify-center items-center grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-                <img className="h-12" src="/logo-placeholder-2.svg" alt="Company 2" />
+                <img className="h-12" src="https://placeholder.pics/svg/150x50/DEDEDE/555555/LOGO%202" alt="Company 2" />
               </div>
               <div className="col-span-1 flex justify-center items-center grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-                <img className="h-12" src="/logo-placeholder-3.svg" alt="Company 3" />
+                <img className="h-12" src="https://placeholder.pics/svg/150x50/DEDEDE/555555/LOGO%203" alt="Company 3" />
               </div>
               <div className="col-span-1 flex justify-center items-center grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-                <img className="h-12" src="/logo-placeholder-4.svg" alt="Company 4" />
+                <img className="h-12" src="https://placeholder.pics/svg/150x50/DEDEDE/555555/LOGO%204" alt="Company 4" />
               </div>
             </div>
           </div>
@@ -63,7 +63,7 @@ const Hero = () => {
             <div className="bg-white p-6 sm:p-10">
               <div className="aspect-video w-full overflow-hidden rounded-lg shadow-inner">
                 <img 
-                  src="/platform-screenshot.jpg" 
+                  src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?q=80&w=2070" 
                   alt="Blinkly Platform Dashboard" 
                   className="w-full h-full object-cover"
                 />

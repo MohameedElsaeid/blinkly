@@ -41,7 +41,7 @@ const CTASection = () => {
               <div className="relative w-full max-w-md lg:max-w-lg">
                 <div className="rounded-lg shadow-lg overflow-hidden">
                   <img 
-                    src="/dashboard-preview.jpg" 
+                    src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=2070" 
                     alt="Blinkly Dashboard Preview" 
                     className="w-full h-auto"
                   />
