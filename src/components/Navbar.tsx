@@ -77,6 +77,16 @@ const Navbar = () => {
                     </Link>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>
+                    <span className="text-alchemy-purple font-medium">Blog</span>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <Link to="/blog" className="block p-3 hover:bg-gray-100 rounded">
+                      Blog
+                    </Link>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
             
@@ -123,6 +133,9 @@ const Navbar = () => {
                   <Link to="/about" className="font-semibold text-lg">
                     About
                   </Link>
+                  <Link to="/blog" className="font-semibold text-lg">
+                    Blog
+                  </Link>
                   <Link to="/contact" className="font-semibold text-lg">
                     Contact
                   </Link>
@@ -149,7 +162,6 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      
     </header>
   );
 };

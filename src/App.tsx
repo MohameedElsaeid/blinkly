@@ -22,6 +22,8 @@ import ApiDocs from "./pages/ApiDocs";
 import Pricing from "./pages/Pricing";
 import CookieConsent from "./components/CookieConsent";
 import Contact from "./pages/Contact";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,6 +51,8 @@ const App = () => (
               <Route path="/api-docs" element={<ApiDocs />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/dashboard/links" element={<MyLinks />} />
               <Route path="/dashboard/links/create" element={<CreateDynamicLink />} />
