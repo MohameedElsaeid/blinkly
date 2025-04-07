@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 import tailwindAnimate from "tailwindcss-animate";
 
@@ -30,7 +29,13 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        // Soft, muted color palette
+        brand: {
+          purple: '#5D5FEF',
+          teal: '#28C8C8',
+          gold: '#F4C06C',
+          red: '#FF6B6B',
+          lightBg: '#FAFAFB',
+        },
         blinkly: {
           purple: {
             light: '#D3D1F9',    // Soft lavender
@@ -67,7 +72,8 @@ export default {
         },
       },
       backgroundImage: {
-        // Soft, muted gradients
+        'brand-gradient': 'linear-gradient(135deg, #5D5FEF 0%, #28C8C8 100%)',
+        'brand-gradient-reversed': 'linear-gradient(135deg, #28C8C8 0%, #5D5FEF 100%)',
         'soft-purple-gradient': 'linear-gradient(135deg, #D3D1F9 0%, #8B7FD4 100%)',
         'soft-blue-gradient': 'linear-gradient(135deg, #B3E5FC 0%, #4FBCDF 100%)',
         'soft-peach-gradient': 'linear-gradient(135deg, #FFE4CA 0%, #FBB477 100%)',

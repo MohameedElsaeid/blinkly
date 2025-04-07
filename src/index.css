@@ -7,7 +7,7 @@
 
 @layer base {
   :root {
-    --background: 220 44% 98%;     /* Very soft gray-blue */
+    --background: 240 33% 99%;     /* #FAFAFB */
     --foreground: 222 47% 11%;     /* Deep gray-blue for text */
 
     --card: 0 0% 100%;
@@ -16,24 +16,24 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    --primary: 250 69% 75%;        /* Soft periwinkle */
+    --primary: 239 83% 66%;        /* #5D5FEF */
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 196 77% 65%;      /* Soft azure */
+    --secondary: 180 67% 47%;      /* #28C8C8 */
     --secondary-foreground: 210 40% 98%;
 
     --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
 
-    --accent: 250 50% 95%;         /* Very soft lavender */
+    --accent: 42 86% 69%;          /* #F4C06C */
     --accent-foreground: 222 47% 11%;
 
-    --destructive: 0 84% 70%;      /* Softer red */
+    --destructive: 0 84% 70%;      /* #FF6B6B */
     --destructive-foreground: 210 40% 98%;
 
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 250 69% 75%;
+    --ring: 239 83% 66%;
 
     --radius: 0.5rem;
   }
@@ -49,16 +49,16 @@
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 250 69% 75%;
-    --primary-foreground: 222 47% 11%;
+    --primary: 239 83% 66%;
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 196 77% 65%;
+    --secondary: 180 67% 47%;
     --secondary-foreground: 210 40% 98%;
 
     --muted: 217 33% 18%;
     --muted-foreground: 215 20% 65%;
 
-    --accent: 250 40% 20%;
+    --accent: 42 86% 69%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 63% 41%;
@@ -66,7 +66,7 @@
 
     --border: 217 33% 18%;
     --input: 217 33% 18%;
-    --ring: 250 69% 75%;
+    --ring: 239 83% 66%;
   }
 }
 
@@ -86,7 +86,7 @@
 
 @layer components {
   .hero-gradient {
-    @apply bg-gradient-to-r from-blinkly-purple-light to-blinkly-purple;
+    @apply bg-brand-gradient;
   }
   
   .card-hover {
@@ -94,15 +94,15 @@
   }
   
   .btn-blinkly {
-    @apply bg-blinkly-purple text-white hover:bg-blinkly-purple-dark transition-colors duration-200;
+    @apply bg-brand-purple text-white hover:bg-brand-purple/90 transition-colors duration-200;
   }
   
   .btn-secondary {
-    @apply bg-blinkly-teal text-white hover:bg-blinkly-teal-dark transition-colors duration-200;
+    @apply bg-brand-teal text-white hover:bg-brand-teal/90 transition-colors duration-200;
   }
   
   .btn-accent {
-    @apply bg-blinkly-orange text-white hover:bg-blinkly-orange-dark transition-colors duration-200;
+    @apply bg-brand-gold text-white hover:bg-brand-gold/90 transition-colors duration-200;
   }
   
   .btn-success {
