@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 import tailwindAnimate from "tailwindcss-animate";
 
@@ -24,6 +25,11 @@ export default {
         heading: ['Poppins', 'sans-serif'],
       },
       colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
         // Soft, muted color palette
         blinkly: {
           purple: {
@@ -66,6 +72,12 @@ export default {
         'soft-blue-gradient': 'linear-gradient(135deg, #B3E5FC 0%, #4FBCDF 100%)',
         'soft-peach-gradient': 'linear-gradient(135deg, #FFE4CA 0%, #FBB477 100%)',
         'soft-green-gradient': 'linear-gradient(135deg, #E8F5E9 0%, #81C784 100%)',
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'hero-pattern': 'linear-gradient(120deg, #6E59A5 0%, #7E69AB 50%, #9b87f5 100%)',
+        'blinkly-gradient': 'linear-gradient(135deg, #7E69AB 0%, #33C3F0 100%)',
+        'blinkly-orange-gradient': 'linear-gradient(135deg, #FEC6A1 0%, #FDE1D3 100%)',
+        'blinkly-green-gradient': 'linear-gradient(135deg, #5C8F17 0%, #F2FCE2 100%)',
+        'soft-blue-gradient': 'linear-gradient(90deg, hsla(186, 33%, 94%, 1) 0%, hsla(216, 41%, 79%, 1) 100%)',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -113,14 +125,6 @@ export default {
         'accordion-up': 'accordion-up 0.2s ease-out',
         'fade-in': 'fade-in 0.5s ease-out',
         'float': 'float 3s infinite ease-in-out',
-      },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'hero-pattern': 'linear-gradient(120deg, #6E59A5 0%, #7E69AB 50%, #9b87f5 100%)',
-        'blinkly-gradient': 'linear-gradient(135deg, #7E69AB 0%, #33C3F0 100%)',
-        'blinkly-orange-gradient': 'linear-gradient(135deg, #FEC6A1 0%, #FDE1D3 100%)',
-        'blinkly-green-gradient': 'linear-gradient(135deg, #5C8F17 0%, #F2FCE2 100%)',
-        'soft-blue-gradient': 'linear-gradient(90deg, hsla(186, 33%, 94%, 1) 0%, hsla(216, 41%, 79%, 1) 100%)',
       },
     }
   },
