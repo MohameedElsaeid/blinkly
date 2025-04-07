@@ -5,9 +5,9 @@ const Logo = () => {
   return (
     <div className="flex items-center">
       <img 
-        src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?q=80&w=200&h=200&fit=crop" 
+        src="/logo.svg" 
         alt="Blinkly Logo" 
-        className="h-8 mr-2 rounded" 
+        className="h-8 mr-2 rounded-md" 
       />
       <span className="text-xl font-bold text-alchemy-purple">Blinkly</span>
     </div>
