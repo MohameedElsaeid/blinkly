@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
@@ -30,8 +31,8 @@ const plans: Plan[] = [
     description: "Basic link shortening for personal use",
     buttonText: "Get Started",
     features: {
-      "shortened_links": 50,
-      "qr_codes": 5,
+      "shortened_links": 10,
+      "qr_codes": 2,
       "basic_analytics": true,
       "link_customization": "Standard",
       "security_features": "Basic",
@@ -44,7 +45,8 @@ const plans: Plan[] = [
       "api_access": false,
       "deep_linking": false,
       "dedicated_manager": false,
-      "sla": false
+      "sla": false,
+      "enhanced_analytics": false
     }
   },
   {
@@ -69,7 +71,8 @@ const plans: Plan[] = [
       "api_access": false,
       "deep_linking": false,
       "dedicated_manager": false,
-      "sla": false
+      "sla": false,
+      "enhanced_analytics": true
     }
   },
   {
@@ -95,7 +98,8 @@ const plans: Plan[] = [
       "api_access": true,
       "deep_linking": false,
       "dedicated_manager": false,
-      "sla": false
+      "sla": false,
+      "enhanced_analytics": true
     }
   },
   {
@@ -120,7 +124,8 @@ const plans: Plan[] = [
       "api_access": true,
       "deep_linking": true,
       "dedicated_manager": true,
-      "sla": false
+      "sla": false,
+      "enhanced_analytics": true
     }
   },
   {
@@ -145,7 +150,8 @@ const plans: Plan[] = [
       "api_access": true,
       "deep_linking": true,
       "dedicated_manager": true,
-      "sla": true
+      "sla": true,
+      "enhanced_analytics": true
     }
   }
 ];
@@ -161,7 +167,8 @@ const featureCategories = [
   {
     name: "Core Features",
     features: [
-      { id: "basic_analytics", name: "Analytics" },
+      { id: "basic_analytics", name: "Basic Analytics" },
+      { id: "enhanced_analytics", name: "Advanced Analytics" },
       { id: "link_customization", name: "Link Customization" },
       { id: "security_features", name: "Security Features" },
       { id: "support", name: "Support" }
@@ -231,7 +238,7 @@ const Pricing = () => {
               
               <TabsContent value="cards" className="mt-0">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-                  {plans.slice(0, 5).map((plan) => (
+                  {plans.map((plan) => (
                     <div 
                       key={plan.id}
                       className={`relative flex flex-col rounded-2xl ${
@@ -281,6 +288,12 @@ const Pricing = () => {
                               {plan.features.qr_codes} QR codes/month
                             </span>
                           </li>
+                          {plan.features.enhanced_analytics && (
+                            <li className="flex">
+                              <Check className="h-5 w-5 text-alchemy-green flex-shrink-0" />
+                              <span className="ml-3 text-sm text-gray-700">Advanced analytics</span>
+                            </li>
+                          )}
                           {plan.features.password_protected && (
                             <li className="flex">
                               <Check className="h-5 w-5 text-alchemy-green flex-shrink-0" />

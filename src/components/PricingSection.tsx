@@ -30,11 +30,10 @@ const pricingTiers: PricingTier[] = [
     yearlyPrice: "$0",
     description: "Basic link shortening for personal use",
     features: [
-      "Up to 50 shortened links per month",
-      "Up to 5 QR Codes per month",
+      "Up to 10 shortened links per month",
+      "Up to 2 QR Codes per month",
       "Basic link analytics",
       "Standard link customization",
-      "Basic security features",
       "Community support"
     ],
     buttonText: "Get Started",
@@ -46,11 +45,11 @@ const pricingTiers: PricingTier[] = [
     yearlyPrice: "$90",
     description: "For creators and small businesses",
     features: [
+      "All features in the Free Plan",
       "Up to 500 shortened links per month",
       "Up to 50 QR Codes per month",
       "Advanced link analytics",
       "Customizable QR Codes",
-      "Password-protected links",
       "Email support"
     ],
     buttonText: "Start 14-Day Free Trial",
@@ -63,6 +62,7 @@ const pricingTiers: PricingTier[] = [
     yearlyPrice: "$290",
     description: "Advanced features for teams",
     features: [
+      "All features in the Basic Plan",
       "Up to 5,000 shortened links per month",
       "Up to 500 QR Codes per month",
       "Branded links with custom domains",
