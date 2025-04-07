@@ -17,9 +17,6 @@ const CTASection = () => {
             <Button size="lg" className="bg-blinkly-orange text-white hover:bg-blinkly-orange-dark" asChild>
               <Link to="/signup" className="text-white">Get started for free</Link>
             </Button>
-            <Button variant="outline" size="lg" className="border-white text-white hover:bg-white/10" asChild>
-              <Link to="/contact" className="w-full h-full text-white">Contact sales</Link>
-            </Button>
           </div>
         </div>
       </div>
@@ -28,4 +25,3 @@ const CTASection = () => {
 };
 
 export default CTASection;
-
