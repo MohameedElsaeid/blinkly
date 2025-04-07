@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Link2, BarChart3, QrCode } from "lucide-react";
+import { ArrowRight, Link2, BarChart3, QrCode, Shield, Zap } from "lucide-react";
 
 const Hero = () => {
   return (
@@ -59,14 +59,37 @@ const Hero = () => {
         </div>
         
         <div className="relative pb-16">
-          <div className="mx-auto max-w-4xl bg-white rounded-2xl shadow-xl overflow-hidden">
-            <div className="bg-white p-6 sm:p-10">
-              <div className="aspect-video w-full overflow-hidden rounded-lg shadow-inner">
-                <img 
-                  src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?q=80&w=2070" 
-                  alt="Blinkly Platform Dashboard" 
-                  className="w-full h-full object-cover"
-                />
+          <div className="mx-auto max-w-4xl">
+            <div className="bg-gradient-to-r from-blinkly-purple/10 to-blinkly-teal/10 rounded-2xl shadow-lg p-8">
+              <h2 className="text-2xl font-bold text-center mb-8">Why Blinkly stands out</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
+                  <div className="flex items-center mb-4">
+                    <div className="p-2 bg-blinkly-purple/10 rounded-full mr-4">
+                      <Shield className="h-6 w-6 text-blinkly-purple" />
+                    </div>
+                    <h3 className="font-semibold">Enterprise Security</h3>
+                  </div>
+                  <p className="text-gray-600 text-sm">Bank-level encryption and protection for all your links and data.</p>
+                </div>
+                <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
+                  <div className="flex items-center mb-4">
+                    <div className="p-2 bg-blinkly-teal/10 rounded-full mr-4">
+                      <Zap className="h-6 w-6 text-blinkly-teal" />
+                    </div>
+                    <h3 className="font-semibold">Lightning Fast</h3>
+                  </div>
+                  <p className="text-gray-600 text-sm">Global CDN ensures your links load quickly anywhere in the world.</p>
+                </div>
+                <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
+                  <div className="flex items-center mb-4">
+                    <div className="p-2 bg-blinkly-orange/10 rounded-full mr-4">
+                      <QrCode className="h-6 w-6 text-blinkly-orange" />
+                    </div>
+                    <h3 className="font-semibold">Dynamic QR Codes</h3>
+                  </div>
+                  <p className="text-gray-600 text-sm">Create and update QR codes that change content without reprinting.</p>
+                </div>
               </div>
             </div>
           </div>
