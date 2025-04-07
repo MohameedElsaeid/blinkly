@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { FileText } from "lucide-react";
+import { FileText, Home, Shield, Scale, BarChart, Link as LinkIcon } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -38,23 +38,26 @@ const Footer = () => {
                 </h3>
                 <ul className="mt-4 space-y-4">
                   <li>
-                    <a href="#features" className="text-base text-gray-500 hover:text-gray-900">
+                    <a href="#features" className="text-base text-gray-500 hover:text-gray-900 flex items-center">
+                      <BarChart className="h-4 w-4 mr-2" />
                       Features
                     </a>
                   </li>
                   <li>
-                    <a href="#pricing" className="text-base text-gray-500 hover:text-gray-900">
+                    <a href="#pricing" className="text-base text-gray-500 hover:text-gray-900 flex items-center">
+                      <Scale className="h-4 w-4 mr-2" />
                       Pricing
                     </a>
                   </li>
                   <li>
-                    <Link to="/dashboard" className="text-base text-gray-500 hover:text-gray-900">
+                    <Link to="/dashboard" className="text-base text-gray-500 hover:text-gray-900 flex items-center">
+                      <Home className="h-4 w-4 mr-2" />
                       Dashboard
                     </Link>
                   </li>
                   <li>
                     <Link to="/api-docs" className="text-base text-gray-500 hover:text-gray-900 flex items-center">
-                      <FileText className="h-4 w-4 mr-1" />
+                      <LinkIcon className="h-4 w-4 mr-2" />
                       API Docs
                     </Link>
                   </li>
@@ -66,12 +69,14 @@ const Footer = () => {
                 </h3>
                 <ul className="mt-4 space-y-4">
                   <li>
-                    <Link to="/privacy" className="text-base text-gray-500 hover:text-gray-900">
+                    <Link to="/privacy" className="text-base text-gray-500 hover:text-gray-900 flex items-center">
+                      <Shield className="h-4 w-4 mr-2" />
                       Privacy
                     </Link>
                   </li>
                   <li>
-                    <Link to="/terms" className="text-base text-gray-500 hover:text-gray-900">
+                    <Link to="/terms" className="text-base text-gray-500 hover:text-gray-900 flex items-center">
+                      <FileText className="h-4 w-4 mr-2" />
                       Terms
                     </Link>
                   </li>
@@ -84,7 +89,8 @@ const Footer = () => {
               </h3>
               <ul className="mt-4 space-y-4">
                 <li>
-                  <Link to="/about" className="text-base text-gray-500 hover:text-gray-900">
+                  <Link to="/about" className="text-base text-gray-500 hover:text-gray-900 flex items-center">
+                    <FileText className="h-4 w-4 mr-2" />
                     About
                   </Link>
                 </li>
