@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
@@ -331,7 +330,7 @@ const Pricing = () => {
                               : plan.id === 'free'
                                 ? 'bg-white border-2 border-alchemy-purple text-alchemy-purple hover:bg-alchemy-purple hover:text-white'
                                 : plan.id === 'enterprise'
-                                  ? 'bg-gray-800 hover:bg-gray-900'
+                                  ? 'bg-blinkly-purple hover:bg-blinkly-purple-dark'
                                   : 'bg-alchemy-purple/90 hover:bg-alchemy-purple'
                           }`} 
                           asChild
@@ -407,7 +406,7 @@ const Pricing = () => {
                                   : plan.id === 'free'
                                     ? 'bg-white border-2 border-alchemy-purple text-alchemy-purple hover:bg-alchemy-purple hover:text-white'
                                     : plan.id === 'enterprise'
-                                      ? 'bg-gray-800 hover:bg-gray-900'
+                                      ? 'bg-blinkly-purple hover:bg-blinkly-purple-dark'
                                       : 'bg-alchemy-purple/90 hover:bg-alchemy-purple'
                               }`} 
                               asChild
