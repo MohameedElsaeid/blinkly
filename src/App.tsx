@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,8 +21,8 @@ import Terms from "./pages/Terms";
 import ApiDocs from "./pages/ApiDocs";
 import Pricing from "./pages/Pricing";
 import CookieConsent from "./components/CookieConsent";
+import Contact from "./pages/Contact";
 
-// Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -49,6 +48,7 @@ const App = () => (
               <Route path="/terms" element={<Terms />} />
               <Route path="/api-docs" element={<ApiDocs />} />
               <Route path="/pricing" element={<Pricing />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/dashboard/links" element={<MyLinks />} />
               <Route path="/dashboard/links/create" element={<CreateDynamicLink />} />

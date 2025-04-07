@@ -1,33 +1,28 @@
-
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const CTASection = () => {
   return (
-    <div className="bg-alchemy-purple-light/10">
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between">
-        <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-          <span className="block">Ready to transform your links?</span>
-          <span className="block text-alchemy-purple">Start your 7-day free trial today.</span>
-        </h2>
-        <div className="mt-8 flex lg:mt-0 lg:flex-shrink-0">
-          <div className="inline-flex rounded-md shadow">
-            <Button className="bg-alchemy-purple hover:bg-alchemy-purple-dark text-white px-5 py-3 text-base font-medium" asChild>
-              <Link to="/signup">
-                Start free trial
-              </Link>
+    <section className="bg-alchemy-purple py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-white sm:text-4xl">
+            Ready to supercharge your links?
+          </h2>
+          <p className="mt-4 text-xl text-white/90 max-w-2xl mx-auto">
+            Start shortening links for free or contact us to learn more about our enterprise solutions.
+          </p>
+          <div className="mt-8 flex justify-center gap-4 flex-wrap">
+            <Button size="lg" className="bg-white text-alchemy-purple hover:bg-gray-100" asChild>
+              <Link to="/signup">Get started for free</Link>
             </Button>
-          </div>
-          <div className="ml-3 inline-flex rounded-md shadow">
-            <Button variant="outline" className="text-alchemy-purple bg-white hover:bg-gray-50 px-5 py-3 text-base font-medium" asChild>
-              <a href="#features" aria-label="Learn more about our features">
-                Learn more
-              </a>
+            <Button variant="outline" size="lg" className="border-white text-white hover:bg-white/10" asChild>
+              <Link to="/contact">Contact sales</Link>
             </Button>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

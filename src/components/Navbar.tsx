@@ -1,151 +1,147 @@
-
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Menu } from "lucide-react";
+import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuContent, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { useAuth } from "@/hooks";
+import { useMobile } from "@/hooks";
+import Logo from "./Logo";
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isAuthenticated, logout } = useAuth();
+  const { user, logout } = useAuth();
+  const [open, setOpen] = useState(false);
+  const isMobile = useMobile();
 
-  const handleLogout = () => {
-    logout();
-    setIsMenuOpen(false);
+  const handleLogout = async () => {
+    try {
+      await logout();
+      // Redirect to landing page after logout
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (
-    <nav className="bg-white shadow-sm fixed w-full z-10">
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Link to="/" className="flex-shrink-0 flex items-center">
-              <span className="text-alchemy-purple-dark font-heading font-bold text-xl">
-                Blinkly
-              </span>
+            <Link to="/">
+              <Logo />
             </Link>
           </div>
           
-          {/* Desktop Navigation */}
-          <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
-            <a href="#features" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-alchemy-purple transition-colors">
-              Features
-            </a>
-            <a href="#pricing" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-alchemy-purple transition-colors">
-              Pricing
-            </a>
-            <Link to="/about" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-alchemy-purple transition-colors">
-              About
-            </Link>
-            {isAuthenticated && (
-              <Link to="/dashboard" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-alchemy-purple transition-colors">
-                Dashboard
-              </Link>
-            )}
-          </div>
-          
-          <div className="hidden md:flex items-center">
-            {isAuthenticated ? (
-              <Button variant="outline" className="text-gray-700 hover:text-alchemy-purple" onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
-                Log out
+          <div className="hidden md:flex items-center space-x-4">
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger asChild>
+                    <Button variant="link" className="text-alchemy-purple font-medium">
+                      <Link to="/#features">Features</Link>
+                    </Button>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent />
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger asChild>
+                    <Button variant="link" className="text-alchemy-purple font-medium">
+                      <Link to="/pricing">Pricing</Link>
+                    </Button>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent />
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger asChild>
+                    <Button variant="link" className="text-alchemy-purple font-medium">
+                      <Link to="/api-docs">API</Link>
+                    </Button>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent />
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger asChild>
+                    <Button variant="link" className="text-alchemy-purple font-medium">
+                      <Link to="/about">About</Link>
+                    </Button>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent />
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+            
+            <div className="ml-4 flex items-center space-x-2">
+              <Button variant="outline" asChild>
+                <Link to="/contact" className="text-alchemy-purple font-medium">
+                  Contact
+                </Link>
               </Button>
-            ) : (
-              <>
-                <Button variant="outline" className="mr-3" asChild>
-                  <Link to="/login">Log in</Link>
-                </Button>
-                <Button className="bg-alchemy-purple hover:bg-alchemy-purple-dark" asChild>
-                  <Link to="/signup">Sign up</Link>
-                </Button>
-              </>
-            )}
+              <Button variant="outline" asChild>
+                <Link to="/login" className="text-alchemy-purple font-medium">
+                  Log in
+                </Link>
+              </Button>
+              <Button className="bg-alchemy-purple hover:bg-alchemy-purple-dark" asChild>
+                <Link to="/signup">
+                  Sign up
+                </Link>
+              </Button>
+            </div>
           </div>
           
-          {/* Mobile menu button */}
-          <div className="flex items-center md:hidden">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-alchemy-purple hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-alchemy-purple"
-            >
-              <span className="sr-only">Open main menu</span>
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+          <div className="md:hidden">
+            <Sheet open={open} onOpenChange={setOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-5 w-5 text-gray-500" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-full sm:w-64">
+                <div className="flex flex-col space-y-4">
+                  <Link to="/" className="font-semibold text-lg">
+                    Home
+                  </Link>
+                  <Link to="/#features" className="font-semibold text-lg">
+                    Features
+                  </Link>
+                  <Link to="/pricing" className="font-semibold text-lg">
+                    Pricing
+                  </Link>
+                  <Link to="/api-docs" className="font-semibold text-lg">
+                    API
+                  </Link>
+                  <Link to="/about" className="font-semibold text-lg">
+                    About
+                  </Link>
+                  <Link to="/contact" className="font-semibold text-lg">
+                    Contact
+                  </Link>
+                  {!user ? (
+                    <>
+                      <Link to="/login" className="font-semibold text-lg">
+                        Log in
+                      </Link>
+                      <Link to="/signup" className="font-semibold text-lg">
+                        Sign up
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link to="/dashboard" className="font-semibold text-lg">
+                        Dashboard
+                      </Link>
+                      <Button variant="destructive" onClick={handleLogout}>Logout</Button>
+                    </>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </div>
       
-      {/* Mobile menu, show/hide based on menu state */}
-      {isMenuOpen && (
-        <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <a 
-              href="#features"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-alchemy-purple hover:bg-gray-50"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Features
-            </a>
-            <a
-              href="#pricing"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-alchemy-purple hover:bg-gray-50"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Pricing
-            </a>
-            <Link 
-              to="/about" 
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-alchemy-purple hover:bg-gray-50"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              About
-            </Link>
-            {isAuthenticated && (
-              <Link 
-                to="/dashboard" 
-                className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-alchemy-purple hover:bg-gray-50"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Dashboard
-              </Link>
-            )}
-          </div>
-          <div className="pt-4 pb-3 border-t border-gray-200">
-            {isAuthenticated ? (
-              <div className="flex items-center px-5">
-                <Button variant="outline" className="w-full" onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Log out
-                </Button>
-              </div>
-            ) : (
-              <>
-                <div className="flex items-center px-5">
-                  <Button variant="outline" className="w-full mb-2" asChild>
-                    <Link 
-                      to="/login"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Log in
-                    </Link>
-                  </Button>
-                </div>
-                <div className="flex items-center px-5">
-                  <Button className="w-full bg-alchemy-purple hover:bg-alchemy-purple-dark" asChild>
-                    <Link 
-                      to="/signup"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Sign up
-                    </Link>
-                  </Button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-    </nav>
+    </header>
   );
 };
 
