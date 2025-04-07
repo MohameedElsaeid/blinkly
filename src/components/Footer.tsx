@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { FileText, Home, Shield, Scale, BarChart, Link as LinkIcon } from "lucide-react";
+import { FileText, Home, Shield, Scale, BarChart, Link as LinkIcon, DollarSign } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -44,10 +44,10 @@ const Footer = () => {
                     </a>
                   </li>
                   <li>
-                    <a href="#pricing" className="text-base text-gray-500 hover:text-gray-900 flex items-center">
-                      <Scale className="h-4 w-4 mr-2" />
+                    <Link to="/pricing" className="text-base text-gray-500 hover:text-gray-900 flex items-center">
+                      <DollarSign className="h-4 w-4 mr-2" />
                       Pricing
-                    </a>
+                    </Link>
                   </li>
                   <li>
                     <Link to="/dashboard" className="text-base text-gray-500 hover:text-gray-900 flex items-center">

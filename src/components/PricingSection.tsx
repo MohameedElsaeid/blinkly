@@ -1,12 +1,21 @@
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Check, BadgeDollarSign, Star } from "lucide-react";
+import { Check, BadgeDollarSign, Star, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Toggle } from "@/components/ui/toggle";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+
+interface PlanFeature {
+  text: string;
+  included: boolean;
+}
 
 interface PricingTier {
   name: string;
-  price: string;
+  monthlyPrice: string;
+  yearlyPrice: string;
   description: string;
   features: string[];
   buttonText: string;
@@ -17,52 +26,59 @@ interface PricingTier {
 const pricingTiers: PricingTier[] = [
   {
     name: "Free",
-    price: "$0",
+    monthlyPrice: "$0",
+    yearlyPrice: "$0",
     description: "Basic link shortening for personal use",
     features: [
-      "Create up to 25 short links",
-      "Basic click analytics",
-      "Standard QR code generation",
-      "24-hour support response time"
+      "Up to 50 shortened links per month",
+      "Up to 5 QR Codes per month",
+      "Basic link analytics",
+      "Standard link customization",
+      "Basic security features",
+      "Community support"
     ],
     buttonText: "Get Started",
     buttonLink: "/signup"
   },
   {
-    name: "Pro",
-    price: "$12",
-    description: "Advanced features for creators and small businesses",
+    name: "Basic",
+    monthlyPrice: "$9",
+    yearlyPrice: "$90",
+    description: "For creators and small businesses",
     features: [
-      "Create up to 500 short links",
-      "Detailed analytics with geographic data",
-      "Custom QR code designs",
-      "Social media preview customization",
-      "4-hour support response time",
-      "No ads"
+      "Up to 500 shortened links per month",
+      "Up to 50 QR Codes per month",
+      "Advanced link analytics",
+      "Customizable QR Codes",
+      "Password-protected links",
+      "Email support"
     ],
-    buttonText: "Start 7-Day Free Trial",
+    buttonText: "Start 14-Day Free Trial",
     buttonLink: "/signup",
     isPopular: true
   },
   {
-    name: "Business",
-    price: "$49",
-    description: "Powerful tools for teams and companies",
+    name: "Professional",
+    monthlyPrice: "$29",
+    yearlyPrice: "$290",
+    description: "Advanced features for teams",
     features: [
-      "Unlimited short links",
-      "Advanced analytics with API access",
-      "Branded domain names",
-      "Team collaboration features",
-      "Priority 1-hour support",
-      "Custom integrations",
-      "No ads"
+      "Up to 5,000 shortened links per month",
+      "Up to 500 QR Codes per month",
+      "Branded links with custom domains",
+      "Bulk link creation and editing",
+      "Team collaboration (up to 5 users)",
+      "API access for integrations",
+      "Priority email support"
     ],
-    buttonText: "Start 7-Day Free Trial",
+    buttonText: "Start 14-Day Free Trial",
     buttonLink: "/signup"
   }
 ];
 
 const PricingSection = () => {
+  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
+
   return (
     <div className="bg-gradient-to-b from-white to-alchemy-purple-light/5 py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -72,11 +88,25 @@ const PricingSection = () => {
             Choose the Perfect Plan for Your Needs
           </p>
           <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
-            All plans include a 7-day free trial. No credit card required to start.
+            Scale your link management as your business grows.
           </p>
+          
+          <div className="flex justify-center mt-8 mb-8">
+            <div className="inline-flex p-1 bg-gray-100 rounded-lg items-center">
+              <ToggleGroup type="single" value={billingPeriod} onValueChange={(value) => value && setBillingPeriod(value as "monthly" | "yearly")} className="flex">
+                <ToggleGroupItem value="monthly" className={`px-4 py-2 rounded-md text-sm font-medium ${billingPeriod === "monthly" ? "bg-white shadow-sm" : ""}`}>
+                  Monthly
+                </ToggleGroupItem>
+                <ToggleGroupItem value="yearly" className={`px-4 py-2 rounded-md text-sm font-medium ${billingPeriod === "yearly" ? "bg-white shadow-sm" : ""}`}>
+                  <span className="mr-1">Yearly</span>
+                  <Badge className="bg-alchemy-peach ml-1 text-xs">Save 15%</Badge>
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </div>
+          </div>
         </div>
 
-        <div className="mt-16 space-y-12 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-8">
+        <div className="mt-8 space-y-12 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-8">
           {pricingTiers.map((tier) => (
             <div 
               key={tier.name}
@@ -100,8 +130,12 @@ const PricingSection = () => {
                   {tier.name}
                 </h3>
                 <div className="mt-4 flex items-center justify-center">
-                  <span className="text-5xl font-extrabold tracking-tight text-gray-900">{tier.price}</span>
-                  <span className="ml-1 text-xl font-medium text-gray-500">/month</span>
+                  <span className="text-5xl font-extrabold tracking-tight text-gray-900">
+                    {billingPeriod === "monthly" ? tier.monthlyPrice : tier.yearlyPrice}
+                  </span>
+                  <span className="ml-1 text-xl font-medium text-gray-500">
+                    /{billingPeriod === "monthly" ? "month" : "year"}
+                  </span>
                 </div>
                 <p className="mt-4 text-sm text-gray-500 text-center">{tier.description}</p>
               </div>
@@ -135,7 +169,7 @@ const PricingSection = () => {
                   </Link>
                 </Button>
                 {tier.name !== "Free" && (
-                  <p className="mt-2 text-xs text-center text-gray-500">7-day free trial, cancel anytime</p>
+                  <p className="mt-2 text-xs text-center text-gray-500">14-day free trial, cancel anytime</p>
                 )}
               </div>
             </div>
@@ -143,9 +177,19 @@ const PricingSection = () => {
         </div>
 
         <div className="mt-16 text-center">
-          <div className="inline-flex items-center p-4 bg-alchemy-purple-light/20 rounded-lg">
+          <Button 
+            variant="outline" 
+            size="lg"
+            className="font-medium"
+            asChild
+          >
+            <Link to="/pricing">
+              See all plans and comparison
+            </Link>
+          </Button>
+          <div className="inline-flex items-center p-4 mt-6 bg-alchemy-purple-light/20 rounded-lg">
             <BadgeDollarSign className="h-6 w-6 text-alchemy-purple mr-2" />
-            <span className="text-sm text-gray-700">All plans include a <span className="font-semibold">7-day free trial</span> with no credit card required to start</span>
+            <span className="text-sm text-gray-700">All paid plans include a <span className="font-semibold">14-day free trial</span> with no credit card required to start</span>
           </div>
         </div>
       </div>
