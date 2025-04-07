@@ -1,41 +1,17 @@
 
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, LogOut } from "lucide-react";
-import { useState, useEffect } from "react";
-import { authService } from "@/services/api";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    // Check if user is logged in
-    const checkAuthStatus = () => {
-      const isAuthenticated = authService.isAuthenticated();
-      setIsLoggedIn(isAuthenticated);
-    };
-
-    checkAuthStatus();
-    
-    // Listen for storage events (login/logout)
-    const handleStorageChange = () => {
-      checkAuthStatus();
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
+  const { isAuthenticated, logout } = useAuth();
 
   const handleLogout = () => {
-    authService.logout();
-    setIsLoggedIn(false);
+    logout();
     setIsMenuOpen(false);
-    // Dispatch storage event to notify other components
-    window.dispatchEvent(new Event('storage'));
   };
 
   return (
@@ -61,7 +37,7 @@ const Navbar = () => {
             <Link to="/about" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-alchemy-purple transition-colors">
               About
             </Link>
-            {isLoggedIn && (
+            {isAuthenticated && (
               <Link to="/dashboard" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-alchemy-purple transition-colors">
                 Dashboard
               </Link>
@@ -69,7 +45,7 @@ const Navbar = () => {
           </div>
           
           <div className="hidden md:flex items-center">
-            {isLoggedIn ? (
+            {isAuthenticated ? (
               <Button variant="outline" className="text-gray-700 hover:text-alchemy-purple" onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
                 Log out
@@ -124,7 +100,7 @@ const Navbar = () => {
             >
               About
             </Link>
-            {isLoggedIn && (
+            {isAuthenticated && (
               <Link 
                 to="/dashboard" 
                 className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-alchemy-purple hover:bg-gray-50"
@@ -135,7 +111,7 @@ const Navbar = () => {
             )}
           </div>
           <div className="pt-4 pb-3 border-t border-gray-200">
-            {isLoggedIn ? (
+            {isAuthenticated ? (
               <div className="flex items-center px-5">
                 <Button variant="outline" className="w-full" onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
