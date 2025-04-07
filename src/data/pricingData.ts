@@ -1,4 +1,3 @@
-
 import { Plan, FeatureCategory } from "@/types/pricing";
 
 export const plans: Plan[] = [
