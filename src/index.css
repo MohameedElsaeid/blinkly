@@ -7,8 +7,8 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    --background: 220 44% 98%;     // Very soft gray-blue
+    --foreground: 222 47% 11%;     // Deep gray-blue for text
 
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
@@ -16,38 +16,30 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    --primary: 262 66% 74%;
+    --primary: 250 69% 75%;        // Soft periwinkle
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 196 77% 55%;
+    --secondary: 196 77% 65%;      // Soft azure
     --secondary-foreground: 210 40% 98%;
 
     --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
 
-    --accent: 221 83% 95%;
+    --accent: 250 50% 95%;         // Very soft lavender
     --accent-foreground: 222 47% 11%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 84% 70%;      // Softer red
     --destructive-foreground: 210 40% 98%;
 
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 262 66% 74%;
+    --ring: 250 69% 75%;
 
     --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5% 26%;
-    --sidebar-primary: 262 66% 74%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 5% 96%;
-    --sidebar-accent-foreground: 240 6% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 262 66% 74%;
   }
 
   .dark {
+    // Dark mode colors with soft, muted tones
     --background: 222 47% 11%;
     --foreground: 210 40% 98%;
 
@@ -57,33 +49,24 @@
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 262 66% 74%;
+    --primary: 250 69% 75%;
     --primary-foreground: 222 47% 11%;
 
-    --secondary: 196 77% 55%;
+    --secondary: 196 77% 65%;
     --secondary-foreground: 210 40% 98%;
 
     --muted: 217 33% 18%;
     --muted-foreground: 215 20% 65%;
 
-    --accent: 262 40% 20%;
+    --accent: 250 40% 20%;
     --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 63% 31%;
+    --destructive: 0 63% 41%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 217 33% 18%;
     --input: 217 33% 18%;
-    --ring: 262 66% 74%;
-    
-    --sidebar-background: 240 6% 10%;
-    --sidebar-foreground: 240 5% 96%;
-    --sidebar-primary: 262 66% 74%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 4% 16%;
-    --sidebar-accent-foreground: 240 5% 96%;
-    --sidebar-border: 240 4% 16%;
-    --sidebar-ring: 262 66% 74%;
+    --ring: 250 69% 75%;
   }
 }
 
@@ -103,7 +86,7 @@
 
 @layer components {
   .hero-gradient {
-    @apply bg-gradient-to-r from-blinkly-purple-dark to-blinkly-purple-light;
+    @apply bg-gradient-to-r from-blinkly-purple-light to-blinkly-purple;
   }
   
   .card-hover {
@@ -126,3 +109,4 @@
     @apply bg-blinkly-green text-white hover:bg-blinkly-green-dark transition-colors duration-200;
   }
 }
+
