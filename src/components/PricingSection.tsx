@@ -1,10 +1,8 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Check, BadgeDollarSign, Star, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Toggle } from "@/components/ui/toggle";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface PlanFeature {
@@ -193,7 +191,7 @@ const PricingSection = () => {
               size="lg"
               asChild
             >
-              <Link to="/contact">
+              <Link to="/contact" className="flex items-center">
                 <BadgeDollarSign className="h-5 w-5 mr-2" />
                 Contact Sales
               </Link>
