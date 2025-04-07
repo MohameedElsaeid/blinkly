@@ -5,79 +5,99 @@ import { ArrowRight, Link2, BarChart3, QrCode } from "lucide-react";
 
 const Hero = () => {
   return (
-    <div className="relative overflow-hidden">
-      <div className="bg-brand-gradient pt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-            <div className="lg:col-span-6 text-center lg:text-left lg:flex lg:flex-col lg:justify-center py-12 sm:py-16 lg:py-20">
-              <h1 className="text-4xl tracking-tight font-extrabold text-white sm:text-5xl md:text-6xl">
-                <span className="block">Transform, Track,</span>
-                <span className="block text-white/90">and Optimize Your Links</span>
-              </h1>
-              <p className="mt-3 max-w-md mx-auto lg:mx-0 text-lg text-white sm:text-xl md:mt-5">
-                Blink and you'll miss it – share your link in a flash.
-              </p>
-              <div className="mt-10 sm:flex sm:justify-center lg:justify-start">
-                <div className="rounded-md shadow">
-                  <Button className="w-full px-8 py-3 md:py-4 md:text-lg md:px-10 bg-brand-purple text-white hover:bg-brand-purple/90" asChild>
-                    <Link to="/signup">
-                      Get Started Free
-                    </Link>
-                  </Button>
-                </div>
-                <div className="mt-3 sm:mt-0 sm:ml-3">
-                  <Button variant="outline" className="w-full px-8 py-3 md:py-4 md:text-lg md:px-10 border-2 border-white text-white bg-transparent hover:bg-white hover:text-brand-purple transition-colors" asChild>
-                    <a href="#features">
-                      Learn More
-                    </a>
-                  </Button>
-                </div>
+    <div className="relative overflow-hidden bg-gradient-to-b from-gray-50 to-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="pt-16 pb-20 lg:pt-24 lg:pb-28">
+          <div className="text-center mx-auto max-w-4xl">
+            <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
+              <span className="block text-blinkly-purple">Transform Your Links,</span>
+              <span className="block">Elevate Your Brand</span>
+            </h1>
+            <p className="mt-6 text-xl text-gray-500 max-w-2xl mx-auto">
+              Create powerful short links, track performance analytics, and generate custom QR codes - all in one platform.
+            </p>
+            
+            <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+              <Button size="lg" className="bg-blinkly-purple hover:bg-blinkly-purple/90 text-white px-8 py-3" asChild>
+                <Link to="/signup">
+                  Start for Free
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" className="border-blinkly-purple text-blinkly-purple hover:bg-blinkly-purple/10" asChild>
+                <a href="#features" className="flex items-center">
+                  See Features <ArrowRight className="ml-2 h-4 w-4" />
+                </a>
+              </Button>
+            </div>
+          </div>
+          
+          <div className="mt-20">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                <div className="w-full border-t border-gray-200" />
+              </div>
+              <div className="relative flex justify-center">
+                <span className="bg-white px-3 text-base text-gray-500">Trusted by brands worldwide</span>
               </div>
             </div>
-            <div className="mt-12 lg:mt-0 lg:col-span-6 flex justify-center items-center">
-              <div className="relative w-full max-w-lg">
-                <div className="absolute top-0 -left-4 w-72 h-72 bg-brand-teal/30 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float"></div>
-                <div className="absolute top-0 -right-4 w-72 h-72 bg-brand-purple/30 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float" style={{ animationDelay: '2s' }}></div>
-                <div className="absolute -bottom-8 left-20 w-72 h-72 bg-brand-gold/30 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float" style={{ animationDelay: '4s' }}></div>
-                <div className="relative">
-                  <div className="bg-white rounded-lg shadow-xl p-6 md:p-8 animate-fade-in">
-                    <div className="flex items-center mb-4">
-                      <div className="h-3 w-3 rounded-full bg-brand-gold mr-2"></div>
-                      <div className="h-3 w-3 rounded-full bg-brand-teal mr-2"></div>
-                      <div className="h-3 w-3 rounded-full bg-brand-red"></div>
-                    </div>
-                    <div className="mb-4">
-                      <div className="mb-3 bg-gray-100 rounded-md p-3">
-                        <p className="text-gray-600 text-sm font-mono">https://example.com/very/long/url/that/nobody/remembers</p>
-                      </div>
-                      <ArrowRight className="w-6 h-6 mx-auto text-brand-purple my-2" />
-                      <div className="bg-brand-purple/10 rounded-md p-3">
-                        <p className="text-brand-purple font-medium font-mono">blinkly.app/brand</p>
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap -mx-2">
-                      <div className="px-2 w-1/3">
-                        <div className="bg-brand-purple/10 rounded-lg p-3 text-center">
-                          <Link2 className="h-6 w-6 mx-auto text-brand-purple mb-1" />
-                          <p className="text-xs font-medium">Custom Links</p>
-                        </div>
-                      </div>
-                      <div className="px-2 w-1/3">
-                        <div className="bg-brand-teal/10 rounded-lg p-3 text-center">
-                          <BarChart3 className="h-6 w-6 mx-auto text-brand-teal mb-1" />
-                          <p className="text-xs font-medium">Analytics</p>
-                        </div>
-                      </div>
-                      <div className="px-2 w-1/3">
-                        <div className="bg-brand-gold/10 rounded-lg p-3 text-center">
-                          <QrCode className="h-6 w-6 mx-auto text-brand-gold mb-1" />
-                          <p className="text-xs font-medium">QR Codes</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+            
+            <div className="mt-8 grid grid-cols-2 gap-8 md:grid-cols-4">
+              <div className="col-span-1 flex justify-center items-center grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+                <img className="h-12" src="/logo-placeholder-1.svg" alt="Company 1" />
               </div>
+              <div className="col-span-1 flex justify-center items-center grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+                <img className="h-12" src="/logo-placeholder-2.svg" alt="Company 2" />
+              </div>
+              <div className="col-span-1 flex justify-center items-center grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+                <img className="h-12" src="/logo-placeholder-3.svg" alt="Company 3" />
+              </div>
+              <div className="col-span-1 flex justify-center items-center grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+                <img className="h-12" src="/logo-placeholder-4.svg" alt="Company 4" />
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="relative pb-16">
+          <div className="mx-auto max-w-4xl bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div className="bg-white p-6 sm:p-10">
+              <div className="aspect-video w-full overflow-hidden rounded-lg shadow-inner">
+                <img 
+                  src="/platform-screenshot.jpg" 
+                  alt="Blinkly Platform Dashboard" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="bg-gray-50 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
+              <div className="text-blinkly-purple mb-4">
+                <Link2 className="h-8 w-8" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Custom Short Links</h3>
+              <p className="text-gray-600">Create branded links that reflect your identity and improve recognition.</p>
+            </div>
+            
+            <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
+              <div className="text-blinkly-teal mb-4">
+                <BarChart3 className="h-8 w-8" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Powerful Analytics</h3>
+              <p className="text-gray-600">Track clicks, analyze user data, and optimize your link performance.</p>
+            </div>
+            
+            <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
+              <div className="text-blinkly-orange mb-4">
+                <QrCode className="h-8 w-8" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Dynamic QR Codes</h3>
+              <p className="text-gray-600">Generate and customize QR codes that can be updated at any time.</p>
             </div>
           </div>
         </div>

@@ -1,5 +1,7 @@
 
 import { Link2, BarChart3, QrCode, Shield, Share2, Zap } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const features = [
   {
@@ -42,32 +44,37 @@ const features = [
 
 const FeaturesSection = () => {
   return (
-    <div className="bg-white py-12 sm:py-16 lg:py-20">
+    <div className="bg-white py-16 sm:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="lg:text-center">
-          <h2 className="text-base text-blinkly-purple font-semibold tracking-wide uppercase">Features</h2>
-          <p className="mt-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Everything you need to manage your links
-          </p>
-          <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
-            Blinkly provides powerful tools to create, manage, and analyze your links with precision and ease.
+        <div className="text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            Powerful features for powerful links
+          </h2>
+          <p className="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
+            Everything you need to create, manage, and analyze your links in one platform.
           </p>
         </div>
 
-        <div className="mt-10">
-          <div className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+        <div className="mt-16">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {features.map((feature) => (
-              <div key={feature.name} className="card-hover relative bg-white p-6 rounded-lg border border-gray-200">
-                <div>
-                  <div className={`absolute flex items-center justify-center h-12 w-12 rounded-md ${feature.color} text-white`}>
+              <div key={feature.name} className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 p-6">
+                <div className="flex items-center justify-center h-12 w-12 rounded-md text-white mb-5" style={{ background: `linear-gradient(135deg, var(--tw-gradient-stops))` }}>
+                  <div className={`${feature.color} h-full w-full rounded-md flex items-center justify-center`}>
                     <feature.icon className="h-6 w-6" aria-hidden="true" />
                   </div>
-                  <p className="ml-16 text-lg leading-6 font-medium text-gray-900">{feature.name}</p>
                 </div>
-                <p className="mt-2 ml-16 text-base text-gray-500">{feature.description}</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.name}</h3>
+                <p className="text-gray-600">{feature.description}</p>
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="mt-16 text-center">
+          <Button size="lg" className="bg-blinkly-purple hover:bg-blinkly-purple-dark text-white" asChild>
+            <Link to="/signup">Start using Blinkly for free</Link>
+          </Button>
         </div>
       </div>
     </div>
