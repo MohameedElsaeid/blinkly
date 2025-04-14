@@ -53,6 +53,8 @@ export function useAuth() {
         // Safely cast or extract data from response.user
         const responseUser = response.user as AuthResponseUser;
         // Convert response.user to User type with default values for missing properties
+        const userRole = responseUser.role as UserRole | undefined;
+        
         const userData: User = {
           id: responseUser.id,
           email: responseUser.email,
@@ -63,7 +65,7 @@ export function useAuth() {
           countryCode: responseUser.countryCode || '',
           phone: responseUser.phoneNumber || '',
           phoneNumber: responseUser.phoneNumber || '',
-          role: responseUser.role ? (responseUser.role as UserRole) : undefined
+          role: userRole
         };
         setUser(userData);
         setIsAuthenticated(true);
@@ -88,6 +90,8 @@ export function useAuth() {
         // Safely cast or extract data from response.user
         const responseUser = response.user as AuthResponseUser;
         // Convert response.user to User type with values from params
+        const userRole = responseUser.role as UserRole | undefined;
+        
         const userData: User = {
           id: responseUser.id,
           email: responseUser.email,
@@ -98,7 +102,7 @@ export function useAuth() {
           countryCode: params.countryCode || '',
           phone: params.phoneNumber || '',
           phoneNumber: params.phoneNumber || '',
-          role: responseUser.role ? (responseUser.role as UserRole) : undefined
+          role: userRole
         };
         setUser(userData);
         setIsAuthenticated(true);

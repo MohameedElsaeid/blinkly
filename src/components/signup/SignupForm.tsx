@@ -113,7 +113,7 @@ const SignupForm = () => {
         passwordConfirmation: confirmPassword,
         country,
         countryCode,
-        phoneNumber: `${countryCode}${phone}`
+        phoneNumber: phone // The API expects just the number, it will prepend the country code
       });
       toast.success("Account created successfully!");
       navigate("/dashboard");

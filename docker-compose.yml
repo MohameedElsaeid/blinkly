@@ -1,3 +1,4 @@
+
 version: '3.8'
 
 services:
@@ -11,29 +12,6 @@ services:
       POSTGRES_DB: linkalchemy
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-      - "3001:3001"
-    depends_on:
-      - postgres
-    environment:
-      - NODE_ENV=development
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USERNAME=postgres
-      - DB_PASSWORD=postgres
-      - DB_NAME=linkalchemy
-      - JWT_SECRET=supersecret
-      - FRONTEND_URL=http://localhost:5173
-      - WS_PORT=3001
-    volumes:
-      - ./backend:/usr/src/app
-      - /usr/src/app/node_modules
 
 volumes:
   postgres_data:
