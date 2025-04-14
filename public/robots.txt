@@ -1,10 +1,35 @@
 
+# Blinkly robots.txt
+# https://blinkly.app
+
 User-agent: *
 Allow: /
 
-# Disallow admin and sensitive areas
+# Main content pages
+Allow: /about
+Allow: /blog
+Allow: /blog/*
+Allow: /contact
+Allow: /pricing
+Allow: /terms
+Allow: /privacy
+
+# Disallow admin and user areas
 Disallow: /dashboard/
+Disallow: /dashboard/*
 Disallow: /settings/
+Disallow: /login
+Disallow: /signup
+Disallow: /reset-password
+Disallow: /api/
+
+# Disallow development and utility paths
+Disallow: /dev/
+Disallow: /test/
+Disallow: /*.json$
+Disallow: /*.js$
+Disallow: /*.css$
 
 # Sitemap location
 Sitemap: https://blinkly.app/sitemap.xml
+

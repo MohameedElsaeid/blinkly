@@ -1,18 +1,38 @@
 
 import React from "react";
-import { Helmet } from "react-helmet-async";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ContactForm from "@/components/ContactForm";
 import { Mail, MapPin, Phone, Clock } from "lucide-react";
+import { SEO, generateStructuredData } from "@/utils/seo";
 
 const Contact = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Helmet>
-        <title>Contact Us - Blinkly</title>
-        <meta name="description" content="Contact the Blinkly team. We're here to help with any questions about our URL shortener, link management platform, or QR code generator." />
-      </Helmet>
+      <SEO
+        title="Contact Us"
+        description="Contact the Blinkly team. We're here to help with any questions about our URL shortener, link management platform, or QR code generator."
+        url="https://blinkly.app/contact"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          description: "Contact the Blinkly team",
+          mainEntity: {
+            "@type": "Organization",
+            name: "Blinkly",
+            email: "hello@blinkly.app",
+            telephone: "+1 (555) 123-4567",
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: "123 Blinkly Street",
+              addressLocality: "San Francisco",
+              addressRegion: "CA",
+              postalCode: "94107",
+              addressCountry: "US"
+            }
+          }
+        }}
+      />
       
       <Navbar />
       

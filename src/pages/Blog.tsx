@@ -1,11 +1,11 @@
 
 import React from "react";
-import { Helmet } from "react-helmet-async";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BlogFeatured from "@/components/blog/BlogFeatured";
 import BlogCard from "@/components/blog/BlogCard";
 import { blogPosts } from "@/data/blogPosts";
+import { SEO, generateStructuredData } from "@/utils/seo";
 
 const Blog = () => {
   // Get the most recent post for the featured section
@@ -15,13 +15,27 @@ const Blog = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Helmet>
-        <title>Blog | Blinkly - URL Shortener & Link Management</title>
-        <meta
-          name="description"
-          content="Read the latest articles on URL shortening, link management, and digital marketing strategies from the Blinkly team."
-        />
-      </Helmet>
+      <SEO
+        title="Blog - URL Shortener & Link Management"
+        description="Read the latest articles on URL shortening, link management, and digital marketing strategies from the Blinkly team."
+        url="https://blinkly.app/blog"
+        type="website"
+        structuredData={{
+          ...generateStructuredData.website(),
+          "@type": "Blog",
+          blogPost: blogPosts.slice(0, 5).map(post => ({
+            "@type": "BlogPosting",
+            headline: post.title,
+            description: post.excerpt,
+            datePublished: post.publishedAt,
+            author: {
+              "@type": "Person",
+              name: post.author.name
+            },
+            url: `https://blinkly.app/blog/${post.slug}`
+          }))
+        }}
+      />
 
       <Navbar />
 

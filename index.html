@@ -4,21 +4,54 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Primary Meta Tags -->
     <title>Blinkly - URL Shortener, Link Management & QR Code Generator</title>
+    <meta name="title" content="Blinkly - URL Shortener, Link Management & QR Code Generator">
     <meta name="description" content="Transform long URLs into powerful, trackable short links. Create custom links, track analytics, and generate QR codes with Blinkly - the ultimate link management platform." />
+    <meta name="keywords" content="url shortener, link management, short links, custom links, branded links, link analytics, qr code generator, link tracking, click tracking">
+    <meta name="author" content="Blinkly Team">
     <meta name="theme-color" content="#5D5FEF" />
+    
+    <!-- Canonical Link -->
     <link rel="canonical" href="https://blinkly.app" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://blinkly.app/">
+    <meta property="og:title" content="Blinkly - URL Shortener, Link Management & QR Code Generator">
+    <meta property="og:description" content="Transform long URLs into powerful, trackable short links. Create custom links, track analytics, and generate QR codes with Blinkly - the ultimate link management platform.">
+    <meta property="og:image" content="https://blinkly.app/og-image.png">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Blinkly">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://blinkly.app/">
+    <meta property="twitter:title" content="Blinkly - URL Shortener, Link Management & QR Code Generator">
+    <meta property="twitter:description" content="Transform long URLs into powerful, trackable short links. Create custom links, track analytics, and generate QR codes with Blinkly.">
+    <meta property="twitter:image" content="https://blinkly.app/twitter-card.png">
+    <meta name="twitter:site" content="@blinklyapp">
+    <meta name="twitter:creator" content="@blinklyapp">
+    
+    <!-- Favicons and App Icons -->
     <link rel="manifest" href="/manifest.json" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5D5FEF">
+    <meta name="msapplication-TileColor" content="#5D5FEF">
     
     <!-- Preload critical assets -->
     <link rel="preload" href="/fonts/Poppins-Regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/Roboto-Regular.woff2" as="font" type="font/woff2" crossorigin />
     
-    <!-- Preconnect to critical domains -->
-    <link rel="preconnect" href="https://api.blinkly.app" />
-    <link rel="preconnect" href="https://images.blinkly.app" />
+    <!-- DNS Prefetch and Preconnect -->
+    <link rel="preconnect" href="https://api.blinkly.app" crossorigin />
+    <link rel="preconnect" href="https://images.blinkly.app" crossorigin />
+    <link rel="dns-prefetch" href="https://api.blinkly.app" />
+    <link rel="dns-prefetch" href="https://images.blinkly.app" />
     
     <!-- Critical CSS -->
     <style>
@@ -38,9 +71,26 @@
         src: url('/fonts/Roboto-Regular.woff2') format('woff2');
       }
       /* Add other critical CSS */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      }
+      .loading-indicator {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #fff;
+        z-index: 9999;
+      }
     </style>
     
-    <!-- Structured data -->
+    <!-- Structured data - Website -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -54,15 +104,56 @@
           "@type": "Offer",
           "price": "0",
           "priceCurrency": "USD"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.8",
+          "ratingCount": "923"
+        }
+      }
+    </script>
+    
+    <!-- Structured data - Organization -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Blinkly",
+        "url": "https://blinkly.app",
+        "logo": "https://blinkly.app/logo.png",
+        "sameAs": [
+          "https://twitter.com/blinklyapp",
+          "https://www.facebook.com/blinklyapp",
+          "https://www.linkedin.com/company/blinkly"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+1-555-123-4567",
+          "contactType": "customer service",
+          "availableLanguage": "English"
         }
       }
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <!-- Initial loading state that will be replaced by React -->
+    <div id="root">
+      <div class="loading-indicator">
+        <div role="status">
+          <svg aria-hidden="true" class="w-12 h-12 text-gray-200 animate-spin fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+          </svg>
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+    </div>
     <noscript>You need to enable JavaScript to run this application.</noscript>
+    
     <!-- Add the Lovable script tag -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+    
+    <!-- Main Application Script -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

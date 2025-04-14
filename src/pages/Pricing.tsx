@@ -1,6 +1,5 @@
 
 import React, { useState } from "react";
-import { Helmet } from "react-helmet-async";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -9,16 +8,42 @@ import PricingView from "@/components/pricing/PricingView";
 import PricingTable from "@/components/pricing/PricingTable";
 import FAQ from "@/components/pricing/FAQ";
 import { plans, featureCategories } from "@/data/pricingData";
+import { SEO, generateStructuredData } from "@/utils/seo";
 
 const Pricing = () => {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
   
+  // Generate FAQ data for schema markup
+  const faqItems = [
+    { 
+      question: "Can I change my plan later?", 
+      answer: "Yes, you can upgrade, downgrade, or cancel your plan at any time. Changes will be effective in your next billing cycle." 
+    },
+    { 
+      question: "Do you offer discounts for nonprofits or educational institutions?", 
+      answer: "Yes, we offer special pricing for nonprofit organizations, educational institutions, and open-source projects. Please contact our sales team for more information." 
+    },
+    { 
+      question: "How do the monthly link limits work?", 
+      answer: "The monthly link limit refers to the number of new links you can create during your billing cycle. Links from previous months don't count against your current month's limit." 
+    },
+    { 
+      question: "Is there a free trial?", 
+      answer: "Yes, all paid plans come with a 14-day free trial, no credit card required. You can test all features before committing to a subscription." 
+    }
+  ];
+  
   return (
     <div className="min-h-screen flex flex-col">
-      <Helmet>
-        <title>Pricing - Blinkly | Link Management Platform</title>
-        <meta name="description" content="Explore Blinkly's flexible pricing plans - from free personal use to enterprise solutions. Find the perfect plan for your link management needs." />
-      </Helmet>
+      <SEO
+        title="Pricing - Link Management Platform"
+        description="Explore Blinkly's flexible pricing plans - from free personal use to enterprise solutions. Find the perfect plan for your link management needs."
+        url="https://blinkly.app/pricing"
+        structuredData={{
+          ...generateStructuredData.product(),
+          ...generateStructuredData.faq(faqItems)
+        }}
+      />
       
       <Navbar />
       

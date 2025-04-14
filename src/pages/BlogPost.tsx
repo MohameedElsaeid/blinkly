@@ -1,7 +1,6 @@
 
 import React, { useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BlogCard from "@/components/blog/BlogCard";
@@ -10,6 +9,7 @@ import { Calendar, Clock, ArrowLeft, Share2, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import ReactMarkdown from "react-markdown";
+import { SEO, generateStructuredData } from "@/utils/seo";
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -32,13 +32,18 @@ const BlogPost = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Helmet>
-        <title>{post.title} | Blinkly Blog</title>
-        <meta name="description" content={post.excerpt} />
-        <meta property="og:title" content={post.title} />
-        <meta property="og:description" content={post.excerpt} />
-        <meta property="og:image" content={post.coverImage} />
-      </Helmet>
+      <SEO
+        title={post.title}
+        description={post.excerpt}
+        image={post.coverImage}
+        url={`https://blinkly.app/blog/${post.slug}`}
+        type="article"
+        article={{
+          publishedTime: post.publishedAt,
+          tags: [post.category],
+        }}
+        structuredData={generateStructuredData.blogPost(post)}
+      />
 
       <Navbar />
 

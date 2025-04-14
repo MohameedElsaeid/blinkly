@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
-import { getOptimizedImageUrl, generateSrcSet, getImageDimensions } from '../utils/imageOptimization';
+import React from 'react';
+import { useImageOptimizer } from '@/hooks/useImageOptimizer';
 
 interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -11,6 +11,9 @@ interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> 
   quality?: number;
   priority?: boolean;
   loading?: 'lazy' | 'eager';
+  objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
+  placeholderColor?: string;
+  lazyLoadThreshold?: number;
 }
 
 export const OptimizedImage: React.FC<OptimizedImageProps> = ({
@@ -22,65 +25,52 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   quality = 80,
   priority = false,
   loading = 'lazy',
+  objectFit = 'cover',
+  placeholderColor = '#f3f4f6',
+  lazyLoadThreshold = 100,
   className,
   ...props
 }) => {
-  const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isError, setIsError] = useState(false);
-
-  useEffect(() => {
-    if (!width || !height) {
-      getImageDimensions(src)
-        .then(setDimensions)
-        .catch(() => {
-          setIsError(true);
-          console.error(`Failed to load image dimensions for: ${src}`);
-        });
-    }
-  }, [src, width, height]);
-
-  const imageWidth = width || dimensions?.width || 800;
-  const imageHeight = height || dimensions?.height || 600;
-  const aspectRatio = imageWidth && imageHeight ? imageWidth / imageHeight : 16/9;
-
-  const handleImageLoad = () => {
-    setIsLoaded(true);
-  };
-
-  const handleImageError = () => {
-    setIsError(true);
-    console.error(`Failed to load image: ${src}`);
-  };
-
-  // Use direct image URL for external services like Unsplash
-  const imageUrl = src.startsWith('https://images.unsplash.com/') 
-    ? src
-    : getOptimizedImageUrl(src, imageWidth || 800, quality);
-
-  // Generate srcSet for responsive images
-  const imageSrcSet = src.startsWith('https://images.unsplash.com/')
-    ? undefined // Unsplash already provides optimized images
-    : generateSrcSet(src);
+  const {
+    optimizedSrc,
+    width: imageWidth,
+    height: imageHeight,
+    aspectRatio,
+    isLoading,
+    isError,
+  } = useImageOptimizer(src, alt, {
+    width,
+    quality,
+    priority,
+    placeholderColor,
+    lazyLoadThreshold,
+  });
 
   return (
     <div 
       className={`relative overflow-hidden ${className || ''}`}
-      style={{ aspectRatio: aspectRatio ? `${aspectRatio}` : undefined }}
+      style={{ 
+        aspectRatio: aspectRatio ? `${aspectRatio}` : undefined,
+        width: width ? `${width}px` : '100%',
+      }}
+      role="img"
+      aria-label={alt}
     >
       {!isError ? (
         <img
-          src={imageUrl}
-          srcSet={imageSrcSet}
-          sizes={sizes}
+          src={optimizedSrc}
           alt={alt}
-          width={imageWidth}
-          height={imageHeight}
+          width={imageWidth || undefined}
+          height={imageHeight || undefined}
           loading={priority ? 'eager' : loading}
           decoding={priority ? 'sync' : 'async'}
-          onLoad={handleImageLoad}
-          onError={handleImageError}
-          className={`w-full h-full transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+          sizes={sizes}
+          style={{ 
+            width: '100%', 
+            height: '100%', 
+            objectFit
+          }}
+          className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
           {...props}
         />
       ) : (
@@ -92,7 +82,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
         </div>
       )}
       
-      {!isLoaded && !isError && (
+      {isLoading && !isError && (
         <div 
           className="absolute inset-0 bg-gray-200 animate-pulse"
           style={{ aspectRatio: aspectRatio ? `${aspectRatio}` : undefined }}
@@ -101,3 +91,5 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     </div>
   );
 };
+
+export default OptimizedImage;
