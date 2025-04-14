@@ -40,9 +40,9 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     }
   }, [src, width, height]);
 
-  const imageWidth = width || dimensions?.width;
-  const imageHeight = height || dimensions?.height;
-  const aspectRatio = imageWidth && imageHeight ? imageWidth / imageHeight : undefined;
+  const imageWidth = width || dimensions?.width || 800;
+  const imageHeight = height || dimensions?.height || 600;
+  const aspectRatio = imageWidth && imageHeight ? imageWidth / imageHeight : 16/9;
 
   const handleImageLoad = () => {
     setIsLoaded(true);
@@ -53,6 +53,16 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     console.error(`Failed to load image: ${src}`);
   };
 
+  // Use direct image URL for external services like Unsplash
+  const imageUrl = src.startsWith('https://images.unsplash.com/') 
+    ? src
+    : getOptimizedImageUrl(src, imageWidth || 800, quality);
+
+  // Generate srcSet for responsive images
+  const imageSrcSet = src.startsWith('https://images.unsplash.com/')
+    ? undefined // Unsplash already provides optimized images
+    : generateSrcSet(src);
+
   return (
     <div 
       className={`relative overflow-hidden ${className || ''}`}
@@ -60,8 +70,8 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     >
       {!isError ? (
         <img
-          src={getOptimizedImageUrl(src, imageWidth || 800, quality)}
-          srcSet={generateSrcSet(src)}
+          src={imageUrl}
+          srcSet={imageSrcSet}
           sizes={sizes}
           alt={alt}
           width={imageWidth}
