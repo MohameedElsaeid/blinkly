@@ -1,24 +1,35 @@
 
+// Define interface for resource performance entries
+interface ResourcePerformanceEntry extends PerformanceEntry {
+  initiatorType: string;
+  transferSize: number;
+  duration: number;
+}
+
 // Helper to estimate page load performance metrics
 export const estimateCoreWebVitals = () => {
   if (typeof window !== 'undefined' && 'performance' in window) {
     // Log estimated LCP
     const estimateLCP = () => {
       const entries = performance.getEntriesByType('resource');
-      const images = entries.filter(entry => 
-        entry.initiatorType === 'img' || 
-        /\.(jpg|jpeg|png|webp|avif|gif|svg)$/i.test(entry.name)
-      );
+      const images = entries.filter(entry => {
+        const resourceEntry = entry as ResourcePerformanceEntry;
+        return resourceEntry.initiatorType === 'img' || 
+          /\.(jpg|jpeg|png|webp|avif|gif|svg)$/i.test(entry.name);
+      });
       
       if (images.length) {
         // Find the largest image resource
         const largestImage = images.reduce((largest, current) => {
-          return (current.transferSize > largest.transferSize) ? current : largest;
+          const largestEntry = largest as ResourcePerformanceEntry;
+          const currentEntry = current as ResourcePerformanceEntry;
+          return (currentEntry.transferSize > largestEntry.transferSize) ? current : largest;
         }, images[0]);
         
+        const largestImageEntry = largestImage as ResourcePerformanceEntry;
         console.info('Estimated LCP resource:', largestImage.name, 
-                    'Size:', (largestImage.transferSize / 1024).toFixed(2) + 'kb', 
-                    'Load Time:', largestImage.duration.toFixed(2) + 'ms');
+                    'Size:', (largestImageEntry.transferSize / 1024).toFixed(2) + 'kb', 
+                    'Load Time:', largestImageEntry.duration.toFixed(2) + 'ms');
       }
     };
     
