@@ -29,6 +29,7 @@ export {
   AnalyticsResponse,
 } from './analytics';
 
+// Use export type for interfaces to avoid isolatedModules error
 export type { 
   IClickData,
   ILinkAnalytics,
