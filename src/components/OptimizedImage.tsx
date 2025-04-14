@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { getOptimizedImageUrl, generateSrcSet, getImageDimensions } from '../utils/imageOptimization';
 
@@ -26,12 +27,16 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 }) => {
   const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     if (!width || !height) {
       getImageDimensions(src)
         .then(setDimensions)
-        .catch(console.error);
+        .catch(() => {
+          setIsError(true);
+          console.error(`Failed to load image dimensions for: ${src}`);
+        });
     }
   }, [src, width, height]);
 
@@ -39,25 +44,45 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   const imageHeight = height || dimensions?.height;
   const aspectRatio = imageWidth && imageHeight ? imageWidth / imageHeight : undefined;
 
+  const handleImageLoad = () => {
+    setIsLoaded(true);
+  };
+
+  const handleImageError = () => {
+    setIsError(true);
+    console.error(`Failed to load image: ${src}`);
+  };
+
   return (
     <div 
       className={`relative overflow-hidden ${className || ''}`}
       style={{ aspectRatio: aspectRatio ? `${aspectRatio}` : undefined }}
     >
-      <img
-        src={getOptimizedImageUrl(src, imageWidth || 800, quality)}
-        srcSet={generateSrcSet(src)}
-        sizes={sizes}
-        alt={alt}
-        width={imageWidth}
-        height={imageHeight}
-        loading={priority ? 'eager' : loading}
-        decoding={priority ? 'sync' : 'async'}
-        onLoad={() => setIsLoaded(true)}
-        className={`transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
-        {...props}
-      />
-      {!isLoaded && (
+      {!isError ? (
+        <img
+          src={getOptimizedImageUrl(src, imageWidth || 800, quality)}
+          srcSet={generateSrcSet(src)}
+          sizes={sizes}
+          alt={alt}
+          width={imageWidth}
+          height={imageHeight}
+          loading={priority ? 'eager' : loading}
+          decoding={priority ? 'sync' : 'async'}
+          onLoad={handleImageLoad}
+          onError={handleImageError}
+          className={`w-full h-full transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+          {...props}
+        />
+      ) : (
+        <div 
+          className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm"
+          style={{ aspectRatio: aspectRatio ? `${aspectRatio}` : undefined }}
+        >
+          Unable to load image
+        </div>
+      )}
+      
+      {!isLoaded && !isError && (
         <div 
           className="absolute inset-0 bg-gray-200 animate-pulse"
           style={{ aspectRatio: aspectRatio ? `${aspectRatio}` : undefined }}
