@@ -1,9 +1,11 @@
+
 import { apiClient } from './apiClient';
 import { 
   CreatePaymentIntentDto, 
   CreateSubscriptionDto, 
-  ProcessRefundDto 
-} from '../types';
+  ProcessRefundDto,
+  UserSubscription
+} from '../types/payment';
 
 class PaymentsService {
   async createPaymentIntent(data: CreatePaymentIntentDto): Promise<{ clientSecret: string }> {
@@ -24,6 +26,10 @@ class PaymentsService {
 
   async processRefund(data: ProcessRefundDto): Promise<{ refundId: string }> {
     return apiClient.post<{ refundId: string }>('/payments/refunds', data);
+  }
+
+  async getUserSubscription(): Promise<UserSubscription | null> {
+    return apiClient.get<UserSubscription | null>('/payments/subscriptions/current');
   }
 }
 

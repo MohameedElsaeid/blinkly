@@ -1,3 +1,4 @@
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
@@ -40,7 +41,7 @@ export default defineConfig(({ mode }) => ({
       }
     }),
     mode === 'production' ? compression({
-      algorithm: 'brotli',
+      algorithm: 'gzip',
       exclude: [/\.(br|gz)$/, /\.(png|jpe?g|gif|webp)$/i]
     }) : undefined,
     mode === 'production' ? visualizer({

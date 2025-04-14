@@ -1,5 +1,6 @@
+
 import { apiClient } from './apiClient';
-import { QrCode, CreateQrCodeDto } from '../types';
+import { QrCode, CreateQrCodeDto } from '../types/qr';
 
 class QrService {
   async createQrCode(data: CreateQrCodeDto): Promise<QrCode> {

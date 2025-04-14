@@ -1,3 +1,8 @@
+
+import { User } from './index';
+import { ClickEvent, DynamicLinkClickEvent } from './analytics';
+import { QrCode } from './qr';
+
 export enum RedirectType {
   TEMPORARY = 'TEMPORARY',
   PERMANENT = 'PERMANENT'
@@ -79,3 +84,9 @@ export interface DynamicLink {
   createdAt: Date;
   updatedAt: Date;
 }
+
+// Add the missing types for the links service
+export type CreateLinkParams = CreateLinkDto;
+export type UpdateLinkParams = Partial<CreateLinkDto> & {
+  isActive?: boolean;
+};

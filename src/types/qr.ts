@@ -1,3 +1,7 @@
+
+import { User } from './index';
+import { Link } from './links';
+
 export interface CreateQrCodeDto {
   targetUrl: string;
   linkId?: string;

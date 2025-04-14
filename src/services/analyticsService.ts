@@ -8,7 +8,7 @@ import {
   IDateRangeAnalytics,
   IAnalyticsOverview,
   IClicksByMetric 
-} from '../types';
+} from '../types/analytics';
 
 class AnalyticsService {
   async recordClick(alias: string, data: IClickData): Promise<ClickEvent> {

@@ -1,3 +1,7 @@
+
+import { User } from './index';
+import { Link, DynamicLink } from './links';
+
 export interface ClickEvent {
   id: string;
   ipAddress: string;

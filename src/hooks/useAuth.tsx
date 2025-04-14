@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -37,12 +36,16 @@ export function useAuth() {
     try {
       const response = await authService.login(params);
       if (response.success && response.user) {
-        // Convert response.user to User type
+        // Convert response.user to User type with default values for missing properties
         const userData: User = {
-          ...response.user,
+          id: response.user.id,
+          email: response.user.email,
+          firstName: response.user.firstName,
+          lastName: response.user.lastName,
+          token: response.user.token,
           country: response.user.country || '',
           countryCode: response.user.countryCode || '',
-          phone: response.user.phone || ''
+          phone: response.user.phoneNumber || ''
         };
         setUser(userData);
         setIsAuthenticated(true);
@@ -64,9 +67,13 @@ export function useAuth() {
     try {
       const response = await authService.register(params);
       if (response.success && response.user) {
-        // Convert response.user to User type
+        // Convert response.user to User type with values from params
         const userData: User = {
-          ...response.user,
+          id: response.user.id,
+          email: response.user.email,
+          firstName: response.user.firstName,
+          lastName: response.user.lastName,
+          token: response.user.token,
           country: params.country,
           countryCode: params.countryCode,
           phone: params.phoneNumber

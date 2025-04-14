@@ -1,5 +1,7 @@
+
 import { apiClient } from './apiClient';
-import { User, UpdateUserDto } from '../types';
+import { User } from '../types';
+import { UpdateUserDto } from '../types/users';
 
 class UsersService {
   async getProfile(): Promise<User> {
