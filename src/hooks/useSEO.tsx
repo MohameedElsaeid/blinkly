@@ -22,12 +22,11 @@ export const useSEO = (seoProps: SEOProps = {}) => {
     ...seoProps,
   };
   
-  // Track page views (can be integrated with your analytics solution)
+  // Track page views with Google Tag Manager
   useEffect(() => {
-    // This would be where you track page views in your analytics solution
-    // For example with Google Analytics:
+    // Send pageview to Google Analytics via GTM
     if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('config', 'G-XXXXXXXX', {
+      window.gtag('config', 'G-8BX04XJEWE', {
         page_path: currentPath,
         page_title: combinedSEO.title,
       });
@@ -46,5 +45,6 @@ export const useSEO = (seoProps: SEOProps = {}) => {
 declare global {
   interface Window {
     gtag: (command: string, targetId: string, config?: any) => void;
+    dataLayer: any[];
   }
 }
