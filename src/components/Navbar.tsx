@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu } from "lucide-react";
+import { Menu, Home } from "lucide-react";
 import { useAuth } from "@/hooks";
 import { useIsMobile } from "@/hooks";
 import Logo from "./Logo";
@@ -35,6 +35,12 @@ const Navbar = () => {
           
           <div className="hidden md:flex items-center justify-center flex-grow">
             <div className="space-x-3">
+              <Button variant="ghost" asChild className="text-gray-700 font-medium hover:text-blinkly-purple">
+                <Link to="/">
+                  <Home className="mr-2 h-4 w-4" />
+                  Home
+                </Link>
+              </Button>
               <Button variant="ghost" asChild>
                 <Link to="/#features" className="text-gray-700 font-medium hover:text-blinkly-purple">
                   Features
@@ -75,7 +81,8 @@ const Navbar = () => {
               </SheetTrigger>
               <SheetContent side="right" className="w-full sm:w-64">
                 <div className="flex flex-col space-y-4">
-                  <Link to="/" className="font-semibold text-lg text-gray-800">
+                  <Link to="/" className="font-semibold text-lg text-gray-800 flex items-center">
+                    <Home className="mr-2 h-5 w-5" />
                     Home
                   </Link>
                   <Link to="/#features" className="font-semibold text-lg text-gray-800">

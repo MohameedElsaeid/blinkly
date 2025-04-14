@@ -9,7 +9,8 @@ import {
   Settings, 
   LogOut, 
   Menu, 
-  X 
+  X,
+  LayoutDashboard
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -18,7 +19,7 @@ const navItems = [
   {
     name: "Dashboard",
     href: "/dashboard",
-    icon: Home,
+    icon: LayoutDashboard,
   },
   {
     name: "My Links",
@@ -89,6 +90,18 @@ const Sidebar = ({ className }: SidebarProps) => {
 
           <div className="flex-1 overflow-y-auto py-4 px-3">
             <nav className="space-y-1">
+              {/* Home button to navigate to main landing page */}
+              <Link
+                to="/"
+                className="flex items-center px-3 py-2 text-sm font-medium rounded-md group transition-colors text-gray-700 hover:bg-alchemy-purple/5 hover:text-alchemy-purple"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Home
+                  className="mr-3 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-alchemy-purple"
+                />
+                Home
+              </Link>
+              
               {navItems.map((item) => {
                 const isActive = location.pathname === item.href;
                 return (
