@@ -1,5 +1,5 @@
 
-import { AxiosError, AxiosRequestConfig } from 'axios';
+import { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import { BaseHttpClient } from './baseHttpClient';
 import { csrfTokenService } from '../csrf/csrfTokenService';
 import { apiErrorHandler } from '../errors/apiErrorHandler';
@@ -17,18 +17,19 @@ class ApiClient extends BaseHttpClient {
     this.client.interceptors.request.use(
       async (config) => {
         // Add authentication token
-        config = this.addAuthToken(config);
+        const configWithAuth = this.addAuthToken(config);
         
         // Add client hints
-        config = this.addClientHints(config);
+        const configWithHints = this.addClientHints(configWithAuth);
 
         // Add CSRF token for mutations
         if (['post', 'put', 'delete', 'patch'].includes(config.method?.toLowerCase() || '')) {
-          config.headers = config.headers || {};
-          config.headers['x-csrf-token'] = await csrfTokenService.fetchCsrfToken();
+          const csrfToken = await csrfTokenService.fetchCsrfToken();
+          configWithHints.headers = configWithHints.headers || {};
+          configWithHints.headers['x-csrf-token'] = csrfToken;
         }
 
-        return config;
+        return configWithHints as InternalAxiosRequestConfig;
       },
       (error) => Promise.reject(error)
     );
@@ -47,7 +48,9 @@ class ApiClient extends BaseHttpClient {
           csrfTokenService.invalidateToken();
           const originalRequest = error.config;
           if (originalRequest) {
-            originalRequest.headers['x-csrf-token'] = await csrfTokenService.fetchCsrfToken();
+            const csrfToken = await csrfTokenService.fetchCsrfToken();
+            originalRequest.headers = originalRequest.headers || {};
+            originalRequest.headers['x-csrf-token'] = csrfToken;
             return this.client(originalRequest);
           }
         }

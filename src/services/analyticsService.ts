@@ -1,5 +1,5 @@
 
-import { apiClient } from './apiClient';
+import { apiClient } from './http/apiClient';
 import { 
   ClickEvent, 
   DynamicLinkClickEvent, 
