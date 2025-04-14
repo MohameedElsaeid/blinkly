@@ -29,7 +29,7 @@ export default defineConfig(({ mode }) => ({
     mode === 'development' ? componentTagger() : undefined,
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'robots.txt'],
+      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'robots.txt', 'sitemap.xml'],
       manifest: {
         name: 'Blinkly',
         short_name: 'Blinkly',

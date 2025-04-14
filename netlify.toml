@@ -16,6 +16,12 @@
     Content-Type = "application/xml"
     Cache-Control = "public, max-age=86400"
 
+# Important: Specific redirect for sitemap.xml BEFORE the wildcard redirect
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "/sitemap.xml"
+  status = 200
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
