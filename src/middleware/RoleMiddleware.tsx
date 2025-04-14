@@ -1,18 +1,37 @@
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '../hooks';
+
+import { ReactNode } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import { UserRole } from '../types';
+import { useAuth } from '../hooks';
 
 interface RoleMiddlewareProps {
-  children: React.ReactNode;
-  allowedRoles: UserRole[];
+  requiredRole: UserRole;
+  children: ReactNode;
 }
 
-export const RoleMiddleware: React.FC<RoleMiddlewareProps> = ({ children, allowedRoles }) => {
-  const { user } = useAuth();
+const RoleMiddleware = ({ requiredRole, children }: RoleMiddlewareProps) => {
+  const { user, isAuthenticated } = useAuth();
+  const location = useLocation();
 
-  if (!user || !allowedRoles.includes(user.role)) {
+  // If not authenticated, redirect to login
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  // User is authenticated but has no role or insufficient role
+  const userRole = (user as any).role; // Casting to any as a temporary fix
+  if (!userRole || userRole !== requiredRole) {
+    // For admin routes, redirect to forbidden page
+    if (requiredRole === UserRole.ADMIN || requiredRole === UserRole.SUPERADMIN) {
+      return <Navigate to="/forbidden" replace />;
+    }
+    
+    // For regular user routes, redirect to dashboard
     return <Navigate to="/dashboard" replace />;
   }
 
+  // User has the required role
   return <>{children}</>;
 };
+
+export default RoleMiddleware;

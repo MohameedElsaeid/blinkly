@@ -37,7 +37,14 @@ export function useAuth() {
     try {
       const response = await authService.login(params);
       if (response.success && response.user) {
-        setUser(response.user);
+        // Convert response.user to User type
+        const userData: User = {
+          ...response.user,
+          country: response.user.country || '',
+          countryCode: response.user.countryCode || '',
+          phone: response.user.phone || ''
+        };
+        setUser(userData);
         setIsAuthenticated(true);
         toast.success(response.message || 'Successfully logged in!');
         navigate('/dashboard');
@@ -57,7 +64,14 @@ export function useAuth() {
     try {
       const response = await authService.register(params);
       if (response.success && response.user) {
-        setUser(response.user);
+        // Convert response.user to User type
+        const userData: User = {
+          ...response.user,
+          country: params.country,
+          countryCode: params.countryCode,
+          phone: params.phoneNumber
+        };
+        setUser(userData);
         setIsAuthenticated(true);
         toast.success(response.message || 'Registration successful!');
         navigate('/dashboard');

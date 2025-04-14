@@ -2,7 +2,8 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { linksService, CreateLinkParams, UpdateLinkParams } from '../services';
+import { linksService } from '../services';
+import { CreateLinkParams, UpdateLinkParams } from '../types';
 
 export function useLinks() {
   const [isLoading, setIsLoading] = useState(false);

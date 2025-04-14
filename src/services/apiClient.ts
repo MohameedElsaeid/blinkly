@@ -88,7 +88,8 @@ class ApiClient {
         }
         
         const status = error.response.status;
-        const errorCode = error.response.data?.code;
+        const errorData = error.response.data as any;
+        const errorCode = errorData?.code;
         
         // Handle authentication errors
         if (status === 401) {
@@ -120,7 +121,7 @@ class ApiClient {
         }
         // Handle unknown errors
         else {
-          const errorMessage = error.response.data?.message || 'An unexpected error occurred.';
+          const errorMessage = errorData?.message || 'An unexpected error occurred.';
           toast.error(errorMessage);
         }
         

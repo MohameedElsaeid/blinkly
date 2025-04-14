@@ -1,7 +1,8 @@
+
 import { apiClient } from './apiClient';
 import { 
-  IClickData, 
   ClickEvent, 
+  IClickData, 
   DynamicLinkClickEvent, 
   ILinkAnalytics, 
   IDateRangeAnalytics,
@@ -22,7 +23,7 @@ class AnalyticsService {
     return apiClient.get<ILinkAnalytics>(`/analytics/link/${id}`);
   }
 
-  async getDateRangeAnalytics(id: string, start: Date, end: Date): Promise<IDateRangeAnalytics> {
+  async getClicksByDateRange(id: string, start: Date, end: Date): Promise<IDateRangeAnalytics> {
     return apiClient.get<IDateRangeAnalytics>(
       `/analytics/link/${id}/date-range?start=${start.toISOString()}&end=${end.toISOString()}`
     );
@@ -32,16 +33,24 @@ class AnalyticsService {
     return apiClient.get<IAnalyticsOverview>('/analytics/overview');
   }
 
-  async getDeviceStats(): Promise<IClicksByMetric> {
+  async getClicksByDevice(): Promise<IClicksByMetric> {
     return apiClient.get<IClicksByMetric>('/analytics/devices');
   }
 
-  async getBrowserStats(): Promise<IClicksByMetric> {
+  async getClicksByBrowser(): Promise<IClicksByMetric> {
     return apiClient.get<IClicksByMetric>('/analytics/browsers');
   }
 
-  async getCountryStats(): Promise<IClicksByMetric> {
+  async getClicksByCountry(): Promise<IClicksByMetric> {
     return apiClient.get<IClicksByMetric>('/analytics/countries');
+  }
+
+  async getAllClicks(): Promise<ClickEvent[]> {
+    return apiClient.get<ClickEvent[]>('/analytics');
+  }
+
+  async getClicksForLink(linkId: string): Promise<ClickEvent[]> {
+    return apiClient.get<ClickEvent[]>(`/analytics/link/${linkId}/clicks`);
   }
 }
 

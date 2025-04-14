@@ -2,14 +2,14 @@
 import { createContext, useContext, ReactNode } from 'react';
 import { useAuth } from '@/hooks';
 import { User } from '@/types';
-import { LoginParams, RegisterParams } from '@/services';
+import { LoginDto, SignUpDto } from '@/types/auth';
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (params: LoginParams) => Promise<any>;
-  register: (params: RegisterParams) => Promise<any>;
+  login: (params: LoginDto) => Promise<any>;
+  register: (params: SignUpDto) => Promise<any>;
   logout: () => void;
 }
 
