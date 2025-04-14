@@ -10,8 +10,13 @@
   force = true
   headers = {X-From = "Netlify"}
 
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Content-Type = "application/xml"
+    Cache-Control = "public, max-age=86400"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
