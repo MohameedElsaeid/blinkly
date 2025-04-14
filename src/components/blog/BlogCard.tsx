@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Calendar, Clock } from "lucide-react";
 import { BlogPost } from "@/types/blog";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 interface BlogCardProps {
   post: BlogPost;
@@ -15,10 +16,12 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, className }) => {
     <Card className={`overflow-hidden transition-all hover:shadow-md ${className}`}>
       <Link to={`/blog/${post.slug}`}>
         <div className="aspect-video w-full overflow-hidden">
-          <img 
+          <OptimizedImage 
             src={post.coverImage} 
             alt={post.title} 
             className="h-full w-full object-cover transition-transform hover:scale-105 duration-300"
+            width={400}
+            height={225}
           />
         </div>
       </Link>

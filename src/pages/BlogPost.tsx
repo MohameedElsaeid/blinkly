@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import ReactMarkdown from "react-markdown";
 import { SEO, generateStructuredData } from "@/utils/seo";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -105,10 +106,13 @@ const BlogPost = () => {
           
           {/* Featured image */}
           <div className="mb-10">
-            <img 
+            <OptimizedImage 
               src={post.coverImage} 
               alt={post.title} 
               className="w-full h-auto rounded-xl"
+              width={1200}
+              height={600}
+              priority={true}
             />
           </div>
           

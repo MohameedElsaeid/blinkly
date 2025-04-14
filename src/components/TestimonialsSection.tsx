@@ -1,5 +1,6 @@
 
 import { Star } from "lucide-react";
+import { OptimizedImage } from "./OptimizedImage";
 
 const testimonials = [
   {
@@ -65,10 +66,12 @@ const TestimonialsSection = () => {
               {/* Author */}
               <div className="flex items-center">
                 <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
-                  <img 
+                  <OptimizedImage 
                     src={testimonial.image} 
                     alt={testimonial.author} 
                     className="w-full h-full object-cover"
+                    width={48}
+                    height={48}
                   />
                 </div>
                 <div>
@@ -90,10 +93,12 @@ const TestimonialsSection = () => {
             <div className="grid grid-cols-2 md:grid-cols-5 gap-8 items-center justify-items-center">
               {[1, 2, 3, 4, 5].map((num) => (
                 <div key={num} className="grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-                  <img 
+                  <OptimizedImage 
                     src={`https://placehold.co/180x60/f8f8f8/a3a3a3?text=BRAND ${num}`} 
                     alt={`Brand ${num}`} 
                     className="h-10 max-w-full"
+                    width={180}
+                    height={60}
                   />
                 </div>
               ))}

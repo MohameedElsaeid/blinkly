@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 import { BlogPost } from "@/types/blog";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 interface BlogFeaturedProps {
   post: BlogPost;
@@ -13,10 +14,12 @@ const BlogFeatured: React.FC<BlogFeaturedProps> = ({ post }) => {
   return (
     <div className="relative overflow-hidden rounded-xl bg-gray-900 text-white">
       <div className="absolute inset-0 z-0">
-        <img 
+        <OptimizedImage 
           src={post.coverImage} 
           alt={post.title} 
           className="h-full w-full object-cover opacity-50"
+          width={1200}
+          height={600}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-gray-900/40" />
       </div>

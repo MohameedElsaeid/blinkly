@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { useImageOptimizer } from '@/hooks/useImageOptimizer';
+import React, { useState, useEffect } from 'react';
+import { getOptimizedImageUrl, generateSrcSet } from '@/utils/imageOptimization';
 
 interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -13,7 +13,6 @@ interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> 
   loading?: 'lazy' | 'eager';
   objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
   placeholderColor?: string;
-  lazyLoadThreshold?: number;
 }
 
 export const OptimizedImage: React.FC<OptimizedImageProps> = ({
@@ -27,68 +26,113 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   loading = 'lazy',
   objectFit = 'cover',
   placeholderColor = '#f3f4f6',
-  lazyLoadThreshold = 100,
   className,
   ...props
 }) => {
-  const {
-    optimizedSrc,
-    width: imageWidth,
-    height: imageHeight,
-    aspectRatio,
-    isLoading,
-    isError,
-  } = useImageOptimizer(src, alt, {
-    width,
-    quality,
-    priority,
-    placeholderColor,
-    lazyLoadThreshold,
-  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const [imageSrc, setImageSrc] = useState<string>('');
+  const [aspectRatio, setAspectRatio] = useState<number | undefined>(undefined);
 
-  return (
-    <div 
-      className={`relative overflow-hidden ${className || ''}`}
-      style={{ 
-        aspectRatio: aspectRatio ? `${aspectRatio}` : undefined,
-        width: width ? `${width}px` : '100%',
-      }}
-      role="img"
-      aria-label={alt}
-    >
-      {!isError ? (
-        <img
-          src={optimizedSrc}
-          alt={alt}
-          width={imageWidth || undefined}
-          height={imageHeight || undefined}
-          loading={priority ? 'eager' : loading}
-          decoding={priority ? 'sync' : 'async'}
-          sizes={sizes}
-          style={{ 
-            width: '100%', 
-            height: '100%', 
-            objectFit
-          }}
-          className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
-          {...props}
-        />
-      ) : (
-        <div 
-          className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm"
-          style={{ aspectRatio: aspectRatio ? `${aspectRatio}` : undefined }}
-        >
-          Unable to load image
-        </div>
-      )}
+  useEffect(() => {
+    if (!src) {
+      setIsError(true);
+      setIsLoading(false);
+      return;
+    }
+
+    // Handle basic image dimensions for aspect ratio
+    if (width && height) {
+      setAspectRatio(width / height);
+    } else {
+      // Default aspect ratio if dimensions not provided
+      setAspectRatio(16/9);
+    }
+
+    // Process the image URL
+    let processedSrc = '';
+    try {
+      // Handle external image services that already provide optimized images
+      if (src.startsWith('https://images.unsplash.com/') || 
+          src.startsWith('https://placehold.co/') ||
+          src.startsWith('https://placeholder.com/')) {
+        processedSrc = src;
+      } else {
+        // Use our optimization service
+        processedSrc = getOptimizedImageUrl(src, width || 800, quality);
+      }
       
-      {isLoading && !isError && (
-        <div 
-          className="absolute inset-0 bg-gray-200 animate-pulse"
-          style={{ aspectRatio: aspectRatio ? `${aspectRatio}` : undefined }}
-        />
-      )}
-    </div>
+      setImageSrc(processedSrc);
+      
+      // Preload image
+      const img = new Image();
+      img.src = processedSrc;
+      img.onload = () => {
+        setIsLoading(false);
+        if (!width && !height) {
+          setAspectRatio(img.width / img.height);
+        }
+      };
+      img.onerror = () => {
+        console.error(`Failed to load image: ${processedSrc}`);
+        setIsError(true);
+        setIsLoading(false);
+      };
+    } catch (error) {
+      console.error('Error optimizing image:', error);
+      setImageSrc(src); // Fallback to original source
+      setIsError(true);
+      setIsLoading(false);
+    }
+  }, [src, width, height, quality]);
+
+  // Render placeholder during loading
+  if (isLoading) {
+    return (
+      <div 
+        className={`bg-gray-200 animate-pulse rounded overflow-hidden ${className || ''}`}
+        style={{ 
+          width: width ? `${width}px` : '100%',
+          aspectRatio: aspectRatio ? `${aspectRatio}` : '16/9',
+        }}
+        aria-label={`Loading image: ${alt}`}
+      />
+    );
+  }
+
+  // Render error state
+  if (isError) {
+    return (
+      <div 
+        className={`bg-gray-100 flex items-center justify-center text-gray-400 rounded overflow-hidden ${className || ''}`}
+        style={{ 
+          width: width ? `${width}px` : '100%',
+          aspectRatio: aspectRatio ? `${aspectRatio}` : '16/9',
+        }}
+      >
+        <span className="text-sm">Image unavailable</span>
+      </div>
+    );
+  }
+
+  // Render the image
+  return (
+    <img
+      src={imageSrc}
+      alt={alt}
+      width={width}
+      height={height}
+      loading={priority ? 'eager' : loading}
+      sizes={sizes}
+      className={className}
+      style={{ 
+        objectFit,
+        width: width ? `${width}px` : '100%',
+        height: height ? `${height}px` : 'auto',
+        aspectRatio: (!height && aspectRatio) ? `${aspectRatio}` : undefined
+      }}
+      {...props}
+    />
   );
 };
 

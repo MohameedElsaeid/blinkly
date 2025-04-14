@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, ChevronRight, Play, Check, Globe, Shield, Zap, BarChart3, Users } from "lucide-react";
@@ -78,7 +79,9 @@ const Hero = () => {
                 src="https://images.unsplash.com/photo-1551288049-bebda4e38f71"
                 alt="Analytics dashboard with interactive charts and statistics" 
                 className="w-full h-auto rounded-xl relative z-10"
-                priority
+                priority={true}
+                width={600}
+                height={400}
               />
               
               {/* Stats Overlay */}
