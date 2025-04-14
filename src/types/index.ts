@@ -15,10 +15,15 @@ export interface User {
   role?: UserRole;
 }
 
-// Add other type exports as needed
-export * from './analytics';
-export * from './links';
-export * from './qr';
-export * from './payment';
+// Export other types selectively to avoid duplicates
 export * from './users';
 export * from './auth';
+export * from './payment';
+export * from './qr';
+
+// Export link types carefully
+export * from './links';
+
+// Export analytics types last to avoid conflicts with duplicated types
+// Since there's ambiguity with some types in analytics and links, we'll export analytics last
+export * from './analytics';

@@ -1,6 +1,17 @@
 
 import { User } from './index';
 
+// Export the Click Event interface
+export interface ClickEvent {
+  id: string;
+  linkId: string;
+  timestamp: Date;
+  browser?: string;
+  device?: string;
+  country?: string;
+  referrer?: string;
+}
+
 // Dynamic link related types
 export interface CreateDynamicLinkDto {
   name: string;
@@ -28,17 +39,6 @@ export interface DynamicLink {
   forwardParameters: boolean;
   createdAt: Date;
   updatedAt: Date;
-}
-
-// Export the ClickEvent interface
-export interface ClickEvent {
-  id: string;
-  linkId: string;
-  timestamp: Date;
-  browser?: string;
-  device?: string;
-  country?: string;
-  referrer?: string;
 }
 
 export interface DynamicLinkClickEvent extends ClickEvent {

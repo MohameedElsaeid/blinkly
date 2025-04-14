@@ -13,6 +13,19 @@ import {
   VerifyEmailDto 
 } from '../types/auth';
 
+// Define the auth response user type to match what the backend returns
+interface AuthResponseUser {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  token: string;
+  country?: string;
+  countryCode?: string;
+  phoneNumber?: string;
+  role?: string;
+}
+
 export function useAuth() {
   const [user, setUser] = useState<User | null>(authService.getCurrentUser());
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(authService.isAuthenticated());
@@ -37,18 +50,20 @@ export function useAuth() {
     try {
       const response = await authService.login(params);
       if (response.success && response.user) {
+        // Safely cast or extract data from response.user
+        const responseUser = response.user as AuthResponseUser;
         // Convert response.user to User type with default values for missing properties
         const userData: User = {
-          id: response.user.id,
-          email: response.user.email,
-          firstName: response.user.firstName,
-          lastName: response.user.lastName,
-          token: response.user.token,
-          country: response.user.country || '',
-          countryCode: response.user.countryCode || '',
-          phone: response.user.phoneNumber || '',
-          phoneNumber: response.user.phoneNumber || '',
-          role: response.user.role
+          id: responseUser.id,
+          email: responseUser.email,
+          firstName: responseUser.firstName,
+          lastName: responseUser.lastName,
+          token: responseUser.token,
+          country: responseUser.country || '',
+          countryCode: responseUser.countryCode || '',
+          phone: responseUser.phoneNumber || '',
+          phoneNumber: responseUser.phoneNumber || '',
+          role: responseUser.role
         };
         setUser(userData);
         setIsAuthenticated(true);
@@ -70,18 +85,20 @@ export function useAuth() {
     try {
       const response = await authService.register(params);
       if (response.success && response.user) {
+        // Safely cast or extract data from response.user
+        const responseUser = response.user as AuthResponseUser;
         // Convert response.user to User type with values from params
         const userData: User = {
-          id: response.user.id,
-          email: response.user.email,
-          firstName: response.user.firstName,
-          lastName: response.user.lastName,
-          token: response.user.token,
+          id: responseUser.id,
+          email: responseUser.email,
+          firstName: responseUser.firstName,
+          lastName: responseUser.lastName,
+          token: responseUser.token,
           country: params.country || '',
           countryCode: params.countryCode || '',
           phone: params.phoneNumber || '',
           phoneNumber: params.phoneNumber || '',
-          role: response.user.role
+          role: responseUser.role
         };
         setUser(userData);
         setIsAuthenticated(true);

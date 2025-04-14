@@ -2,13 +2,49 @@
 import { apiClient } from './apiClient';
 import { 
   ClickEvent, 
-  IClickData, 
   DynamicLinkClickEvent, 
-  ILinkAnalytics, 
-  IDateRangeAnalytics,
-  IAnalyticsOverview,
-  IClicksByMetric 
+  ClicksByDateDto,
+  ClicksByPropertyDto,
+  AnalyticsResponse 
 } from '../types/analytics';
+
+// Define interfaces for analytics service
+interface IClickData {
+  browser?: string;
+  device?: string;
+  country?: string;
+  referrer?: string;
+}
+
+interface ILinkAnalytics {
+  totalClicks: number;
+  clicksByDate: ClicksByDateDto[];
+  clicksByDevice: ClicksByPropertyDto;
+  clicksByBrowser: ClicksByPropertyDto;
+  clicksByCountry: ClicksByPropertyDto;
+}
+
+interface IDateRangeAnalytics {
+  totalClicks: number;
+  clicksByDate: ClicksByDateDto[];
+}
+
+interface IAnalyticsOverview {
+  totalClicks: number;
+  clicksToday: number;
+  clicksThisWeek: number;
+  clicksThisMonth: number;
+  topLinks: {
+    linkId: string;
+    alias: string;
+    clicks: number;
+  }[];
+}
+
+interface IClicksByMetric {
+  total: number;
+  data: Record<string, number>;
+}
 
 class AnalyticsService {
   async recordClick(alias: string, data: IClickData): Promise<ClickEvent> {
