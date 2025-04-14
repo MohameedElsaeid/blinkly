@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, ChevronRight, Play, Check, Globe, Shield, Zap, BarChart3, Users } from "lucide-react";
@@ -75,7 +76,7 @@ const Hero = () => {
             <div className="relative rounded-xl overflow-hidden shadow-2xl">
               <div className="absolute inset-0 bg-gradient-to-tr from-blinkly-purple/20 to-blinkly-teal/20 rounded-xl"></div>
               <OptimizedImage 
-                src="https://images.unsplash.com/photo-1498050108023-c5249f4df085"
+                src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6"
                 alt="Blinkly Development Dashboard" 
                 className="w-full h-auto rounded-xl relative z-10"
                 priority
