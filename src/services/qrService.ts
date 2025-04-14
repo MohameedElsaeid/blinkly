@@ -1,5 +1,5 @@
 
-import { apiClient } from './apiClient';
+import { apiClient } from './http/apiClient';
 import { QrCode, CreateQrCodeDto } from '../types/qr';
 
 class QrService {
@@ -20,7 +20,7 @@ class QrService {
   }
 
   async delete(id: string): Promise<void> {
-    return apiClient.delete(`/qr-codes/${id}`);
+    return apiClient.delete<void>(`/qr-codes/${id}`);
   }
 }
 

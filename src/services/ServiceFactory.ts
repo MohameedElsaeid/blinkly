@@ -1,4 +1,5 @@
-import { apiClient } from './apiClient';
+
+import { apiClient } from './http/apiClient';
 import { logger } from './LoggingService';
 import { cache } from './CacheService';
 import { security } from './SecurityService';

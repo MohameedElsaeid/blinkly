@@ -1,5 +1,5 @@
 
-import { apiClient } from './apiClient';
+import { apiClient } from './http/apiClient';
 
 export interface DynamicLinkRule {
   platform: 'ios' | 'android' | 'web';

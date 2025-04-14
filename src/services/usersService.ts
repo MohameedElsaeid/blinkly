@@ -1,5 +1,5 @@
 
-import { apiClient } from './apiClient';
+import { apiClient } from './http/apiClient';
 import { User, UpdateUserDto } from '../types';
 
 class UsersService {

@@ -1,5 +1,5 @@
 
-import { apiClient } from './apiClient';
+import { apiClient } from './http/apiClient';
 import { Link, CreateLinkParams, UpdateLinkParams, ClickEvent } from '../types';
 
 class LinksService {

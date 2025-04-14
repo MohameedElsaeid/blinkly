@@ -49,7 +49,10 @@ class ApiClient extends BaseHttpClient {
           const originalRequest = error.config;
           if (originalRequest) {
             const csrfToken = await csrfTokenService.fetchCsrfToken();
-            originalRequest.headers = originalRequest.headers || {};
+            // Ensure headers is initialized properly before assignment
+            if (!originalRequest.headers) {
+              originalRequest.headers = {};
+            }
             originalRequest.headers['x-csrf-token'] = csrfToken;
             return this.client(originalRequest);
           }
