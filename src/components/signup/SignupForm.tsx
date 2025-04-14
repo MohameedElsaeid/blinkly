@@ -105,7 +105,7 @@ const SignupForm = () => {
     setIsSubmitting(true);
     
     try {
-      await register({
+      const response = await register({
         firstName,
         lastName,
         email,
@@ -115,8 +115,9 @@ const SignupForm = () => {
         countryCode,
         phoneNumber: phone // The API expects just the number, it will prepend the country code
       });
-      toast.success("Account created successfully!");
-      navigate("/dashboard");
+      
+      console.log("Registration response:", response);
+      // Redirect is handled in the useAuth hook
     } catch (error: any) {
       console.error("Registration error:", error);
       setFormError(error.response?.data?.message || "Registration failed. Please try again.");

@@ -33,7 +33,9 @@ class AuthService {
   
   async register(params: SignUpDto): Promise<IAuthResponse> {
     try {
+      console.log('AuthService register called with params:', params);
       const response = await apiClient.post<IAuthResponse>('/auth/signup', params);
+      console.log('Register API response:', response);
       
       if (response.success && response.user) {
         this.saveAuthData(response.user);

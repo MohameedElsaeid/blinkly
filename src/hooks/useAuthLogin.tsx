@@ -52,6 +52,8 @@ export function useAuthLogin() {
         setIsAuthenticated(true);
         toast.success(response.message || 'Successfully logged in!');
         navigate('/dashboard');
+      } else {
+        toast.error(response.message || 'Login failed. Please check your credentials.');
       }
       return response;
     } catch (error: any) {
@@ -90,6 +92,8 @@ export function useAuthLogin() {
         setIsAuthenticated(true);
         toast.success(response.message || 'Registration successful!');
         navigate('/dashboard');
+      } else {
+        toast.error(response.message || 'Registration failed. Please try again.');
       }
       return response;
     } catch (error: any) {

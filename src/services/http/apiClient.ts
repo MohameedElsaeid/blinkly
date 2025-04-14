@@ -1,5 +1,5 @@
 
-import { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
+import { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig, AxiosRequestHeaders } from 'axios';
 import { BaseHttpClient } from './baseHttpClient';
 import { csrfTokenService } from '../csrf/csrfTokenService';
 import { apiErrorHandler } from '../errors/apiErrorHandler';
@@ -51,7 +51,7 @@ class ApiClient extends BaseHttpClient {
             const csrfToken = await csrfTokenService.fetchCsrfToken();
             // Ensure headers is initialized properly before assignment
             if (!originalRequest.headers) {
-              originalRequest.headers = {};
+              originalRequest.headers = {} as AxiosRequestHeaders;
             }
             originalRequest.headers['x-csrf-token'] = csrfToken;
             return this.client(originalRequest);

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,8 +51,7 @@ const Login = () => {
     console.log('Login form submission with:', { email, password });
     
     try {
-      const response = await login({ email, password });
-      console.log('Login response:', response);
+      await login({ email, password });
       // Redirect is handled in the useAuth hook
     } catch (error: any) {
       console.error("Login error details:", error);
