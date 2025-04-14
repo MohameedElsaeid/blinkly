@@ -1,5 +1,9 @@
 
 export * from './useAuth';
+export * from './useAuthState';
+export * from './useAuthLogin';
+export * from './useAuthPassword';
+export * from './useAuthVerification';
 export * from './useLinks';
 export * from './useAnalytics';
 export * from './use-mobile';
