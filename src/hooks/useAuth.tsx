@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { authService } from '../services';
-import { User } from '../types';
+import { User, UserRole } from '../types';
 import { 
   SignUpDto, 
   LoginDto, 
@@ -63,7 +63,7 @@ export function useAuth() {
           countryCode: responseUser.countryCode || '',
           phone: responseUser.phoneNumber || '',
           phoneNumber: responseUser.phoneNumber || '',
-          role: responseUser.role
+          role: responseUser.role ? (responseUser.role as UserRole) : undefined
         };
         setUser(userData);
         setIsAuthenticated(true);
@@ -98,7 +98,7 @@ export function useAuth() {
           countryCode: params.countryCode || '',
           phone: params.phoneNumber || '',
           phoneNumber: params.phoneNumber || '',
-          role: responseUser.role
+          role: responseUser.role ? (responseUser.role as UserRole) : undefined
         };
         setUser(userData);
         setIsAuthenticated(true);

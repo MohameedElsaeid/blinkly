@@ -21,9 +21,18 @@ export * from './auth';
 export * from './payment';
 export * from './qr';
 
-// Export link types carefully
-export * from './links';
+// Export analytics types first to avoid conflicts with links types
+export { 
+  ClickEvent, 
+  ClicksByDateDto, 
+  ClicksByPropertyDto, 
+  AnalyticsResponse,
+  IClickData,
+  ILinkAnalytics,
+  IDateRangeAnalytics,
+  IAnalyticsOverview,
+  IClicksByMetric
+} from './analytics';
 
-// Export analytics types last to avoid conflicts with duplicated types
-// Since there's ambiguity with some types in analytics and links, we'll export analytics last
-export * from './analytics';
+// Export links types but exclude duplicates from analytics
+export * from './links';
