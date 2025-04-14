@@ -9,6 +9,8 @@ export interface User {
   country?: string;
   countryCode?: string;
   phone?: string;
+  phoneNumber?: string;
+  role?: UserRole;
 }
 
 // Link types
@@ -104,4 +106,77 @@ export enum UserRole {
   USER = 'user',
   ADMIN = 'admin',
   SUPERADMIN = 'superadmin'
+}
+
+// QR Code types
+export interface QrCode {
+  id: string;
+  targetUrl: string;
+  link: Link;
+  user: User;
+  size: number;
+  color: string;
+  backgroundColor: string;
+  logoUrl: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateQrCodeDto {
+  targetUrl: string;
+  linkId?: string;
+  size?: number;
+  color?: string;
+  backgroundColor?: string;
+  logoUrl?: string;
+}
+
+// Payment types
+export interface CreatePaymentIntentDto {
+  amount: number;
+  currency: string;
+}
+
+export interface CreateSubscriptionDto {
+  planId: string;
+  paymentMethodId: string;
+}
+
+export interface ProcessRefundDto {
+  paymentIntentId: string;
+  amount?: number;
+}
+
+export interface UserSubscription {
+  id: string;
+  planId: string;
+  status: string;
+  currentPeriodStart: Date;
+  currentPeriodEnd: Date;
+  cancelAtPeriodEnd: boolean;
+}
+
+// Dynamic Link types
+export interface DynamicLink {
+  id: string;
+  name: string;
+  baseUrl: string;
+  user: User;
+  events: DynamicLinkClickEvent[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// User profile update DTO
+export interface UpdateUserDto {
+  firstName?: string;
+  lastName?: string;
+  address?: string;
+  city?: string;
+  postalCode?: string;
+  profilePicture?: string;
+  bio?: string;
+  preferredLanguage?: string;
+  timezone?: string;
+  dateOfBirth?: Date;
 }

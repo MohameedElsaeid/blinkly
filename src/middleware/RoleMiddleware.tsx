@@ -1,7 +1,7 @@
 
 import { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { UserRole } from '../types/users';
+import { User, UserRole } from '../types';
 import { useAuth } from '../hooks';
 
 interface RoleMiddlewareProps {
@@ -19,7 +19,7 @@ const RoleMiddleware = ({ requiredRole, children }: RoleMiddlewareProps) => {
   }
 
   // User is authenticated but has no role or insufficient role
-  // Safely access role with type assertion
+  // Access role safely
   const userRole = user.role as UserRole; 
   if (!userRole || userRole !== requiredRole) {
     // For admin routes, redirect to forbidden page

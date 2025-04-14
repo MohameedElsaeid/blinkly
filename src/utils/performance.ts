@@ -18,8 +18,9 @@ export const measureCLS = () => {
   let clsValue = 0;
   const observer = new PerformanceObserver((entryList) => {
     for (const entry of entryList.getEntries()) {
-      if (!(entry as LayoutShiftEntry).value) continue;
-      clsValue += (entry as LayoutShiftEntry).value;
+      if ((entry as LayoutShiftEntry).value) {
+        clsValue += (entry as LayoutShiftEntry).value;
+      }
     }
   });
   
@@ -79,9 +80,9 @@ export const logPerformanceMetrics = async () => {
     const cls = clsCalculator ? clsCalculator() : null;
     
     console.log('Performance Metrics:', {
-      LCP: lcp ? `${lcp.toFixed(2)}ms` : 'Not available',
-      FID: fid ? `${fid.toFixed(2)}ms` : 'Not available',
-      CLS: cls !== null ? cls.toFixed(3) : 'Not available',
+      LCP: typeof lcp === 'number' ? `${lcp.toFixed(2)}ms` : 'Not available',
+      FID: typeof fid === 'number' ? `${fid.toFixed(2)}ms` : 'Not available',
+      CLS: typeof cls === 'number' ? cls.toFixed(3) : 'Not available',
     });
   } catch (error) {
     console.error('Error measuring performance metrics:', error);

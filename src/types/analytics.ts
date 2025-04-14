@@ -1,80 +1,55 @@
 
-import { User } from './index';
-import { Link, DynamicLink } from './links';
+import { User, Link, ClickEvent } from './index';
 
-export interface ClickEvent {
+// Dynamic link related types
+export interface CreateDynamicLinkDto {
+  name: string;
+  baseUrl: string;
+  forwardParameters?: boolean;
+  tags?: string[];
+}
+
+export interface UpdateDynamicLinkDto {
+  name?: string;
+  baseUrl?: string;
+  forwardParameters?: boolean;
+  isActive?: boolean;
+  tags?: string[];
+}
+
+export interface DynamicLink {
   id: string;
-  ipAddress: string;
-  userAgent: string;
-  referrer: string;
-  country: string;
-  state: string;
-  city: string;
-  latitude: number;
-  longitude: number;
-  operatingSystem: string;
-  osVersion: string;
-  browserName: string;
-  browserVersion: string;
-  deviceModel: string;
-  sessionId: string;
-  utmSource: string;
-  utmMedium: string;
-  utmCampaign: string;
-  utmTerm: string;
-  utmContent: string;
-  link: Link;
-  timestamp: Date;
+  name: string;
+  baseUrl: string;
+  user: User;
+  isActive: boolean;
+  tags?: string[];
+  events: DynamicLinkClickEvent[];
+  forwardParameters: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export interface DynamicLinkClickEvent extends Omit<ClickEvent, 'link'> {
+export interface DynamicLinkClickEvent extends ClickEvent {
   dynamicLink: DynamicLink;
+  dynamicData?: Record<string, any>;
 }
 
-export interface IClickData {
-  ipAddress: string;
-  userAgent: string;
-  referrer?: string;
-  country?: string;
-  state?: string;
-  city?: string;
-  latitude?: number;
-  longitude?: number;
-  sessionId?: string;
-  utmSource?: string;
-  utmMedium?: string;
-  utmCampaign?: string;
-  utmTerm?: string;
-  utmContent?: string;
-}
-
-export interface ILinkAnalytics {
-  totalClicks: number;
-  events: ClickEvent[];
-}
-
-export interface IDateRangeAnalytics extends ILinkAnalytics {
-  clicksByDate: { [key: string]: number };
-}
-
-export interface IAnalyticsOverview {
-  totalClicks: number;
-  standardClicks: number;
-  dynamicClicks: number;
-  recentClicks?: ClickEvent[];
-}
-
-export interface IClicksByMetric {
-  [key: string]: number;
-}
-
+// Analytics response types
 export interface AnalyticsResponse {
   totalClicks: number;
-  clicksByDate: Record<string, number>;
-  browsers?: Record<string, number>;
-  operatingSystems?: Record<string, number>;
-  countries?: Record<string, number>;
-  referrers?: Record<string, number>;
-  utmSources?: Record<string, number>;
-  devices?: Record<string, number>;
+  clicksByDate: ClicksByDateDto[];
+  clicksByDevice: ClicksByPropertyDto;
+  clicksByBrowser: ClicksByPropertyDto;
+  clicksByCountry: ClicksByPropertyDto;
+  clicksByReferrer: ClicksByPropertyDto;
+}
+
+export interface ClicksByDateDto {
+  date: string;
+  count: number;
+}
+
+export interface ClicksByPropertyDto {
+  [key: string]: number;
 }

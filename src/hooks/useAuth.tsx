@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -45,7 +46,9 @@ export function useAuth() {
           token: response.user.token,
           country: response.user.country || '',
           countryCode: response.user.countryCode || '',
-          phone: response.user.phoneNumber || ''
+          phone: response.user.phoneNumber || '',
+          phoneNumber: response.user.phoneNumber || '',
+          role: response.user.role
         };
         setUser(userData);
         setIsAuthenticated(true);
@@ -76,7 +79,9 @@ export function useAuth() {
           token: response.user.token,
           country: params.country,
           countryCode: params.countryCode,
-          phone: params.phoneNumber
+          phone: params.phoneNumber,
+          phoneNumber: params.phoneNumber,
+          role: response.user.role
         };
         setUser(userData);
         setIsAuthenticated(true);
