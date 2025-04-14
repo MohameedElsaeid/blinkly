@@ -1,12 +1,10 @@
 
-// Fix for TypeScript error - the component is read-only, so we're using a consistent attribute format
-// The issue is with the custom components properties being passed to DayPicker
 import * as React from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { DayPicker } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button/button-variants"
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>
 
@@ -55,9 +53,8 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        // Fix: using proper format for custom components
-        IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
-        IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
+        IconLeft: () => <ChevronLeft className="h-4 w-4" />,
+        IconRight: () => <ChevronRight className="h-4 w-4" />,
       }}
       {...props}
     />
