@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -55,8 +56,12 @@ export function useAuth() {
     setIsLoading(true);
     try {
       const response = await authService.register(params);
-      toast.success(response.message || 'Registration successful! Please verify your email.');
-      navigate('/login');
+      if (response.success && response.user) {
+        setUser(response.user);
+        setIsAuthenticated(true);
+        toast.success(response.message || 'Registration successful!');
+        navigate('/dashboard');
+      }
       return response;
     } catch (error: any) {
       const message = error.response?.data?.message || 'Registration failed. Please try again.';

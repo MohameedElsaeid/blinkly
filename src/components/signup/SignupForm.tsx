@@ -110,12 +110,13 @@ const SignupForm = () => {
         lastName,
         email,
         password,
+        passwordConfirmation: confirmPassword,
         country,
         countryCode,
-        phone
+        phoneNumber: `${countryCode}${phone}`
       });
       toast.success("Account created successfully!");
-      navigate("/login");
+      navigate("/dashboard");
     } catch (error: any) {
       console.error("Registration error:", error);
       setFormError(error.response?.data?.message || "Registration failed. Please try again.");

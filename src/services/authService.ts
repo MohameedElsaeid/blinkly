@@ -1,3 +1,4 @@
+
 import { apiClient } from './apiClient';
 import { User } from '../types';
 import { 
@@ -15,8 +16,7 @@ class AuthService {
     const response = await apiClient.post<IAuthResponse>('/auth/login', params);
     
     if (response.success && response.user) {
-      localStorage.setItem('token', response.user.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
+      this.saveAuthData(response.user);
     }
     
     return response;
@@ -24,6 +24,11 @@ class AuthService {
   
   async register(params: SignUpDto): Promise<IAuthResponse> {
     const response = await apiClient.post<IAuthResponse>('/auth/signup', params);
+    
+    if (response.success && response.user) {
+      this.saveAuthData(response.user);
+    }
+    
     return response;
   }
   
@@ -47,6 +52,27 @@ class AuthService {
     return response;
   }
   
+  async refreshToken(): Promise<string | null> {
+    try {
+      const response = await apiClient.post<{success: boolean, user: {token: string}}>('/auth/refresh-token');
+      if (response.success && response.user?.token) {
+        localStorage.setItem('token', response.user.token);
+        return response.user.token;
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to refresh token:', error);
+      this.logout();
+      return null;
+    }
+  }
+  
+  private saveAuthData(user: any): void {
+    localStorage.setItem('token', user.token);
+    localStorage.setItem('user', JSON.stringify(user));
+    window.dispatchEvent(new Event('storage'));
+  }
+  
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -60,6 +86,10 @@ class AuthService {
   
   isAuthenticated(): boolean {
     return !!localStorage.getItem('token');
+  }
+  
+  getToken(): string | null {
+    return localStorage.getItem('token');
   }
 }
 

@@ -1,10 +1,11 @@
+
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import axiosRetry from 'axios-retry';
 import { toast } from 'sonner';
 import Cookies from 'js-cookie';
 import { errorMap } from '../utils/errorMap';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL || 'https://api.blinkly.app';
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
 const REQUEST_TIMEOUT = 30000;
@@ -48,10 +49,13 @@ class ApiClient {
           config.headers.Authorization = `Bearer ${token}`;
         }
         
-        // Add CSRF token
-        const csrfToken = Cookies.get('XSRF-TOKEN');
+        // Add CSRF token - Generate a new one if not available
+        const csrfToken = Cookies.get('XSRF-TOKEN') || this.generateCsrfToken();
         if (csrfToken) {
-          config.headers['X-XSRF-TOKEN'] = csrfToken;
+          config.headers['x-csrf-token'] = csrfToken;
+          if (!Cookies.get('XSRF-TOKEN')) {
+            Cookies.set('XSRF-TOKEN', csrfToken, { expires: 1 }); // 1 day expiry
+          }
         }
         
         // Add timestamp
@@ -116,12 +120,21 @@ class ApiClient {
         }
         // Handle unknown errors
         else {
-          toast.error('An unexpected error occurred.');
+          const errorMessage = error.response.data?.message || 'An unexpected error occurred.';
+          toast.error(errorMessage);
         }
         
         return Promise.reject(error);
       }
     );
+  }
+  
+  // CSRF token generation
+  private generateCsrfToken(): string {
+    // Simple CSRF token generation - in production this should be more secure
+    const array = new Uint8Array(32);
+    window.crypto.getRandomValues(array);
+    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
   }
   
   async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {

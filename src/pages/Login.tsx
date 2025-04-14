@@ -4,17 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AlertCircle, Mail, Lock, Loader2, ArrowRight } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAuth } from "@/hooks";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
-  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const validateForm = () => {
     if (!email) {
@@ -37,7 +37,7 @@ const Login = () => {
     return true;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
     
@@ -47,12 +47,15 @@ const Login = () => {
 
     setIsSubmitting(true);
     
-    // Mock login - in a real app, this would authenticate with a backend
-    setTimeout(() => {
+    try {
+      await login({ email, password });
+      // Redirect is handled in the useAuth hook
+    } catch (error: any) {
+      console.error("Login error:", error);
+      setFormError(error.response?.data?.message || "Login failed. Please check your credentials.");
+    } finally {
       setIsSubmitting(false);
-      toast.success("Login successful!");
-      navigate("/dashboard");
-    }, 1000);
+    }
   };
 
   return (
