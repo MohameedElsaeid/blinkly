@@ -1,8 +1,9 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu } from "lucide-react";
+import { Menu, Home } from "lucide-react";
 import { useAuth } from "@/hooks";
 import { useIsMobile } from "@/hooks";
 import Logo from "./Logo";
