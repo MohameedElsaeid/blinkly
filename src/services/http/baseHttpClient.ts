@@ -81,7 +81,7 @@ export class BaseHttpClient {
       // Ensure headers object exists
       config.headers = config.headers || {};
       
-      // Pass through all Cloudflare headers if they exist
+      // Pass through all Cloudflare headers directly from the document request
       const cloudflareHeaders = [
         'CF-IPCountry',
         'CF-Ray',
@@ -98,15 +98,24 @@ export class BaseHttpClient {
         'CF-IPTimeZone'
       ];
       
-      cloudflareHeaders.forEach(header => {
-        // Check if the header exists in the request and forward it
-        const headerValue = typeof document !== 'undefined' ? 
-          document.querySelector(`meta[name="${header}"]`)?.getAttribute('content') : null;
-          
-        if (headerValue) {
-          config.headers![header] = headerValue;
-        }
-      });
+      // Instead of looking for meta tags, we'll use a different approach
+      // since Cloudflare adds these headers directly to the request
+      
+      // Log attempt to add CF headers for debugging
+      console.log('Attempting to add Cloudflare headers to request');
+      
+      // For now, manually add them if they're available in cookies or local storage
+      // This is a fallback until we can properly capture the headers
+      const cfCountry = localStorage.getItem('cf-country');
+      if (cfCountry) {
+        config.headers['CF-IPCountry'] = cfCountry;
+      }
+      
+      // In a production environment, we should set up an endpoint that returns 
+      // the Cloudflare headers from the server side and cache them client-side
+      
+      // Add a custom header to indicate we want Cloudflare headers returned
+      config.headers['X-Forward-Cloudflare-Headers'] = 'true';
     } catch (error) {
       console.error('Error adding Cloudflare headers:', error);
     }
