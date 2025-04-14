@@ -74,6 +74,46 @@ export class BaseHttpClient {
   }
 
   /**
+   * Adds Cloudflare headers to request
+   */
+  protected addCloudflareHeaders(config: AxiosRequestConfig): AxiosRequestConfig {
+    try {
+      // Ensure headers object exists
+      config.headers = config.headers || {};
+      
+      // Pass through all Cloudflare headers if they exist
+      const cloudflareHeaders = [
+        'CF-IPCountry',
+        'CF-Ray',
+        'CF-Visitor',
+        'CF-Device-Type',
+        'CF-Metro-Code',
+        'CF-Region',
+        'CF-Region-Code',
+        'CF-Connecting-IP',
+        'CF-IPCity',
+        'CF-IPContinent',
+        'CF-IPLatitude',
+        'CF-IPLongitude',
+        'CF-IPTimeZone'
+      ];
+      
+      cloudflareHeaders.forEach(header => {
+        // Check if the header exists in the request and forward it
+        const headerValue = typeof document !== 'undefined' ? 
+          document.querySelector(`meta[name="${header}"]`)?.getAttribute('content') : null;
+          
+        if (headerValue) {
+          config.headers![header] = headerValue;
+        }
+      });
+    } catch (error) {
+      console.error('Error adding Cloudflare headers:', error);
+    }
+    return config;
+  }
+
+  /**
    * Adds auth token to request headers
    */
   protected addAuthToken(config: AxiosRequestConfig): AxiosRequestConfig {

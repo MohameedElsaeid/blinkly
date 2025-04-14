@@ -1,4 +1,3 @@
-
 import { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig, AxiosRequestHeaders } from 'axios';
 import { BaseHttpClient } from './baseHttpClient';
 import { csrfTokenService } from '../csrf/csrfTokenService';
@@ -23,20 +22,23 @@ class ApiClient extends BaseHttpClient {
           // Add client hints
           const configWithHints = this.addClientHints(configWithAuth);
 
+          // Add Cloudflare headers
+          const configWithCloudflare = this.addCloudflareHeaders(configWithHints);
+
           // Add CSRF token for mutations
           if (['post', 'put', 'delete', 'patch'].includes(config.method?.toLowerCase() || '')) {
             try {
               const csrfToken = await csrfTokenService.fetchCsrfToken();
-              configWithHints.headers = configWithHints.headers || {};
-              configWithHints.headers['x-csrf-token'] = csrfToken;
+              configWithCloudflare.headers = configWithCloudflare.headers || {};
+              configWithCloudflare.headers['x-csrf-token'] = csrfToken;
             } catch (csrfError) {
               console.error('Error fetching CSRF token:', csrfError);
               // Continue without CSRF token, the response interceptor will handle this
             }
           }
 
-          console.log('Request config:', configWithHints.url, configWithHints.method);
-          return configWithHints as InternalAxiosRequestConfig;
+          console.log('Request config:', configWithCloudflare.url, configWithCloudflare.method);
+          return configWithCloudflare as InternalAxiosRequestConfig;
         } catch (error) {
           console.error('Request interceptor error:', error);
           return config as InternalAxiosRequestConfig;
