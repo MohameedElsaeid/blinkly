@@ -6,13 +6,10 @@ const SitemapXML: React.FC = () => {
   const location = useLocation();
   
   useEffect(() => {
-    // Set the content type to XML
-    document.contentType = 'text/xml';
+    // Clear any existing document content
+    document.open('text/xml');
     
-    // Clear any HTML structure that might have been created
-    document.documentElement.innerHTML = '';
-    
-    // Create a text node with the XML content
+    // Write the XML content directly
     const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" 
@@ -140,10 +137,10 @@ const SitemapXML: React.FC = () => {
   </url>
 </urlset>`;
 
-    // Write the content directly as text
     document.write(xmlContent);
+    document.close();
     
-    // Set the content type again to ensure it's applied
+    // Add a Content-Type meta tag for browsers 
     const meta = document.createElement('meta');
     meta.httpEquiv = 'Content-Type';
     meta.content = 'application/xml; charset=utf-8';
