@@ -1,4 +1,11 @@
-export * from './apiClient';
+
+// Export HTTP clients
+export * from './http/apiClient';
+export * from './http/baseHttpClient';
+export * from './csrf/csrfTokenService';
+export * from './errors/apiErrorHandler';
+
+// Export services
 export * from './authService';
 export * from './linksService';
 export * from './analyticsService';

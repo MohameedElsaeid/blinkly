@@ -1,4 +1,5 @@
-import { apiClient } from './apiClient';
+
+import { apiClient } from './http/apiClient';
 import { User } from '../types';
 import { 
   IAuthResponse, 

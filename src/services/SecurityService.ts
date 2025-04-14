@@ -1,5 +1,6 @@
+
 import { jwtDecode } from "jwt-decode";
-import { apiClient } from './apiClient';
+import { apiClient } from './http/apiClient';
 
 interface TokenPayload {
   sub: string;
