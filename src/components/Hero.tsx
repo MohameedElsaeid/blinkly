@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, ChevronRight, Play, Check, Globe, Shield, Zap, BarChart3, Users } from "lucide-react";
 import { motion } from "framer-motion";
+import { OptimizedImage } from "./OptimizedImage";
 
 const Hero = () => {
   return (
@@ -74,10 +75,11 @@ const Hero = () => {
           <div className="flex-1 w-full max-w-xl mx-auto lg:mx-0">
             <div className="relative rounded-xl overflow-hidden shadow-2xl">
               <div className="absolute inset-0 bg-gradient-to-tr from-blinkly-purple/20 to-blinkly-teal/20 rounded-xl"></div>
-              <img 
-                src="https://images.unsplash.com/photo-1553729459-efe14ef6055d?q=80&w=2070" 
+              <OptimizedImage 
+                src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d"
                 alt="Blinkly Dashboard Preview" 
                 className="w-full h-auto rounded-xl relative z-10"
+                priority
               />
               
               {/* Stats Overlay */}
