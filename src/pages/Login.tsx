@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,12 +47,17 @@ const Login = () => {
     }
 
     setIsSubmitting(true);
+    console.log('Login form submission with:', { email, password });
     
     try {
-      await login({ email, password });
+      const response = await login({ email, password });
+      console.log('Login response:', response);
       // Redirect is handled in the useAuth hook
     } catch (error: any) {
-      console.error("Login error:", error);
+      console.error("Login error details:", error);
+      if (error.response) {
+        console.error("Server response:", error.response.data);
+      }
       setFormError(error.response?.data?.message || "Login failed. Please check your credentials.");
     } finally {
       setIsSubmitting(false);

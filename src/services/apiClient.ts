@@ -1,3 +1,4 @@
+
 import axios, {AxiosError, AxiosInstance, AxiosRequestConfig} from 'axios';
 import axiosRetry from 'axios-retry';
 import {toast} from 'sonner';
@@ -73,10 +74,14 @@ class ApiClient {
 
         // Response interceptor
         this.client.interceptors.response.use(
-            (response) => response.data,
+            (response) => {
+                // Return the actual data from the response
+                console.log('API Response:', response.data);
+                return response.data;
+            },
             async (error: AxiosError) => {
                 // Handle CSRF token mismatch
-                if (error.response?.status === 403 && error.response.data?.code === 'EBADCSRFTOKEN') {
+                if (error.response?.status === 403 && (error.response.data as any)?.code === 'EBADCSRFTOKEN') {
                     // Clear cached CSRF token and retry
                     this.csrfPromise = null;
                     const originalRequest = error.config;
@@ -95,10 +100,11 @@ class ApiClient {
     // CSRF token handling
     private async fetchCsrfToken(): Promise<string> {
         if (!this.csrfPromise) {
-            this.csrfPromise = this.client.get(CSRF_ENDPOINT)
-                .then(response => response.data.token)
+            console.log('Fetching CSRF token from:', `${API_URL}${CSRF_ENDPOINT}`);
+            this.csrfPromise = this.doFetchCsrfToken()
                 .catch(error => {
                     console.error('CSRF token fetch failed:', error);
+                    this.csrfPromise = null; // Reset for next attempt
                     throw new Error('Failed to obtain CSRF token');
                 });
         }
@@ -111,20 +117,26 @@ class ApiClient {
             // Check if we already have a token in cookies
             const existingToken = Cookies.get('XSRF-TOKEN');
             if (existingToken) {
+                console.log('Using existing CSRF token from cookies');
                 return existingToken;
             }
 
             // Fetch new token from server
+            console.log('Making CSRF token request to:', `${API_URL}${CSRF_ENDPOINT}`);
             const response = await axios.get(`${API_URL}${CSRF_ENDPOINT}`, {
                 withCredentials: true
             });
 
+            console.log('CSRF token response:', response.data);
             const token = response.data.token;
             if (token) {
+                console.log('Setting CSRF token in cookies');
                 Cookies.set('XSRF-TOKEN', token, {expires: 1}); // 1 day expiry
+            } else {
+                console.warn('No token found in CSRF response');
             }
 
-            return token;
+            return token || this.generateCsrfToken();
         } catch (error) {
             console.error('Failed to fetch CSRF token:', error);
             // Return the simple generated token as fallback
@@ -196,10 +208,12 @@ class ApiClient {
     }
 
     async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+        console.log(`Making GET request to: ${url}`);
         return this.client.get(url, config) as Promise<T>;
     }
 
     async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+        console.log(`Making POST request to: ${url}`, data);
         return this.client.post(url, data, config) as Promise<T>;
     }
 

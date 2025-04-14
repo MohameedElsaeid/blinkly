@@ -1,4 +1,3 @@
-
 import { apiClient } from './apiClient';
 import { User } from '../types';
 import { 
@@ -14,8 +13,10 @@ import {
 class AuthService {
   async login(params: LoginDto): Promise<IAuthResponse> {
     try {
+      console.log('AuthService login called with params:', params);
       // Call the login API endpoint
       const response = await apiClient.post<IAuthResponse>('/auth/login', params);
+      console.log('Login API response:', response);
       
       // If login is successful, save the auth data
       if (response.success && response.user) {
@@ -80,6 +81,7 @@ class AuthService {
   }
   
   private saveAuthData(user: any): void {
+    console.log('Saving auth data:', user);
     localStorage.setItem('token', user.token);
     localStorage.setItem('user', JSON.stringify(user));
     window.dispatchEvent(new Event('storage'));

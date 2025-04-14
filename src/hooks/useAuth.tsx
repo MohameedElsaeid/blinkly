@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -47,8 +46,10 @@ export function useAuth() {
 
   const login = useCallback(async (params: LoginDto) => {
     setIsLoading(true);
+    console.log('useAuth login called with params:', params);
     try {
       const response = await authService.login(params);
+      console.log('useAuth login response:', response);
       if (response.success && response.user) {
         // Safely cast or extract data from response.user
         const responseUser = response.user as AuthResponseUser;
@@ -74,6 +75,7 @@ export function useAuth() {
       }
       return response;
     } catch (error: any) {
+      console.error("Login error in useAuth:", error);
       const message = error.response?.data?.message || 'Login failed. Please check your credentials.';
       toast.error(message);
       throw error;
