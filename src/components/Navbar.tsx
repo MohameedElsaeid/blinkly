@@ -1,9 +1,8 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Home } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useAuth } from "@/hooks";
 import { useIsMobile } from "@/hooks";
 import Logo from "./Logo";
@@ -37,7 +36,6 @@ const Navbar = () => {
             <div className="space-x-3">
               <Button variant="ghost" asChild>
                 <Link to="/" className="text-gray-700 font-medium hover:text-blinkly-purple">
-                  <Home className="mr-2 h-4 w-4" />
                   Home
                 </Link>
               </Button>
