@@ -35,8 +35,8 @@ const Navbar = () => {
           
           <div className="hidden md:flex items-center justify-center flex-grow">
             <div className="space-x-3">
-              <Button variant="ghost" asChild className="text-gray-700 font-medium hover:text-blinkly-purple">
-                <Link to="/">
+              <Button variant="ghost" asChild>
+                <Link to="/" className="text-gray-700 font-medium hover:text-blinkly-purple">
                   <Home className="mr-2 h-4 w-4" />
                   Home
                 </Link>
