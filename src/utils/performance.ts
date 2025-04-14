@@ -18,7 +18,7 @@ export const measureCLS = () => {
   let clsValue = 0;
   const observer = new PerformanceObserver((entryList) => {
     for (const entry of entryList.getEntries()) {
-      if ((entry as LayoutShiftEntry).value) {
+      if ('value' in entry) {
         clsValue += (entry as LayoutShiftEntry).value;
       }
     }

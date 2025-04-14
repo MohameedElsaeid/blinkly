@@ -1,7 +1,8 @@
 
 import { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { User, UserRole } from '../types';
+import { User } from '../types';
+import { UserRole } from '../types/users';
 import { useAuth } from '../hooks';
 
 interface RoleMiddlewareProps {

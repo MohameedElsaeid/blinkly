@@ -1,15 +1,18 @@
 
 import { apiClient } from './apiClient';
-import { User } from '../types';
-import { UpdateUserDto } from '../types/users';
+import { User, UpdateUserDto } from '../types';
 
 class UsersService {
-  async getProfile(): Promise<User> {
-    return apiClient.get<User>('/users/profile');
+  async getCurrentUser(): Promise<User> {
+    return apiClient.get<User>('/users/me');
   }
 
-  async updateProfile(data: UpdateUserDto): Promise<User> {
-    return apiClient.put<User>('/users/profile', data);
+  async updateUser(id: string, userData: UpdateUserDto): Promise<User> {
+    return apiClient.patch<User>(`/users/${id}`, userData);
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    return apiClient.delete(`/users/${id}`);
   }
 }
 

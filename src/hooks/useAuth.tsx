@@ -77,10 +77,10 @@ export function useAuth() {
           firstName: response.user.firstName,
           lastName: response.user.lastName,
           token: response.user.token,
-          country: params.country,
-          countryCode: params.countryCode,
-          phone: params.phoneNumber,
-          phoneNumber: params.phoneNumber,
+          country: params.country || '',
+          countryCode: params.countryCode || '',
+          phone: params.phoneNumber || '',
+          phoneNumber: params.phoneNumber || '',
           role: response.user.role
         };
         setUser(userData);

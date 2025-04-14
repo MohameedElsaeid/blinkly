@@ -1,5 +1,5 @@
 
-import { User, Link, ClickEvent } from './index';
+import { User } from './index';
 
 // Dynamic link related types
 export interface CreateDynamicLinkDto {
@@ -30,6 +30,17 @@ export interface DynamicLink {
   updatedAt: Date;
 }
 
+// Export the ClickEvent interface
+export interface ClickEvent {
+  id: string;
+  linkId: string;
+  timestamp: Date;
+  browser?: string;
+  device?: string;
+  country?: string;
+  referrer?: string;
+}
+
 export interface DynamicLinkClickEvent extends ClickEvent {
   dynamicLink: DynamicLink;
   dynamicData?: Record<string, any>;
@@ -52,4 +63,42 @@ export interface ClicksByDateDto {
 
 export interface ClicksByPropertyDto {
   [key: string]: number;
+}
+
+// Add the missing interfaces that are being imported in analyticsService.ts
+export interface IClickData {
+  browser?: string;
+  device?: string;
+  country?: string;
+  referrer?: string;
+}
+
+export interface ILinkAnalytics {
+  totalClicks: number;
+  clicksByDate: ClicksByDateDto[];
+  clicksByDevice: ClicksByPropertyDto;
+  clicksByBrowser: ClicksByPropertyDto;
+  clicksByCountry: ClicksByPropertyDto;
+}
+
+export interface IDateRangeAnalytics {
+  totalClicks: number;
+  clicksByDate: ClicksByDateDto[];
+}
+
+export interface IAnalyticsOverview {
+  totalClicks: number;
+  clicksToday: number;
+  clicksThisWeek: number;
+  clicksThisMonth: number;
+  topLinks: {
+    linkId: string;
+    alias: string;
+    clicks: number;
+  }[];
+}
+
+export interface IClicksByMetric {
+  total: number;
+  data: Record<string, number>;
 }

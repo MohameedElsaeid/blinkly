@@ -1,15 +1,6 @@
 
-import { User } from './index';
 import { Link } from './links';
-
-export interface CreateQrCodeDto {
-  targetUrl: string;
-  linkId?: string;
-  size?: number;
-  color?: string;
-  backgroundColor?: string;
-  logoUrl?: string;
-}
+import { User } from './index';
 
 export interface QrCode {
   id: string;
@@ -22,4 +13,13 @@ export interface QrCode {
   logoUrl: string | null;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface CreateQrCodeDto {
+  targetUrl: string;
+  linkId?: string;
+  size?: number;
+  color?: string;
+  backgroundColor?: string;
+  logoUrl?: string;
 }

@@ -3,24 +3,24 @@ import { apiClient } from './apiClient';
 import { QrCode, CreateQrCodeDto } from '../types/qr';
 
 class QrService {
-  async createQrCode(data: CreateQrCodeDto): Promise<QrCode> {
-    return apiClient.post<QrCode>('/qr', data);
+  async getAll(): Promise<QrCode[]> {
+    return apiClient.get<QrCode[]>('/qr-codes');
   }
 
-  async getAllQrCodes(): Promise<QrCode[]> {
-    return apiClient.get<QrCode[]>('/qr');
+  async getById(id: string): Promise<QrCode> {
+    return apiClient.get<QrCode>(`/qr-codes/${id}`);
   }
 
-  async getQrCode(id: string): Promise<QrCode> {
-    return apiClient.get<QrCode>(`/qr/${id}`);
+  async create(qrCodeData: CreateQrCodeDto): Promise<QrCode> {
+    return apiClient.post<QrCode>('/qr-codes', qrCodeData);
   }
 
-  async deleteQrCode(id: string): Promise<void> {
-    return apiClient.delete(`/qr/${id}`);
+  async update(id: string, qrCodeData: Partial<CreateQrCodeDto>): Promise<QrCode> {
+    return apiClient.patch<QrCode>(`/qr-codes/${id}`, qrCodeData);
   }
 
-  async getStats(): Promise<{ totalQrCodes: number }> {
-    return apiClient.get('/qr/admin/stats');
+  async delete(id: string): Promise<void> {
+    return apiClient.delete(`/qr-codes/${id}`);
   }
 }
 

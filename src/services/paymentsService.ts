@@ -9,27 +9,23 @@ import {
 
 class PaymentsService {
   async createPaymentIntent(data: CreatePaymentIntentDto): Promise<{ clientSecret: string }> {
-    return apiClient.post<{ clientSecret: string }>('/payments/payment-intent', data);
+    return apiClient.post<{ clientSecret: string }>('/payments/create-intent', data);
   }
 
-  async createSubscription(data: CreateSubscriptionDto): Promise<{ subscriptionId: string; clientSecret: string | null }> {
-    return apiClient.post<{ subscriptionId: string; clientSecret: string | null }>('/payments/subscriptions', data);
+  async createSubscription(data: CreateSubscriptionDto): Promise<UserSubscription> {
+    return apiClient.post<UserSubscription>('/payments/subscribe', data);
   }
 
-  async cancelSubscription(): Promise<{ message: string }> {
-    return apiClient.delete<{ message: string }>('/payments/subscriptions');
+  async cancelSubscription(subscriptionId: string): Promise<UserSubscription> {
+    return apiClient.post<UserSubscription>(`/payments/cancel-subscription/${subscriptionId}`, {});
   }
 
-  async getPaymentMethods(): Promise<any[]> {
-    return apiClient.get<any[]>('/payments/payment-methods');
+  async processRefund(data: ProcessRefundDto): Promise<{ success: boolean }> {
+    return apiClient.post<{ success: boolean }>('/payments/refund', data);
   }
 
-  async processRefund(data: ProcessRefundDto): Promise<{ refundId: string }> {
-    return apiClient.post<{ refundId: string }>('/payments/refunds', data);
-  }
-
-  async getUserSubscription(): Promise<UserSubscription | null> {
-    return apiClient.get<UserSubscription | null>('/payments/subscriptions/current');
+  async getSubscriptions(): Promise<UserSubscription[]> {
+    return apiClient.get<UserSubscription[]>('/payments/subscriptions');
   }
 }
 
