@@ -51,18 +51,19 @@ class ApiClient {
                     config.headers.Authorization = `Bearer ${token}`;
                 }
 
+                // Add client hints with better type checking
+                if (typeof window !== 'undefined' && 'userAgentData' in window.navigator) {
+                    const userAgentData = (window.navigator as any).userAgentData;
+                    config.headers['Sec-CH-UA'] = userAgentData.brands
+                        ?.map((b: { brand: string; version: string }) => `"${b.brand}";v="${b.version}"`)
+                        .join(', ') || '';
+                    config.headers['Sec-CH-UA-Mobile'] = userAgentData.mobile ? '?1' : '?0';
+                    config.headers['Sec-CH-UA-Platform'] = userAgentData.platform || '';
+                }
+
                 // Add CSRF token for mutations
                 if (['post', 'put', 'delete', 'patch'].includes(config.method?.toLowerCase() || '')) {
                     config.headers['x-csrf-token'] = await this.fetchCsrfToken();
-                }
-
-                // Add client hints
-                if (typeof window !== 'undefined' && window.navigator.userAgentData) {
-                    config.headers['Sec-CH-UA'] = window.navigator.userAgentData.brands
-                        ?.map(b => `"${b.brand}";v="${b.version}"`)
-                        .join(', ') || '';
-                    config.headers['Sec-CH-UA-Mobile'] = window.navigator.userAgentData.mobile ? '?1' : '?0';
-                    config.headers['Sec-CH-UA-Platform'] = window.navigator.userAgentData.platform || '';
                 }
 
                 return config;
