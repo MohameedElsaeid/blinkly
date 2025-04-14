@@ -33,6 +33,19 @@ export type SEOProps = {
   structuredData?: Record<string, any>;
 };
 
+// Core Web Vitals reporting
+export const reportWebVitals = (onPerfEntry?: any) => {
+  if (onPerfEntry && onPerfEntry instanceof Function) {
+    import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
+      getCLS(onPerfEntry);
+      getFID(onPerfEntry);
+      getFCP(onPerfEntry);
+      getLCP(onPerfEntry);
+      getTTFB(onPerfEntry);
+    });
+  }
+};
+
 export const generateMetaTags = (data: {
   title: string;
   description: string;
@@ -245,4 +258,92 @@ export const generateStructuredData = {
       },
     })),
   }),
+};
+
+// Utility for adding enhanced SEO metadata
+export const enhanceSEO = {
+  // Add breadcrumb schema for better navigation understanding by search engines
+  breadcrumbs: (breadcrumbs: { name: string; url: string }[]) => ({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: breadcrumbs.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: item.url
+    }))
+  }),
+  
+  // Add local business schema for location-based services
+  localBusiness: (data: { name: string; address: string; city: string; state: string; zip: string; country: string; phone: string; latitude?: number; longitude?: number }) => ({
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: data.name,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: data.address,
+      addressLocality: data.city,
+      addressRegion: data.state,
+      postalCode: data.zip,
+      addressCountry: data.country
+    },
+    telephone: data.phone,
+    ...(data.latitude && data.longitude ? {
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: data.latitude,
+        longitude: data.longitude
+      }
+    } : {})
+  })
+};
+
+// Helper to estimate page load performance metrics
+export const estimateCoreWebVitals = () => {
+  if (typeof window !== 'undefined' && 'performance' in window) {
+    // Log estimated LCP
+    const estimateLCP = () => {
+      const entries = performance.getEntriesByType('resource');
+      const images = entries.filter(entry => 
+        entry.initiatorType === 'img' || 
+        /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(entry.name)
+      );
+      
+      if (images.length) {
+        // Find the largest image resource
+        const largestImage = images.reduce((largest, current) => {
+          return (current.transferSize > largest.transferSize) ? current : largest;
+        }, images[0]);
+        
+        console.info('Estimated LCP resource:', largestImage.name, 
+                    'Size:', (largestImage.transferSize / 1024).toFixed(2) + 'kb', 
+                    'Load Time:', largestImage.duration.toFixed(2) + 'ms');
+      }
+    };
+    
+    // Track CLS events
+    let clsValue = 0;
+    let clsEntries = [];
+    
+    const observer = new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        if (!entry.hadRecentInput) {
+          clsValue += entry.value;
+          clsEntries.push(entry);
+        }
+      }
+      console.info('Current CLS:', clsValue);
+    });
+    
+    if (PerformanceObserver.supportedEntryTypes.includes('layout-shift')) {
+      observer.observe({type: 'layout-shift', buffered: true});
+    }
+    
+    // Check after main content should be loaded
+    setTimeout(() => {
+      estimateLCP();
+      // Disconnect observers
+      observer.disconnect();
+    }, 3000);
+  }
 };
