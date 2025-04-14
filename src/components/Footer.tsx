@@ -1,6 +1,6 @@
-
 import { Link } from "react-router-dom";
 import { Mail, Twitter, Github, Linkedin } from "lucide-react";
+import Logo from "./Logo";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -9,31 +9,8 @@ const Footer = () => {
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-          <Link to="/" className="flex items-center text-lg font-semibold mb-4 md:mb-0">
-            <div className="h-8 w-8 mr-2 bg-gradient-to-r from-blinkly-purple to-blinkly-teal rounded-md flex items-center justify-center">
-              <svg 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-5 w-5 text-white"
-              >
-                <path 
-                  d="M3 9L12 4.5L21 9L12 13.5L3 9Z" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                />
-                <path 
-                  d="M3 14L12 18.5L21 14" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <span>Blinkly</span>
+          <Link to="/" className="mb-4 md:mb-0">
+            <Logo size="large" className="text-white" />
           </Link>
           <div className="flex space-x-4">
             <a href="#" className="text-gray-400 hover:text-white transition-colors">

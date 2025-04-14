@@ -1,35 +1,38 @@
 
 import React from "react";
 
-const Logo = () => {
+type LogoProps = {
+  size?: "small" | "medium" | "large" | "custom";
+  customSize?: string;
+  className?: string;
+}
+
+const Logo: React.FC<LogoProps> = ({ 
+  size = "medium", 
+  customSize, 
+  className = "" 
+}) => {
+  const sizeMap = {
+    small: "h-6 w-6",
+    medium: "h-9 w-9",
+    large: "h-12 w-12",
+    custom: customSize || "h-9 w-9"
+  };
+
+  const containerSizeClass = sizeMap[size];
+  
   return (
-    <div className="flex items-center">
-      <div className="h-9 w-9 mr-2 bg-gradient-to-r from-blinkly-purple to-blinkly-teal rounded-lg flex items-center justify-center shadow-sm">
-        <svg 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          xmlns="http://www.w3.org/2000/svg" 
-          className="h-6 w-6 text-white"
-        >
-          <path 
-            d="M3 9L12 4.5L21 9L12 13.5L3 9Z" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round"
-          />
-          <path 
-            d="M3 14L12 18.5L21 14" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round"
-          />
-        </svg>
+    <div className={`flex items-center ${className}`}>
+      <div className={`${containerSizeClass} mr-2 flex items-center justify-center`}>
+        <img 
+          src="/lovable-uploads/ed79eeec-3c34-4e54-8aa2-6ef526e315b8.png" 
+          alt="Blinkly Logo" 
+          className="w-full h-full object-contain"
+        />
       </div>
       <div className="flex items-baseline">
         <span className="text-2xl font-bold text-gray-900">Blink</span>
-        <span className="text-2xl font-bold bg-gradient-to-r from-blinkly-purple to-blinkly-teal bg-clip-text text-transparent">ly</span>
+        <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">ly</span>
       </div>
     </div>
   );

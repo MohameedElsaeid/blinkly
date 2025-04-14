@@ -29,22 +29,28 @@ export default defineConfig(({ mode }) => ({
     mode === 'development' ? componentTagger() : undefined,
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'robots.txt', 'sitemap.xml'],
+      includeAssets: [
+        'favicon.svg', 
+        'apple-touch-icon.png', 
+        'robots.txt', 
+        'sitemap.xml',
+        'lovable-uploads/ed79eeec-3c34-4e54-8aa2-6ef526e315b8.png'
+      ],
       manifest: {
         name: 'Blinkly',
         short_name: 'Blinkly',
         description: 'URL Shortener & Link Management Platform',
-        theme_color: '#5D5FEF',
+        theme_color: '#3B82F6',
         background_color: '#ffffff',
         display: 'standalone',
         icons: [
           {
-            src: 'pwa-192x192.png',
+            src: '/lovable-uploads/ed79eeec-3c34-4e54-8aa2-6ef526e315b8.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'pwa-512x512.png',
+            src: '/lovable-uploads/ed79eeec-3c34-4e54-8aa2-6ef526e315b8.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'

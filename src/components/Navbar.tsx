@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -29,7 +28,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link to="/">
-              <Logo />
+              <Logo size={isMobile ? "small" : "medium"} />
             </Link>
           </div>
           
@@ -90,7 +89,10 @@ const Navbar = () => {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-full sm:w-64">
-                <div className="flex flex-col space-y-4 pt-8">
+                <div className="pt-6 pb-8 flex justify-center">
+                  <Logo size="large" />
+                </div>
+                <div className="flex flex-col space-y-4">
                   <Link to="/" className="font-semibold text-lg text-gray-800" onClick={() => setOpen(false)}>
                     Home
                   </Link>

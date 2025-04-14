@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import Logo from "../Logo";
 
 const navItems = [
   {
@@ -83,9 +84,9 @@ const Sidebar = ({ className }: SidebarProps) => {
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-center h-16 border-b">
-            <div className="text-alchemy-purple-dark font-heading font-bold text-xl">
-              Bli<span className="text-alchemy-purple">nkly</span>
-            </div>
+            <Link to="/dashboard">
+              <Logo size="medium" />
+            </Link>
           </div>
 
           <div className="flex-1 overflow-y-auto py-4 px-3">
