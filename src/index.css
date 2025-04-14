@@ -1,15 +1,65 @@
 
-/* Modify the existing button styles to prevent transparency */
-button, input:where([type=button]), input:where([type=reset]), input:where([type=submit]) {
-    -webkit-appearance: button;
-    background-color: var(--brand-purple, #5D5FEF); /* Default to brand purple */
-    background-image: none;
-    color: white; /* Ensure text is visible */
+/* Base button styles to ensure visibility */
+button, 
+input:where([type=button]), 
+input:where([type=reset]), 
+input:where([type=submit]) {
+  -webkit-appearance: button;
+  background-color: var(--brand-purple, #5D5FEF); /* Default to brand purple */
+  background-image: none;
+  color: white; /* Ensure text is visible */
+  border: none;
+  border-radius: 0.375rem; /* rounded-md in Tailwind */
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
 }
 
 /* Ensure hover states maintain visibility */
-button:hover, input:where([type=button]):hover, 
-input:where([type=reset]):hover, input:where([type=submit]):hover {
-    background-color: var(--brand-purple-dark, #4D4FDF); /* Slightly darker shade on hover */
-    opacity: 0.9;
+button:hover, 
+input:where([type=button]):hover, 
+input:where([type=reset]):hover, 
+input:where([type=submit]):hover {
+  background-color: var(--brand-purple-dark, #4D4FDF); /* Slightly darker shade on hover */
+  opacity: 0.9;
+}
+
+/* Exception for buttons with specific variants that should keep their styling */
+button[class*="variant"], 
+.btn-custom,
+[class*="button-variants"] {
+  background-color: initial; /* Reset to allow button variants to work */
+  color: initial;
+}
+
+/* Ensure form inputs are visible */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  width: 100%;
+}
+
+/* Make sure text is readable */
+body {
+  color: #1a202c;
+  background-color: #f9fafb;
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.5;
+}
+
+/* Fix contrast for better accessibility */
+a {
+  color: var(--brand-purple, #5D5FEF);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
 }
