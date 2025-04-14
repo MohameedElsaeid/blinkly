@@ -6,8 +6,14 @@ const SitemapXML: React.FC = () => {
   const location = useLocation();
   
   useEffect(() => {
-    // Create the XML content
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+    // Set the content type to XML
+    document.contentType = 'text/xml';
+    
+    // Clear any HTML structure that might have been created
+    document.documentElement.innerHTML = '';
+    
+    // Create a text node with the XML content
+    const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" 
         xmlns:xhtml="http://www.w3.org/1999/xhtml" 
@@ -134,20 +140,15 @@ const SitemapXML: React.FC = () => {
   </url>
 </urlset>`;
 
-    // Instead of modifying the document HTML, let's create a proper XML response
-    document.open('text/xml');
-    document.write(xml);
-    document.close();
+    // Write the content directly as text
+    document.write(xmlContent);
     
-    // Set the content type to XML
-    const contentType = document.createElement('meta');
-    contentType.httpEquiv = 'Content-Type';
-    contentType.content = 'application/xml';
-    document.head.appendChild(contentType);
+    // Set the content type again to ensure it's applied
+    const meta = document.createElement('meta');
+    meta.httpEquiv = 'Content-Type';
+    meta.content = 'application/xml; charset=utf-8';
+    document.head.appendChild(meta);
     
-    return () => {
-      // No cleanup needed as document gets replaced on route change
-    };
   }, [location]);
 
   return null; // This component doesn't render any visible elements
