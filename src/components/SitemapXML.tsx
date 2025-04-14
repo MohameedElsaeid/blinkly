@@ -134,20 +134,19 @@ const SitemapXML: React.FC = () => {
   </url>
 </urlset>`;
 
-    // Set content type to XML
-    document.title = 'Sitemap';
+    // Instead of modifying the document HTML, let's create a proper XML response
+    document.open('text/xml');
+    document.write(xml);
+    document.close();
+    
+    // Set the content type to XML
     const contentType = document.createElement('meta');
     contentType.httpEquiv = 'Content-Type';
     contentType.content = 'application/xml';
     document.head.appendChild(contentType);
     
-    // Replace the document content with XML
-    document.documentElement.innerHTML = xml;
-    document.documentElement.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
-    
     return () => {
-      // Clean up when component unmounts
-      document.head.removeChild(contentType);
+      // No cleanup needed as document gets replaced on route change
     };
   }, [location]);
 
