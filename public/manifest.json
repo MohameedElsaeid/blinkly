@@ -14,14 +14,14 @@
       "type": "image/x-icon"
     },
     {
-      "src": "/pwa-192x192.png",
-      "type": "image/png",
+      "src": "/favicon.ico",
+      "type": "image/x-icon",
       "sizes": "192x192",
       "purpose": "any maskable"
     },
     {
-      "src": "/pwa-512x512.png",
-      "type": "image/png",
+      "src": "/favicon.ico",
+      "type": "image/x-icon",
       "sizes": "512x512",
       "purpose": "any maskable"
     }
