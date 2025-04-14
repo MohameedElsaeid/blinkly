@@ -16,46 +16,76 @@ class ApiClient extends BaseHttpClient {
     // Request interceptor
     this.client.interceptors.request.use(
       async (config) => {
-        // Add authentication token
-        const configWithAuth = this.addAuthToken(config);
-        
-        // Add client hints
-        const configWithHints = this.addClientHints(configWithAuth);
+        try {
+          // Add authentication token
+          const configWithAuth = this.addAuthToken(config);
+          
+          // Add client hints
+          const configWithHints = this.addClientHints(configWithAuth);
 
-        // Add CSRF token for mutations
-        if (['post', 'put', 'delete', 'patch'].includes(config.method?.toLowerCase() || '')) {
-          const csrfToken = await csrfTokenService.fetchCsrfToken();
-          configWithHints.headers = configWithHints.headers || {};
-          configWithHints.headers['x-csrf-token'] = csrfToken;
+          // Add CSRF token for mutations
+          if (['post', 'put', 'delete', 'patch'].includes(config.method?.toLowerCase() || '')) {
+            try {
+              const csrfToken = await csrfTokenService.fetchCsrfToken();
+              configWithHints.headers = configWithHints.headers || {};
+              configWithHints.headers['x-csrf-token'] = csrfToken;
+            } catch (csrfError) {
+              console.error('Error fetching CSRF token:', csrfError);
+              // Continue without CSRF token, the response interceptor will handle this
+            }
+          }
+
+          console.log('Request config:', configWithHints.url, configWithHints.method);
+          return configWithHints as InternalAxiosRequestConfig;
+        } catch (error) {
+          console.error('Request interceptor error:', error);
+          return config as InternalAxiosRequestConfig;
         }
-
-        return configWithHints as InternalAxiosRequestConfig;
       },
-      (error) => Promise.reject(error)
+      (error) => {
+        console.error('Request interceptor rejection:', error);
+        return Promise.reject(error);
+      }
     );
 
     // Response interceptor
     this.client.interceptors.response.use(
       (response) => {
-        // Return the actual data from the response
-        console.log('API Response:', response.data);
+        console.log('API Response for', response.config.url, ':', response.status);
         return response.data;
       },
       async (error: AxiosError) => {
+        console.error('API Error:', error.message, error.response?.status);
+        
         // Handle CSRF token mismatch
         if (error.response?.status === 403 && (error.response.data as any)?.code === 'EBADCSRFTOKEN') {
+          console.log('CSRF token mismatch, retrying request with fresh token');
           // Clear cached CSRF token and retry
           csrfTokenService.invalidateToken();
           const originalRequest = error.config;
           if (originalRequest) {
-            const csrfToken = await csrfTokenService.fetchCsrfToken();
-            // Ensure headers is initialized properly before assignment
-            if (!originalRequest.headers) {
-              originalRequest.headers = {} as AxiosRequestHeaders;
+            try {
+              const csrfToken = await csrfTokenService.fetchCsrfToken();
+              // Ensure headers is initialized properly before assignment
+              if (!originalRequest.headers) {
+                originalRequest.headers = {} as AxiosRequestHeaders;
+              }
+              originalRequest.headers['x-csrf-token'] = csrfToken;
+              return this.client(originalRequest);
+            } catch (tokenError) {
+              console.error('Failed to refresh CSRF token:', tokenError);
             }
-            originalRequest.headers['x-csrf-token'] = csrfToken;
-            return this.client(originalRequest);
           }
+        }
+
+        // Handle network errors with detailed logging
+        if (!error.response) {
+          console.error('Network error details:', {
+            message: error.message,
+            code: error.code,
+            requestURL: error.config?.url,
+            requestMethod: error.config?.method
+          });
         }
 
         apiErrorHandler.handleApiError(error);
@@ -64,27 +94,52 @@ class ApiClient extends BaseHttpClient {
     );
   }
 
-  // HTTP Methods
+  // HTTP Methods with improved error handling
   async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
     console.log(`Making GET request to: ${url}`);
-    return this.client.get(url, config) as Promise<T>;
+    try {
+      return this.client.get(url, config) as Promise<T>;
+    } catch (error) {
+      console.error(`GET request failed for ${url}:`, error);
+      throw error;
+    }
   }
 
   async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
     console.log(`Making POST request to: ${url}`, data);
-    return this.client.post(url, data, config) as Promise<T>;
+    try {
+      return this.client.post(url, data, config) as Promise<T>;
+    } catch (error) {
+      console.error(`POST request failed for ${url}:`, error);
+      throw error;
+    }
   }
 
   async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    return this.client.put(url, data, config) as Promise<T>;
+    try {
+      return this.client.put(url, data, config) as Promise<T>;
+    } catch (error) {
+      console.error(`PUT request failed for ${url}:`, error);
+      throw error;
+    }
   }
 
   async patch<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    return this.client.patch(url, data, config) as Promise<T>;
+    try {
+      return this.client.patch(url, data, config) as Promise<T>;
+    } catch (error) {
+      console.error(`PATCH request failed for ${url}:`, error);
+      throw error;
+    }
   }
 
   async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    return this.client.delete(url, config) as Promise<T>;
+    try {
+      return this.client.delete(url, config) as Promise<T>;
+    } catch (error) {
+      console.error(`DELETE request failed for ${url}:`, error);
+      throw error;
+    }
   }
 }
 

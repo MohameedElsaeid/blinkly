@@ -5,7 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 const REQUEST_TIMEOUT = 30000;
 const MAX_RETRIES = 3;
-const RETRY_DELAY = 1000;
+const INITIAL_RETRY_DELAY = 1000;
+const MAX_RETRY_DELAY = 10000;
 
 export class BaseHttpClient {
   protected client: AxiosInstance;
@@ -22,14 +23,32 @@ export class BaseHttpClient {
       },
     });
 
-    // Configure retry logic
+    // Configure retry logic with exponential backoff
     axiosRetry(this.client, {
       retries: MAX_RETRIES,
-      retryDelay: (retryCount) => retryCount * RETRY_DELAY,
+      retryDelay: (retryCount) => {
+        const delay = Math.min(
+          Math.pow(2, retryCount) * INITIAL_RETRY_DELAY,
+          MAX_RETRY_DELAY
+        );
+        console.log(`Retrying request (attempt ${retryCount}), delay: ${delay}ms`);
+        return delay;
+      },
       retryCondition: (error) => {
-        return axiosRetry.isNetworkOrIdempotentRequestError(error) ||
+        // Retry on network errors, timeouts, and specific HTTP status codes
+        const shouldRetry = 
+          axiosRetry.isNetworkOrIdempotentRequestError(error) ||
+          error.code === 'ECONNABORTED' ||
           (error.response?.status === 429) ||
-          (error.response?.status === 503);
+          (error.response?.status === 503) ||
+          (error.response?.status === 500) ||
+          (error.response?.status === 408);
+        
+        console.log(`Request failed with status ${error.response?.status}. Retry? ${shouldRetry}`);
+        return shouldRetry;
+      },
+      onRetry: (retryCount, error, requestConfig) => {
+        console.log(`Retrying request to ${requestConfig.url} (attempt ${retryCount}). Previous error: ${error.message}`);
       }
     });
   }
@@ -38,14 +57,18 @@ export class BaseHttpClient {
    * Adds client hints to request headers
    */
   protected addClientHints(config: AxiosRequestConfig): AxiosRequestConfig {
-    if (typeof window !== 'undefined' && 'userAgentData' in window.navigator) {
-      const userAgentData = (window.navigator as any).userAgentData;
-      config.headers = config.headers || {};
-      config.headers['Sec-CH-UA'] = userAgentData.brands
-        ?.map((b: { brand: string; version: string }) => `"${b.brand}";v="${b.version}"`)
-        .join(', ') || '';
-      config.headers['Sec-CH-UA-Mobile'] = userAgentData.mobile ? '?1' : '?0';
-      config.headers['Sec-CH-UA-Platform'] = userAgentData.platform || '';
+    try {
+      if (typeof window !== 'undefined' && 'userAgentData' in window.navigator) {
+        const userAgentData = (window.navigator as any).userAgentData;
+        config.headers = config.headers || {};
+        config.headers['Sec-CH-UA'] = userAgentData.brands
+          ?.map((b: { brand: string; version: string }) => `"${b.brand}";v="${b.version}"`)
+          .join(', ') || '';
+        config.headers['Sec-CH-UA-Mobile'] = userAgentData.mobile ? '?1' : '?0';
+        config.headers['Sec-CH-UA-Platform'] = userAgentData.platform || '';
+      }
+    } catch (error) {
+      console.error('Error adding client hints:', error);
     }
     return config;
   }
@@ -54,10 +77,14 @@ export class BaseHttpClient {
    * Adds auth token to request headers
    */
   protected addAuthToken(config: AxiosRequestConfig): AxiosRequestConfig {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers = config.headers || {};
-      config.headers.Authorization = `Bearer ${token}`;
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers = config.headers || {};
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch (error) {
+      console.error('Error adding auth token:', error);
     }
     return config;
   }

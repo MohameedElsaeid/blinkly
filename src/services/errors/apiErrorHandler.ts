@@ -10,13 +10,27 @@ export class ApiErrorHandler {
   handleApiError(error: AxiosError): void {
     // Handle network errors
     if (!error.response) {
-      toast.error('Network error. Please check your connection.');
+      const errorMessage = this.getNetworkErrorMessage(error);
+      toast.error(errorMessage);
+      console.error('Network error details:', {
+        message: error.message,
+        code: error.code,
+        requestURL: error.config?.url,
+        requestMethod: error.config?.method
+      });
       return;
     }
 
     const status = error.response.status;
     const errorData = error.response.data as any;
     const errorCode = errorData?.code;
+
+    console.log('API Error Handler:', { 
+      status, 
+      errorCode, 
+      errorMessage: errorData?.message,
+      url: error.config?.url
+    });
 
     // Check for CORS errors
     if (status === 403 && error.response.headers['x-cors-error']) {
@@ -48,7 +62,7 @@ export class ApiErrorHandler {
     }
     // Handle server errors
     else if (status >= 500) {
-      toast.error('Server error. Please try again later.');
+      toast.error(`Server error (${status}). Please try again later.`);
     }
     // Handle mapped errors
     else if (errorCode && errorMap[errorCode]) {
@@ -58,6 +72,21 @@ export class ApiErrorHandler {
     else {
       const errorMessage = errorData?.message || 'An unexpected error occurred.';
       toast.error(errorMessage);
+    }
+  }
+
+  /**
+   * Get a user-friendly network error message
+   */
+  private getNetworkErrorMessage(error: AxiosError): string {
+    if (error.code === 'ECONNABORTED') {
+      return 'Request timed out. Please check your connection and try again.';
+    } else if (error.code === 'ERR_NETWORK') {
+      return 'Network error. Please check your internet connection.';
+    } else if (error.code === 'ERR_BAD_REQUEST') {
+      return 'Bad request. Please try again.';
+    } else {
+      return 'Network error. Please check your connection.';
     }
   }
 }
