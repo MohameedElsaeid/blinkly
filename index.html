@@ -5,54 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blinkly - URL Shortener, Link Management & QR Code Generator</title>
     <meta name="description" content="Transform long URLs into powerful, trackable short links. Create custom links, track analytics, and generate QR codes with Blinkly - the ultimate link management platform." />
-    <meta name="keywords" content="url shortener, link shortener, short links, custom links, link management, link tracking, url analytics, qr code generator, blinkly, link optimization" />
-    <meta name="author" content="Blinkly" />
-    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#5D5FEF" />
     <link rel="canonical" href="https://blinkly.app" />
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://blinkly.app" />
-    <meta property="og:title" content="Blinkly - Transform, Track, and Optimize Your Links" />
-    <meta property="og:description" content="Create memorable branded links, track detailed analytics, and generate high-quality QR codes with Blinkly's powerful link management platform." />
-    <meta property="og:image" content="https://blinkly.app/og-image.png" />
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@blinkly_app" />
-    <meta name="twitter:title" content="Blinkly - URL Shortener & Link Analytics" />
-    <meta name="twitter:description" content="Blink and you'll miss it – share your link in a flash. Transform long URLs into powerful, trackable short links." />
-    <meta name="twitter:image" content="https://blinkly.app/twitter-card.png" />
-
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238A4FFF' stroke-width='2'><path d='M3 9L12 4.5L21 9L12 13.5L3 9Z'/><path d='M3 14L12 18.5L21 14'/></svg>" />
-  </head>
-
-  <body>
-    <div id="root"></div>
-    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="/src/main.tsx"></script>
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     
-    <!-- Structured data for SEO -->
+    <!-- Preload critical assets -->
+    <link rel="preload" href="/fonts/Poppins-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/Roboto-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    
+    <!-- Preconnect to critical domains -->
+    <link rel="preconnect" href="https://api.blinkly.app" />
+    <link rel="preconnect" href="https://images.blinkly.app" />
+    
+    <!-- Critical CSS -->
+    <style>
+      /* Inline critical CSS here */
+      @font-face {
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/Poppins-Regular.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/Roboto-Regular.woff2') format('woff2');
+      }
+      /* Add other critical CSS */
+    </style>
+    
+    <!-- Structured data -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
+        "@type": "WebApplication",
         "name": "Blinkly",
-        "applicationCategory": "WebApplication",
+        "applicationCategory": "UtilityApplication",
+        "description": "Transform long URLs into powerful, trackable short links. Create custom links, track analytics, and generate QR codes.",
         "operatingSystem": "Web",
+        "url": "https://blinkly.app",
         "offers": {
           "@type": "Offer",
           "price": "0",
           "priceCurrency": "USD"
-        },
-        "description": "Transform long URLs into powerful, trackable short links. Create custom links, track analytics, and generate QR codes.",
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": "4.8",
-          "ratingCount": "1024"
         }
       }
     </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>You need to enable JavaScript to run this application.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -2,8 +2,10 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
+import { VitePWA } from 'vite-plugin-pwa';
+import { visualizer } from 'rollup-plugin-visualizer';
+import { compression } from 'vite-plugin-compression2';
 
-// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
@@ -11,12 +13,80 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    mode === 'development' &&
-    componentTagger(),
+    mode === 'development' ? componentTagger() : undefined,
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'robots.txt'],
+      manifest: {
+        name: 'Blinkly',
+        short_name: 'Blinkly',
+        description: 'URL Shortener & Link Management Platform',
+        theme_color: '#5D5FEF',
+        background_color: '#ffffff',
+        display: 'standalone',
+        icons: [
+          {
+            src: 'pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable'
+          }
+        ]
+      }
+    }),
+    mode === 'production' ? compression({
+      algorithm: 'brotli',
+      exclude: [/\.(br|gz)$/, /\.(png|jpe?g|gif|webp)$/i]
+    }) : undefined,
+    mode === 'production' ? visualizer({
+      open: true,
+      gzipSize: true,
+      brotliSize: true
+    }) : undefined
   ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    target: 'es2015',
+    cssCodeSplit: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: [
+            'react',
+            'react-dom',
+            'react-router-dom',
+            '@tanstack/react-query',
+            'axios',
+            'framer-motion'
+          ],
+          ui: [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-tooltip'
+          ]
+        }
+      }
+    },
+    sourcemap: false,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    }
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom']
+  }
 }));

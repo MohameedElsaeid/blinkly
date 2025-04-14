@@ -1,46 +1,47 @@
-
 import { apiClient } from './apiClient';
-import { ClickEvent, ClicksByDate, ClicksByProperty } from '../types';
-
-export interface RecordClickParams {
-  browser?: string;
-  device?: string;
-  country?: string;
-  referrer?: string;
-}
+import { 
+  IClickData, 
+  ClickEvent, 
+  DynamicLinkClickEvent, 
+  ILinkAnalytics, 
+  IDateRangeAnalytics,
+  IAnalyticsOverview,
+  IClicksByMetric 
+} from '../types';
 
 class AnalyticsService {
-  async getClicksForLink(linkId: string): Promise<ClickEvent[]> {
-    return apiClient.get<ClickEvent[]>(`/analytics/link/${linkId}`);
+  async recordClick(alias: string, data: IClickData): Promise<ClickEvent> {
+    return apiClient.post<ClickEvent>(`/analytics/link/${alias}/click`, data);
   }
-  
-  async getAllClicks(): Promise<ClickEvent[]> {
-    return apiClient.get<ClickEvent[]>('/analytics');
+
+  async recordDynamicClick(alias: string, data: Record<string, unknown>): Promise<DynamicLinkClickEvent> {
+    return apiClient.post<DynamicLinkClickEvent>(`/analytics/dynamic/${alias}/click`, data);
   }
-  
-  async getClicksByDateRange(linkId: string, startDate: Date, endDate: Date): Promise<ClicksByDate[]> {
-    const start = startDate.toISOString().split('T')[0];
-    const end = endDate.toISOString().split('T')[0];
-    
-    return apiClient.get<ClicksByDate[]>(
-      `/analytics/link/${linkId}/date-range?start=${start}&end=${end}`
+
+  async getLinkAnalytics(id: string): Promise<ILinkAnalytics> {
+    return apiClient.get<ILinkAnalytics>(`/analytics/link/${id}`);
+  }
+
+  async getDateRangeAnalytics(id: string, start: Date, end: Date): Promise<IDateRangeAnalytics> {
+    return apiClient.get<IDateRangeAnalytics>(
+      `/analytics/link/${id}/date-range?start=${start.toISOString()}&end=${end.toISOString()}`
     );
   }
-  
-  async getClicksByDevice(): Promise<ClicksByProperty> {
-    return apiClient.get<ClicksByProperty>('/analytics/devices');
+
+  async getOverview(): Promise<IAnalyticsOverview> {
+    return apiClient.get<IAnalyticsOverview>('/analytics/overview');
   }
-  
-  async getClicksByBrowser(): Promise<ClicksByProperty> {
-    return apiClient.get<ClicksByProperty>('/analytics/browsers');
+
+  async getDeviceStats(): Promise<IClicksByMetric> {
+    return apiClient.get<IClicksByMetric>('/analytics/devices');
   }
-  
-  async getClicksByCountry(): Promise<ClicksByProperty> {
-    return apiClient.get<ClicksByProperty>('/analytics/countries');
+
+  async getBrowserStats(): Promise<IClicksByMetric> {
+    return apiClient.get<IClicksByMetric>('/analytics/browsers');
   }
-  
-  async recordClick(alias: string, data: RecordClickParams): Promise<void> {
-    return apiClient.post<void>(`/analytics/${alias}/click`, data);
+
+  async getCountryStats(): Promise<IClicksByMetric> {
+    return apiClient.get<IClicksByMetric>('/analytics/countries');
   }
 }
 

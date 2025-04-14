@@ -1,8 +1,13 @@
-
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
+import axiosRetry from 'axios-retry';
 import { toast } from 'sonner';
+import Cookies from 'js-cookie';
+import { errorMap } from '../utils/errorMap';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000;
+const REQUEST_TIMEOUT = 30000;
 
 class ApiClient {
   private client: AxiosInstance;
@@ -10,34 +15,76 @@ class ApiClient {
   constructor(baseURL: string) {
     this.client = axios.create({
       baseURL,
+      timeout: REQUEST_TIMEOUT,
       headers: {
         'Content-Type': 'application/json',
       },
+    });
+    
+    // Configure retry logic
+    axiosRetry(this.client, {
+      retries: MAX_RETRIES,
+      retryDelay: (retryCount) => retryCount * RETRY_DELAY,
+      retryCondition: (error) => {
+        return axiosRetry.isNetworkOrIdempotentRequestError(error) || 
+               (error.response?.status === 429) || // Rate limit
+               (error.response?.status === 503);    // Service unavailable
+      }
     });
     
     this.setupInterceptors();
   }
   
   private setupInterceptors() {
-    // Request interceptor for adding auth token
+    // Request interceptor
     this.client.interceptors.request.use(
       (config) => {
+        // Add request ID
+        config.headers['X-Request-ID'] = crypto.randomUUID();
+        
+        // Add auth token
         const token = localStorage.getItem('token');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
+        
+        // Add CSRF token
+        const csrfToken = Cookies.get('XSRF-TOKEN');
+        if (csrfToken) {
+          config.headers['X-XSRF-TOKEN'] = csrfToken;
+        }
+        
+        // Add timestamp
+        config.headers['X-Request-Time'] = new Date().toISOString();
+        
         return config;
       },
       (error) => {
+        console.error('Request error:', error);
         return Promise.reject(error);
       }
     );
     
-    // Response interceptor for global error handling
+    // Response interceptor
     this.client.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        // Log response time
+        const requestTime = new Date(response.config.headers['X-Request-Time']);
+        const responseTime = new Date();
+        const duration = responseTime.getTime() - requestTime.getTime();
+        console.debug(`Request to ${response.config.url} took ${duration}ms`);
+        
+        return response;
+      },
       (error: AxiosError) => {
-        const status = error.response?.status;
+        // Handle network errors
+        if (!error.response) {
+          toast.error('Network error. Please check your connection.');
+          return Promise.reject(new Error('Network error'));
+        }
+        
+        const status = error.response.status;
+        const errorCode = error.response.data?.code;
         
         // Handle authentication errors
         if (status === 401) {
@@ -54,10 +101,22 @@ class ApiClient {
         // Handle forbidden errors
         else if (status === 403) {
           toast.error('You do not have permission to perform this action.');
-        } 
+        }
+        // Handle rate limiting
+        else if (status === 429) {
+          toast.error('Too many requests. Please try again later.');
+        }
         // Handle server errors
-        else if (status && status >= 500) {
+        else if (status >= 500) {
           toast.error('Server error. Please try again later.');
+        }
+        // Handle mapped errors
+        else if (errorCode && errorMap[errorCode]) {
+          toast.error(errorMap[errorCode]);
+        }
+        // Handle unknown errors
+        else {
+          toast.error('An unexpected error occurred.');
         }
         
         return Promise.reject(error);

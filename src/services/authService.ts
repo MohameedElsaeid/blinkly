@@ -1,39 +1,49 @@
-
 import { apiClient } from './apiClient';
 import { User } from '../types';
-
-interface AuthResponse {
-  user: User;
-  access_token: string;
-}
-
-export interface RegisterParams {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  country: string;
-  countryCode: string;
-  phone: string;
-}
-
-export interface LoginParams {
-  email: string;
-  password: string;
-}
+import { 
+  IAuthResponse, 
+  SignUpDto, 
+  LoginDto, 
+  ForgotPasswordDto, 
+  ResetPasswordDto,
+  VerifyPhoneDto,
+  VerifyEmailDto
+} from '../types/auth';
 
 class AuthService {
-  async login({ email, password }: LoginParams): Promise<AuthResponse> {
-    const response = await apiClient.post<AuthResponse>('/auth/login', { email, password });
+  async login(params: LoginDto): Promise<IAuthResponse> {
+    const response = await apiClient.post<IAuthResponse>('/auth/login', params);
     
-    localStorage.setItem('token', response.access_token);
-    localStorage.setItem('user', JSON.stringify(response.user));
+    if (response.success && response.user) {
+      localStorage.setItem('token', response.user.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
+    }
     
     return response;
   }
   
-  async register(params: RegisterParams): Promise<User> {
-    const response = await apiClient.post<User>('/auth/register', params);
+  async register(params: SignUpDto): Promise<IAuthResponse> {
+    const response = await apiClient.post<IAuthResponse>('/auth/signup', params);
+    return response;
+  }
+  
+  async forgotPassword(params: ForgotPasswordDto): Promise<IAuthResponse> {
+    const response = await apiClient.post<IAuthResponse>('/auth/forgot-password', params);
+    return response;
+  }
+  
+  async resetPassword(params: ResetPasswordDto): Promise<IAuthResponse> {
+    const response = await apiClient.post<IAuthResponse>('/auth/reset-password', params);
+    return response;
+  }
+  
+  async verifyPhone(params: VerifyPhoneDto): Promise<IAuthResponse> {
+    const response = await apiClient.post<IAuthResponse>('/auth/verify-phone', params);
+    return response;
+  }
+  
+  async verifyEmail(params: VerifyEmailDto): Promise<IAuthResponse> {
+    const response = await apiClient.post<IAuthResponse>('/auth/verify-email', params);
     return response;
   }
   

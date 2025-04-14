@@ -1,43 +1,21 @@
-
 import { apiClient } from './apiClient';
-import { Link } from '../types';
-
-export interface CreateLinkParams {
-  originalUrl: string;
-  alias?: string;
-  tags?: string[];
-}
-
-export interface UpdateLinkParams {
-  originalUrl?: string;
-  alias?: string;
-  isActive?: boolean;
-  tags?: string[];
-}
+import { Link, CreateLinkDto, DynamicLink, CreateDynamicLinkDto, AnalyticsResponse } from '../types';
 
 class LinksService {
-  async createLink(params: CreateLinkParams): Promise<Link> {
-    return apiClient.post<Link>('/links', params);
+  async createLink(data: CreateLinkDto): Promise<Link> {
+    return apiClient.post<Link>('/api/links', data);
   }
-  
-  async getAllLinks(): Promise<Link[]> {
-    return apiClient.get<Link[]>('/links');
+
+  async createDynamicLink(data: CreateDynamicLinkDto): Promise<DynamicLink> {
+    return apiClient.post<DynamicLink>('/api/dynamic-links', data);
   }
-  
-  async getRecentLinks(limit: number = 3): Promise<Link[]> {
-    return apiClient.get<Link[]>(`/links?limit=${limit}`);
+
+  async getAnalytics(): Promise<AnalyticsResponse> {
+    return apiClient.get<AnalyticsResponse>('/api/links/analytics');
   }
-  
-  async getLinkById(id: string): Promise<Link> {
-    return apiClient.get<Link>(`/links/${id}`);
-  }
-  
-  async updateLink(id: string, data: UpdateLinkParams): Promise<Link> {
-    return apiClient.patch<Link>(`/links/${id}`, data);
-  }
-  
-  async deleteLink(id: string): Promise<void> {
-    return apiClient.delete<void>(`/links/${id}`);
+
+  async getLinkClicks(id: string): Promise<ClickEvent[]> {
+    return apiClient.get<ClickEvent[]>(`/api/links/${id}/clicks`);
   }
 }
 
