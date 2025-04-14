@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => ({
         'apple-touch-icon.png', 
         'robots.txt', 
         'sitemap.xml',
-        'lovable-uploads/ed79eeec-3c34-4e54-8aa2-6ef526e315b8.png'
+        'lovable-uploads/de393ef5-a1f3-4b87-b5aa-2d0886d80447.png'
       ],
       manifest: {
         name: 'Blinkly',
@@ -45,12 +45,12 @@ export default defineConfig(({ mode }) => ({
         display: 'standalone',
         icons: [
           {
-            src: '/lovable-uploads/ed79eeec-3c34-4e54-8aa2-6ef526e315b8.png',
+            src: '/lovable-uploads/de393ef5-a1f3-4b87-b5aa-2d0886d80447.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: '/lovable-uploads/ed79eeec-3c34-4e54-8aa2-6ef526e315b8.png',
+            src: '/lovable-uploads/de393ef5-a1f3-4b87-b5aa-2d0886d80447.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'

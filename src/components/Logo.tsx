@@ -25,7 +25,7 @@ const Logo: React.FC<LogoProps> = ({
     <div className={`flex items-center ${className}`}>
       <div className={`${containerSizeClass} mr-2 flex items-center justify-center`}>
         <img 
-          src="/lovable-uploads/ed79eeec-3c34-4e54-8aa2-6ef526e315b8.png" 
+          src="/lovable-uploads/de393ef5-a1f3-4b87-b5aa-2d0886d80447.png" 
           alt="Blinkly Logo" 
           className="w-full h-full object-contain"
         />
