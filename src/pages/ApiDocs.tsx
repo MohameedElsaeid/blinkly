@@ -1,5 +1,4 @@
 
-import { Helmet } from "react-helmet-async";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { 
@@ -9,14 +8,15 @@ import {
   DynamicLinksApiSection,
   AnalyticsApiSection
 } from "@/components/api-docs";
+import { SEO } from "@/utils/seo";
 
 const ApiDocs = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Helmet>
-        <title>API Documentation - Blinkly</title>
-        <meta name="description" content="Documentation for Blinkly's RESTful APIs for URL shortening and dynamic link management." />
-      </Helmet>
+      <SEO
+        title="API Documentation"
+        description="Documentation for Blinkly's RESTful APIs for URL shortening and dynamic link management."
+      />
       <Navbar />
       <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-4xl mx-auto">
