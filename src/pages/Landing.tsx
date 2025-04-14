@@ -4,7 +4,7 @@ import Hero from "@/components/Hero";
 import FeaturesSection from "@/components/FeaturesSection";
 import PricingSection from "@/components/PricingSection";
 import CTASection from "@/components/CTASection";
-import TestimonialsSection from "@/components/TestimonialsSection";
+import CommunitySection from "@/components/CommunitySection";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import Footer from "@/components/Footer";
 import { Helmet } from "react-helmet-async";
@@ -36,7 +36,7 @@ const Landing = () => {
         <section id="features" aria-labelledby="features-heading">
           <FeaturesSection />
         </section>
-        <TestimonialsSection />
+        <CommunitySection />
         <section id="pricing" aria-labelledby="pricing-heading">
           <PricingSection />
         </section>
