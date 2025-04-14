@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, ChevronRight, Play, Check, Globe, Shield, Zap, BarChart3, Users } from "lucide-react";
@@ -120,23 +119,6 @@ const Hero = () => {
             </div>
             <span className="text-4xl font-bold text-gray-900 mb-2">99.9%</span>
             <span className="text-gray-600">Uptime guarantee</span>
-          </div>
-        </div>
-
-        {/* Brands Section */}
-        <div className="mt-20 text-center">
-          <p className="text-sm uppercase tracking-wider text-gray-500 font-medium mb-8">Trusted by innovative brands worldwide</p>
-          
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 items-center justify-items-center">
-            {[1, 2, 3, 4, 5].map((num) => (
-              <div key={num} className="grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-                <img 
-                  src={`https://placehold.co/180x60/f5f5f5/a3a3a3?text=BRAND ${num}`} 
-                  alt={`Brand ${num}`} 
-                  className="h-8 md:h-10 max-w-full"
-                />
-              </div>
-            ))}
           </div>
         </div>
       </div>
