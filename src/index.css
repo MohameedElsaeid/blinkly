@@ -82,6 +82,14 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading font-semibold;
   }
+  
+  /* Fix for transparent buttons */
+  button, input:where([type=button]), input:where([type=reset]), input:where([type=submit]) {
+    -webkit-appearance: button;
+    background-color: #5D5FEF; /* Default brand purple color */
+    color: white; /* Text color for visibility */
+    background-image: none;
+  }
 }
 
 @layer components {
