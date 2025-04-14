@@ -2,7 +2,8 @@
 import { Link } from './links';
 import { QrCode } from './qr';
 import { UserSubscription } from './payment';
-import { DynamicLinkClickEvent, DynamicLink } from './analytics';
+import { DynamicLinkClickEvent } from './analytics';
+import { DynamicLink } from './links'; // Import DynamicLink from links instead of analytics
 
 export enum UserRole {
   USER = 'USER',
