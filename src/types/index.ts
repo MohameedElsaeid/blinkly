@@ -27,6 +27,9 @@ export {
   ClicksByDateDto, 
   ClicksByPropertyDto, 
   AnalyticsResponse,
+} from './analytics';
+
+export type { 
   IClickData,
   ILinkAnalytics,
   IDateRangeAnalytics,

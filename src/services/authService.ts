@@ -13,23 +13,35 @@ import {
 
 class AuthService {
   async login(params: LoginDto): Promise<IAuthResponse> {
-    const response = await apiClient.post<IAuthResponse>('/auth/login', params);
-    
-    if (response.success && response.user) {
-      this.saveAuthData(response.user);
+    try {
+      // Call the login API endpoint
+      const response = await apiClient.post<IAuthResponse>('/auth/login', params);
+      
+      // If login is successful, save the auth data
+      if (response.success && response.user) {
+        this.saveAuthData(response.user);
+      }
+      
+      return response;
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
     }
-    
-    return response;
   }
   
   async register(params: SignUpDto): Promise<IAuthResponse> {
-    const response = await apiClient.post<IAuthResponse>('/auth/signup', params);
-    
-    if (response.success && response.user) {
-      this.saveAuthData(response.user);
+    try {
+      const response = await apiClient.post<IAuthResponse>('/auth/signup', params);
+      
+      if (response.success && response.user) {
+        this.saveAuthData(response.user);
+      }
+      
+      return response;
+    } catch (error) {
+      console.error('Registration error:', error);
+      throw error;
     }
-    
-    return response;
   }
   
   async forgotPassword(params: ForgotPasswordDto): Promise<IAuthResponse> {

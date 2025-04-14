@@ -73,12 +73,12 @@ class ApiClient {
     this.client.interceptors.response.use(
       (response) => {
         // Log response time
-        const requestTime = new Date(response.config.headers['X-Request-Time']);
+        const requestTime = new Date(response.config.headers['X-Request-Time'] as string);
         const responseTime = new Date();
         const duration = responseTime.getTime() - requestTime.getTime();
         console.debug(`Request to ${response.config.url} took ${duration}ms`);
         
-        return response;
+        return response.data; // Return the data directly
       },
       (error: AxiosError) => {
         // Handle network errors
@@ -132,35 +132,30 @@ class ApiClient {
   
   // CSRF token generation
   private generateCsrfToken(): string {
-    // Simple CSRF token generation - in production this should be more secure
+    // Simple CSRF token generation
     const array = new Uint8Array(32);
     window.crypto.getRandomValues(array);
     return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
   }
   
   async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.client.get<T>(url, config);
-    return response.data;
+    return this.client.get<T>(url, config);
   }
   
   async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.client.post<T>(url, data, config);
-    return response.data;
+    return this.client.post<T>(url, data, config);
   }
   
   async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.client.put<T>(url, data, config);
-    return response.data;
+    return this.client.put<T>(url, data, config);
   }
   
   async patch<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.client.patch<T>(url, data, config);
-    return response.data;
+    return this.client.patch<T>(url, data, config);
   }
   
   async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.client.delete<T>(url, config);
-    return response.data;
+    return this.client.delete<T>(url, config);
   }
 }
 

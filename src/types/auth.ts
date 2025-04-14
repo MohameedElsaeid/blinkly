@@ -10,6 +10,10 @@ export interface IAuthResponse {
     firstName: string;
     lastName: string;
     token: string;
+    country?: string;
+    countryCode?: string;
+    phoneNumber?: string;
+    role?: string;
   };
 }
 
