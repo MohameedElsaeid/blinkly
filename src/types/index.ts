@@ -22,7 +22,7 @@ export * from './payment';
 export * from './qr';
 
 // Export analytics types first to avoid conflicts with links types
-export { 
+export type { 
   ClickEvent, 
   ClicksByDateDto, 
   ClicksByPropertyDto, 
