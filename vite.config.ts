@@ -11,6 +11,18 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    proxy: {
+      '/api': {
+        target: process.env.VITE_API_URL || 'https://api.blinkly.app',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+        headers: {
+          'X-Forwarded-Proto': 'https',
+          'X-Forwarded-Host': 'blinkly.app'
+        }
+      }
+    }
   },
   plugins: [
     react(),
@@ -89,5 +101,12 @@ export default defineConfig(({ mode }) => ({
   },
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom']
+  },
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(mode),
+    'process.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL),
+    'process.env.VITE_ENV': JSON.stringify(process.env.VITE_ENV),
+    'process.env.VITE_CSRF_ENDPOINT': JSON.stringify(process.env.VITE_CSRF_ENDPOINT),
+    'process.env.VITE_ALLOWED_ORIGINS': JSON.stringify(process.env.VITE_ALLOWED_ORIGINS)
   }
 }));
