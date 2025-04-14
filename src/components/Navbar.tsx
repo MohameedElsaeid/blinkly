@@ -36,39 +36,50 @@ const Navbar = () => {
           <div className="hidden md:flex items-center justify-center flex-grow">
             <div className="space-x-3">
               <Button variant="ghost" asChild>
-                <Link to="/" className="text-gray-700 font-medium hover:text-blinkly-purple">
+                <Link to="/" className="nav-link">
                   Home
                 </Link>
               </Button>
               <Button variant="ghost" asChild>
-                <Link to="/#features" className="text-gray-700 font-medium hover:text-blinkly-purple">
+                <Link to="/#features" className="nav-link">
                   Features
                 </Link>
               </Button>
               <Button variant="ghost" asChild>
-                <Link to="/pricing" className="text-gray-700 font-medium hover:text-blinkly-purple">
+                <Link to="/pricing" className="nav-link">
                   Pricing
                 </Link>
               </Button>
               <Button variant="ghost" asChild>
-                <Link to="/about" className="text-gray-700 font-medium hover:text-blinkly-purple">
+                <Link to="/about" className="nav-link">
                   About
                 </Link>
               </Button>
             </div>
           </div>
           
-          <div className="hidden md:flex items-center space-x-2">
-            <Button variant="outline" className="text-blinkly-purple border-blinkly-purple hover:bg-blinkly-purple/10" asChild>
-              <Link to="/login" className="text-blinkly-purple">
-                Log in
-              </Link>
-            </Button>
-            <Button className="bg-blinkly-purple hover:bg-blinkly-purple-dark text-white shadow-sm" asChild>
-              <Link to="/signup" className="text-white">
-                Sign up
-              </Link>
-            </Button>
+          <div className="hidden md:flex items-center space-x-3">
+            {!user ? (
+              <>
+                <Button variant="outline" className="text-brand-purple border-brand-purple hover:bg-brand-purple/10" asChild>
+                  <Link to="/login">
+                    Log in
+                  </Link>
+                </Button>
+                <Button className="bg-brand-purple hover:bg-brand-purple/90 shadow-sm" asChild>
+                  <Link to="/signup" className="text-white">
+                    Sign up
+                  </Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="outline" asChild>
+                  <Link to="/dashboard">Dashboard</Link>
+                </Button>
+                <Button variant="destructive" onClick={handleLogout}>Logout</Button>
+              </>
+            )}
           </div>
           
           <div className="md:hidden">
@@ -79,34 +90,34 @@ const Navbar = () => {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-full sm:w-64">
-                <div className="flex flex-col space-y-4">
-                  <Link to="/" className="font-semibold text-lg text-gray-800">
+                <div className="flex flex-col space-y-4 pt-8">
+                  <Link to="/" className="font-semibold text-lg text-gray-800" onClick={() => setOpen(false)}>
                     Home
                   </Link>
-                  <Link to="/#features" className="font-semibold text-lg text-gray-800">
+                  <Link to="/#features" className="font-semibold text-lg text-gray-800" onClick={() => setOpen(false)}>
                     Features
                   </Link>
-                  <Link to="/pricing" className="font-semibold text-lg text-blinkly-teal">
+                  <Link to="/pricing" className="font-semibold text-lg text-brand-teal" onClick={() => setOpen(false)}>
                     Pricing
                   </Link>
-                  <Link to="/about" className="font-semibold text-lg text-blinkly-orange">
+                  <Link to="/about" className="font-semibold text-lg text-brand-gold" onClick={() => setOpen(false)}>
                     About
                   </Link>
                   {!user ? (
                     <>
-                      <Link to="/login" className="font-semibold text-lg text-blinkly-purple">
+                      <Link to="/login" className="font-semibold text-lg text-brand-purple" onClick={() => setOpen(false)}>
                         Log in
                       </Link>
-                      <Link to="/signup" className="font-semibold text-lg text-blinkly-teal">
+                      <Link to="/signup" className="font-semibold text-lg text-brand-teal" onClick={() => setOpen(false)}>
                         Sign up
                       </Link>
                     </>
                   ) : (
                     <>
-                      <Link to="/dashboard" className="font-semibold text-lg">
+                      <Link to="/dashboard" className="font-semibold text-lg" onClick={() => setOpen(false)}>
                         Dashboard
                       </Link>
-                      <Button variant="destructive" onClick={handleLogout}>Logout</Button>
+                      <Button variant="destructive" onClick={() => { handleLogout(); setOpen(false); }}>Logout</Button>
                     </>
                   )}
                 </div>

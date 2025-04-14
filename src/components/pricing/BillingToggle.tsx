@@ -29,7 +29,7 @@ const BillingToggle = ({ billingPeriod, onChange }: BillingToggleProps) => {
             className={`px-4 py-2 rounded-md text-sm font-medium ${billingPeriod === "yearly" ? "bg-white shadow-sm" : ""}`}
           >
             <span className="mr-1">Yearly</span>
-            <Badge className="bg-alchemy-peach ml-1 text-xs">Save 15%</Badge>
+            <Badge className="bg-brand-gold ml-1 text-xs text-white">Save 15%</Badge>
           </ToggleGroupItem>
         </ToggleGroup>
       </div>
