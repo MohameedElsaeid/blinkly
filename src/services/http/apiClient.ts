@@ -1,4 +1,5 @@
-import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig, AxiosHeaders } from 'axios';
+
+import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import { BaseHttpClient } from './baseHttpClient';
 import { csrfTokenService } from '../csrf/csrfTokenService';
 import { apiErrorHandler } from '../errors/apiErrorHandler';
@@ -32,16 +33,24 @@ class ApiClient extends BaseHttpClient {
           // Add authentication token
           const configWithAuth = this.addAuthToken(config);
           
-          // Add tracking headers - use AxiosHeaders to resolve type issue
-          const headers = new AxiosHeaders(configWithAuth.headers);
-          headers.concat(getTrackingHeaders());
-          configWithAuth.headers = headers;
+          // Ensure withCredentials is set for all requests
+          configWithAuth.withCredentials = true;
+          
+          // Add tracking headers
+          configWithAuth.headers = {
+            ...configWithAuth.headers,
+            ...getTrackingHeaders(),
+          };
           
           // Add CSRF token for mutations
           if (['post', 'put', 'delete', 'patch'].includes((config.method || '').toLowerCase())) {
             try {
               const csrfToken = await csrfTokenService.fetchCsrfToken();
-              configWithAuth.headers['x-csrf-token'] = csrfToken;
+              if (configWithAuth.headers) {
+                configWithAuth.headers['x-csrf-token'] = csrfToken;
+              } else {
+                configWithAuth.headers = { 'x-csrf-token': csrfToken };
+              }
             } catch (csrfError) {
               console.error('Error fetching CSRF token:', csrfError);
             }
@@ -78,6 +87,8 @@ class ApiClient extends BaseHttpClient {
               const csrfToken = await csrfTokenService.fetchCsrfToken();
               originalRequest.headers = originalRequest.headers || {};
               originalRequest.headers['x-csrf-token'] = csrfToken;
+              // Ensure withCredentials for the retry request
+              originalRequest.withCredentials = true;
               return this.client(originalRequest);
             } catch (tokenError) {
               console.error('Failed to refresh CSRF token:', tokenError);
@@ -104,7 +115,7 @@ class ApiClient extends BaseHttpClient {
   async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
     console.log(`Making GET request to: ${url}`);
     try {
-      return this.client.get(url, config) as Promise<T>;
+      return this.client.get(url, { ...config, withCredentials: true }) as Promise<T>;
     } catch (error) {
       console.error(`GET request failed for ${url}:`, error);
       throw error;
@@ -114,7 +125,7 @@ class ApiClient extends BaseHttpClient {
   async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
     console.log(`Making POST request to: ${url}`, data);
     try {
-      return this.client.post(url, data, config) as Promise<T>;
+      return this.client.post(url, data, { ...config, withCredentials: true }) as Promise<T>;
     } catch (error) {
       console.error(`POST request failed for ${url}:`, error);
       throw error;
@@ -123,7 +134,7 @@ class ApiClient extends BaseHttpClient {
 
   async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
     try {
-      return this.client.put(url, data, config) as Promise<T>;
+      return this.client.put(url, data, { ...config, withCredentials: true }) as Promise<T>;
     } catch (error) {
       console.error(`PUT request failed for ${url}:`, error);
       throw error;
@@ -132,7 +143,7 @@ class ApiClient extends BaseHttpClient {
 
   async patch<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
     try {
-      return this.client.patch(url, data, config) as Promise<T>;
+      return this.client.patch(url, data, { ...config, withCredentials: true }) as Promise<T>;
     } catch (error) {
       console.error(`PATCH request failed for ${url}:`, error);
       throw error;
@@ -141,7 +152,7 @@ class ApiClient extends BaseHttpClient {
 
   async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
     try {
-      return this.client.delete(url, config) as Promise<T>;
+      return this.client.delete(url, { ...config, withCredentials: true }) as Promise<T>;
     } catch (error) {
       console.error(`DELETE request failed for ${url}:`, error);
       throw error;

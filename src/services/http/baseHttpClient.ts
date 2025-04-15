@@ -15,7 +15,7 @@ export class BaseHttpClient {
     this.client = axios.create({
       baseURL,
       timeout: REQUEST_TIMEOUT,
-      withCredentials: true,
+      withCredentials: true, // Always send credentials with requests
       headers: {
         'Content-Type': 'application/json',
         'X-Request-ID': uuidv4(),
@@ -66,6 +66,9 @@ export class BaseHttpClient {
       // Add custom header
       config.headers = config.headers || {};
       config.headers['X-Custom-Header'] = localStorage.getItem('custom-header') || 'default-value';
+      
+      // Ensure withCredentials is set
+      config.withCredentials = true;
     } catch (error) {
       console.error('Error adding auth token:', error);
     }
