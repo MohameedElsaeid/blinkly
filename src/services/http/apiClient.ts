@@ -1,3 +1,4 @@
+
 import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import { BaseHttpClient } from './baseHttpClient';
 import { csrfTokenService } from '../csrf/csrfTokenService';
@@ -31,6 +32,7 @@ class ApiClient extends BaseHttpClient {
         const configWithAuth = this.addAuthToken(config);
         
         // Ensure Content-Type is set to application/json
+        configWithAuth.headers = configWithAuth.headers || {};
         configWithAuth.headers = {
           ...configWithAuth.headers,
           'Content-Type': 'application/json',
@@ -40,7 +42,9 @@ class ApiClient extends BaseHttpClient {
         if (['post', 'put', 'patch', 'delete'].includes((config.method || '').toLowerCase())) {
           try {
             const csrfToken = await csrfTokenService.fetchCsrfToken();
-            configWithAuth.headers['x-csrf-token'] = csrfToken;
+            if (configWithAuth.headers) {
+              configWithAuth.headers['x-csrf-token'] = csrfToken;
+            }
           } catch (csrfError) {
             console.error('Error fetching CSRF token:', csrfError);
           }
@@ -58,24 +62,38 @@ class ApiClient extends BaseHttpClient {
       async (error: AxiosError) => {
         console.error('API Error:', error.message, error.response?.status);
         
-        // Handle CSRF token mismatch
-        if (error.response?.status === 403 && (error.response.data as any)?.code === 'EBADCSRFTOKEN') {
-          console.log('CSRF token mismatch, retrying request with fresh token');
-          // Clear cached CSRF token and retry
+        // Handle general 403 Forbidden responses
+        if (error.response?.status === 403) {
+          console.log('403 Forbidden response, attempting to refresh CSRF token');
+          
+          // Invalidate and fetch a new CSRF token
           csrfTokenService.invalidateToken();
+          
           const originalRequest = error.config;
           if (originalRequest) {
             try {
+              // Fetch a fresh CSRF token
               const csrfToken = await csrfTokenService.fetchCsrfToken();
+              
+              // Ensure headers exist
               originalRequest.headers = originalRequest.headers || {};
               originalRequest.headers['x-csrf-token'] = csrfToken;
+              
               // Ensure withCredentials for the retry request
               originalRequest.withCredentials = true;
+              
+              console.log('Retrying request with new CSRF token');
               return this.client(originalRequest);
             } catch (tokenError) {
               console.error('Failed to refresh CSRF token:', tokenError);
             }
           }
+        }
+
+        // Handle CSRF token mismatch specific error code
+        if (error.response?.status === 403 && (error.response.data as any)?.code === 'EBADCSRFTOKEN') {
+          console.log('CSRF token mismatch detected');
+          // This is already handled by the general 403 handler above
         }
 
         // Handle network errors with detailed logging
