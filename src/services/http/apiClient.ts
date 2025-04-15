@@ -1,5 +1,4 @@
-
-import { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig, AxiosHeaders } from 'axios';
 import { BaseHttpClient } from './baseHttpClient';
 import { csrfTokenService } from '../csrf/csrfTokenService';
 import { apiErrorHandler } from '../errors/apiErrorHandler';
@@ -27,18 +26,16 @@ class ApiClient extends BaseHttpClient {
   }
 
   private setupInterceptors() {
-    // Request interceptor
     this.client.interceptors.request.use(
       async (config) => {
         try {
           // Add authentication token
           const configWithAuth = this.addAuthToken(config);
           
-          // Add tracking headers
-          configWithAuth.headers = {
-            ...configWithAuth.headers,
-            ...getTrackingHeaders(),
-          };
+          // Add tracking headers - use AxiosHeaders to resolve type issue
+          const headers = new AxiosHeaders(configWithAuth.headers);
+          headers.concat(getTrackingHeaders());
+          configWithAuth.headers = headers;
           
           // Add CSRF token for mutations
           if (['post', 'put', 'delete', 'patch'].includes((config.method || '').toLowerCase())) {
@@ -50,7 +47,6 @@ class ApiClient extends BaseHttpClient {
             }
           }
 
-          console.log('Request config:', configWithAuth.url, configWithAuth.method);
           return configWithAuth as InternalAxiosRequestConfig;
         } catch (error) {
           console.error('Request interceptor error:', error);
@@ -63,7 +59,6 @@ class ApiClient extends BaseHttpClient {
       }
     );
 
-    // Response interceptor
     this.client.interceptors.response.use(
       (response) => {
         console.log('API Response for', response.config.url, ':', response.status);
@@ -106,7 +101,6 @@ class ApiClient extends BaseHttpClient {
     );
   }
 
-  // HTTP Methods with improved error handling
   async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
     console.log(`Making GET request to: ${url}`);
     try {
