@@ -1,4 +1,3 @@
-
 import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import { BaseHttpClient } from './baseHttpClient';
 import { csrfTokenService } from '../csrf/csrfTokenService';
@@ -29,43 +28,26 @@ class ApiClient extends BaseHttpClient {
   private setupInterceptors() {
     this.client.interceptors.request.use(
       async (config) => {
-        try {
-          // Add authentication token
-          const configWithAuth = this.addAuthToken(config);
-          
-          // Ensure withCredentials is set for all requests
-          configWithAuth.withCredentials = true;
-          
-          // Add tracking headers
-          configWithAuth.headers = {
-            ...configWithAuth.headers,
-            ...getTrackingHeaders(),
-          };
-          
-          // Add CSRF token for mutations
-          if (['post', 'put', 'delete', 'patch'].includes((config.method || '').toLowerCase())) {
-            try {
-              const csrfToken = await csrfTokenService.fetchCsrfToken();
-              if (configWithAuth.headers) {
-                configWithAuth.headers['x-csrf-token'] = csrfToken;
-              } else {
-                configWithAuth.headers = { 'x-csrf-token': csrfToken };
-              }
-            } catch (csrfError) {
-              console.error('Error fetching CSRF token:', csrfError);
-            }
-          }
+        const configWithAuth = this.addAuthToken(config);
+        
+        // Ensure Content-Type is set to application/json
+        configWithAuth.headers = {
+          ...configWithAuth.headers,
+          'Content-Type': 'application/json',
+          ...getTrackingHeaders(),
+        };
 
-          return configWithAuth as InternalAxiosRequestConfig;
-        } catch (error) {
-          console.error('Request interceptor error:', error);
-          return config as InternalAxiosRequestConfig;
+        if (['post', 'put', 'patch', 'delete'].includes((config.method || '').toLowerCase())) {
+          try {
+            const csrfToken = await csrfTokenService.fetchCsrfToken();
+            configWithAuth.headers['x-csrf-token'] = csrfToken;
+          } catch (csrfError) {
+            console.error('Error fetching CSRF token:', csrfError);
+          }
         }
+        return configWithAuth as InternalAxiosRequestConfig;
       },
-      (error) => {
-        console.error('Request interceptor rejection:', error);
-        return Promise.reject(error);
-      }
+      (error) => Promise.reject(error)
     );
 
     this.client.interceptors.response.use(
@@ -113,50 +95,58 @@ class ApiClient extends BaseHttpClient {
   }
 
   async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    console.log(`Making GET request to: ${url}`);
-    try {
-      return this.client.get(url, { ...config, withCredentials: true }) as Promise<T>;
-    } catch (error) {
-      console.error(`GET request failed for ${url}:`, error);
-      throw error;
-    }
+    return this.client.get(url, {
+      ...config,
+      headers: {
+        ...config?.headers,
+        'Content-Type': 'application/json',
+      },
+      withCredentials: true
+    }) as Promise<T>;
   }
 
   async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    console.log(`Making POST request to: ${url}`, data);
-    try {
-      return this.client.post(url, data, { ...config, withCredentials: true }) as Promise<T>;
-    } catch (error) {
-      console.error(`POST request failed for ${url}:`, error);
-      throw error;
-    }
+    return this.client.post(url, data, {
+      ...config,
+      headers: {
+        ...config?.headers,
+        'Content-Type': 'application/json',
+      },
+      withCredentials: true
+    }) as Promise<T>;
   }
 
   async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    try {
-      return this.client.put(url, data, { ...config, withCredentials: true }) as Promise<T>;
-    } catch (error) {
-      console.error(`PUT request failed for ${url}:`, error);
-      throw error;
-    }
+    return this.client.put(url, data, {
+      ...config,
+      headers: {
+        ...config?.headers,
+        'Content-Type': 'application/json',
+      },
+      withCredentials: true
+    }) as Promise<T>;
   }
 
   async patch<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    try {
-      return this.client.patch(url, data, { ...config, withCredentials: true }) as Promise<T>;
-    } catch (error) {
-      console.error(`PATCH request failed for ${url}:`, error);
-      throw error;
-    }
+    return this.client.patch(url, data, {
+      ...config,
+      headers: {
+        ...config?.headers,
+        'Content-Type': 'application/json',
+      },
+      withCredentials: true
+    }) as Promise<T>;
   }
 
   async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    try {
-      return this.client.delete(url, { ...config, withCredentials: true }) as Promise<T>;
-    } catch (error) {
-      console.error(`DELETE request failed for ${url}:`, error);
-      throw error;
-    }
+    return this.client.delete(url, {
+      ...config,
+      headers: {
+        ...config?.headers,
+        'Content-Type': 'application/json',
+      },
+      withCredentials: true
+    }) as Promise<T>;
   }
 }
 
