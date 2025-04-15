@@ -1,4 +1,5 @@
-import { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig, AxiosHeaders } from 'axios';
+
+import { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import { BaseHttpClient } from './baseHttpClient';
 import { csrfTokenService } from '../csrf/csrfTokenService';
 import { apiErrorHandler } from '../errors/apiErrorHandler';
@@ -28,15 +29,6 @@ class ApiClient extends BaseHttpClient {
             } catch (csrfError) {
               console.error('Error fetching CSRF token:', csrfError);
             }
-          }
-
-          // Remove any browser-controlled headers
-          if (configWithAuth.headers) {
-            const headers = { ...configWithAuth.headers };
-            delete headers['Sec-CH-UA'];
-            delete headers['Sec-CH-UA-Mobile'];
-            delete headers['Sec-CH-UA-Platform'];
-            configWithAuth.headers = headers;
           }
 
           console.log('Request config:', configWithAuth.url, configWithAuth.method);

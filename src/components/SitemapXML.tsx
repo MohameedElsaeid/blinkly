@@ -3,8 +3,8 @@ import React, { useEffect } from 'react';
 
 const SitemapXML: React.FC = () => {
   useEffect(() => {
-    // Redirect to the static sitemap.xml file
-    window.location.replace("/sitemap.xml");
+    // Simple redirect to the static sitemap file
+    window.location.href = "/sitemap.xml";
   }, []);
 
   return null; // This component doesn't render any visible elements

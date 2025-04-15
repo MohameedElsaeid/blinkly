@@ -10,6 +10,12 @@
   force = true
   headers = {X-From = "Netlify"}
 
+# Make sure sitemap.xml is served directly
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "/sitemap.xml"
+  status = 200
+
 [[headers]]
   for = "/sitemap.xml"
   [headers.values]
