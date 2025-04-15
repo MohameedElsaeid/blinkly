@@ -6,6 +6,20 @@ import { apiErrorHandler } from '../errors/apiErrorHandler';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://api.blinkly.app';
 
+function getTrackingHeaders(): Record<string, string> {
+  return {
+    'X-User-Agent': navigator.userAgent,
+    'X-Language': navigator.language,
+    'X-Platform': navigator.platform || 'unknown',
+    'X-Screen-Width': window.screen.width.toString(),
+    'X-Screen-Height': window.screen.height.toString(),
+    'X-Time-Zone': Intl.DateTimeFormat().resolvedOptions().timeZone,
+    'X-Color-Depth': window.screen.colorDepth.toString(),
+    'X-Hardware-Concurrency': navigator.hardwareConcurrency ? navigator.hardwareConcurrency.toString() : 'unknown',
+    'X-Device-Memory': (navigator as any).deviceMemory ? (navigator as any).deviceMemory.toString() : 'unknown',
+  };
+}
+
 class ApiClient extends BaseHttpClient {
   constructor(baseURL: string) {
     super(baseURL);
@@ -20,11 +34,16 @@ class ApiClient extends BaseHttpClient {
           // Add authentication token
           const configWithAuth = this.addAuthToken(config);
           
+          // Add tracking headers
+          configWithAuth.headers = {
+            ...configWithAuth.headers,
+            ...getTrackingHeaders(),
+          };
+          
           // Add CSRF token for mutations
-          if (['post', 'put', 'delete', 'patch'].includes(config.method?.toLowerCase() || '')) {
+          if (['post', 'put', 'delete', 'patch'].includes((config.method || '').toLowerCase())) {
             try {
               const csrfToken = await csrfTokenService.fetchCsrfToken();
-              configWithAuth.headers = configWithAuth.headers || {};
               configWithAuth.headers['x-csrf-token'] = csrfToken;
             } catch (csrfError) {
               console.error('Error fetching CSRF token:', csrfError);

@@ -20,6 +20,8 @@ export class BaseHttpClient {
         'Content-Type': 'application/json',
         'X-Request-ID': uuidv4(),
         'X-Request-Time': new Date().toISOString(),
+        'DNT': '1',
+        'X-Custom-Header': localStorage.getItem('custom-header') || 'default-value',
       },
     });
 
@@ -39,10 +41,7 @@ export class BaseHttpClient {
         const shouldRetry = 
           axiosRetry.isNetworkOrIdempotentRequestError(error) ||
           error.code === 'ECONNABORTED' ||
-          (error.response?.status === 429) ||
-          (error.response?.status === 503) ||
-          (error.response?.status === 500) ||
-          (error.response?.status === 408);
+          [429, 503, 500, 408].includes(error.response?.status || 0);
         
         console.log(`Request failed with status ${error.response?.status}. Retry? ${shouldRetry}`);
         return shouldRetry;
@@ -63,6 +62,10 @@ export class BaseHttpClient {
         config.headers = config.headers || {};
         config.headers.Authorization = `Bearer ${token}`;
       }
+      
+      // Add custom header
+      config.headers = config.headers || {};
+      config.headers['X-Custom-Header'] = localStorage.getItem('custom-header') || 'default-value';
     } catch (error) {
       console.error('Error adding auth token:', error);
     }
