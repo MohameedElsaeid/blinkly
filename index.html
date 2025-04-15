@@ -15,14 +15,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <!-- Content Security Policy - Updated to allow Google Fonts and required resources -->
+    <!-- Content Security Policy - Updated to allow Google Analytics and related domains -->
     <meta http-equiv="Content-Security-Policy" 
       content="default-src 'self' https://api.blinkly.app;
-              script-src 'self' 'unsafe-inline' https://cdn.gpteng.co https://static.cloudflareinsights.com https://www.googletagmanager.com;
+              script-src 'self' 'unsafe-inline' https://cdn.gpteng.co https://static.cloudflareinsights.com https://www.googletagmanager.com https://analytics.google.com;
               style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
               font-src 'self' https://fonts.gstatic.com;
-              img-src 'self' data: https://images.unsplash.com;
-              connect-src 'self' https://api.blinkly.app https://www.google-analytics.com">
+              img-src 'self' data: https://images.unsplash.com https://www.googletagmanager.com https://www.google.com https://www.google.com.eg https://stats.g.doubleclick.net;
+              connect-src 'self' https://api.blinkly.app https://www.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net;
+              frame-src 'self' https://td.doubleclick.net;">
     
     <!-- Primary Meta Tags -->
     <title>Blinkly - URL Shortener, Link Management & QR Code Generator</title>
