@@ -1,8 +1,6 @@
-
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import SignupForm from "@/components/signup/SignupForm";
-import SocialSignup from "@/components/signup/SocialSignup";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -42,8 +40,6 @@ const Signup = () => {
               </p>
             </CardFooter>
           </Card>
-
-          <SocialSignup />
         </div>
       </div>
       <Footer />

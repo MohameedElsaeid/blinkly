@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,7 +28,6 @@ const Login = () => {
       return false;
     }
     
-    // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setFormError("Please enter a valid email address");
@@ -52,7 +50,6 @@ const Login = () => {
     
     try {
       await login({ email, password });
-      // Redirect is handled in the useAuth hook
     } catch (error: any) {
       console.error("Login error details:", error);
       if (error.response) {
@@ -163,26 +160,6 @@ const Login = () => {
               </p>
             </CardFooter>
           </Card>
-
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-gray-50 text-gray-500">Or continue with</span>
-              </div>
-            </div>
-
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              <Button variant="outline" className="w-full">
-                Google
-              </Button>
-              <Button variant="outline" className="w-full">
-                GitHub
-              </Button>
-            </div>
-          </div>
         </div>
       </div>
       <Footer />
