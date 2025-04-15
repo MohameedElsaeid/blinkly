@@ -23,20 +23,21 @@ class ApiClient extends BaseHttpClient {
           if (['post', 'put', 'delete', 'patch'].includes(config.method?.toLowerCase() || '')) {
             try {
               const csrfToken = await csrfTokenService.fetchCsrfToken();
-              const headers = new AxiosHeaders(configWithAuth.headers);
-              headers.set('x-csrf-token', csrfToken);
-              configWithAuth.headers = headers;
+              configWithAuth.headers = configWithAuth.headers || {};
+              configWithAuth.headers['x-csrf-token'] = csrfToken;
             } catch (csrfError) {
               console.error('Error fetching CSRF token:', csrfError);
             }
           }
 
           // Remove any browser-controlled headers
-          const cleanHeaders = new AxiosHeaders(configWithAuth.headers);
-          ['Sec-CH-UA', 'Sec-CH-UA-Mobile', 'Sec-CH-UA-Platform'].forEach(header => {
-            cleanHeaders.delete(header);
-          });
-          configWithAuth.headers = cleanHeaders;
+          if (configWithAuth.headers) {
+            const headers = { ...configWithAuth.headers };
+            delete headers['Sec-CH-UA'];
+            delete headers['Sec-CH-UA-Mobile'];
+            delete headers['Sec-CH-UA-Platform'];
+            configWithAuth.headers = headers;
+          }
 
           console.log('Request config:', configWithAuth.url, configWithAuth.method);
           return configWithAuth as InternalAxiosRequestConfig;

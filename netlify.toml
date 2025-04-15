@@ -26,12 +26,7 @@
     Access-Control-Allow-Credentials = "true"
     Access-Control-Max-Age = "86400"
 
-# Important: Specific redirect for sitemap.xml BEFORE the wildcard redirect
-[[redirects]]
-  from = "/sitemap.xml"
-  to = "/sitemap.xml"
-  status = 200
-
+# Important: The wildcard redirect should be the last rule
 [[redirects]]
   from = "/*"
   to = "/index.html"
