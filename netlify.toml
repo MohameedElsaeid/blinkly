@@ -16,6 +16,14 @@
     Content-Type = "application/xml"
     Cache-Control = "public, max-age=86400"
 
+# Add CORS headers for all requests
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "*"
+
 # Important: Specific redirect for sitemap.xml BEFORE the wildcard redirect
 [[redirects]]
   from = "/sitemap.xml"

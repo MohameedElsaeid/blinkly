@@ -11,6 +11,7 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    cors: true, // Enable CORS for all requests
     proxy: {
       '/api': {
         target: process.env.VITE_API_URL || 'https://api.blinkly.app',

@@ -15,6 +15,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
+    <!-- CORS headers to allow all requests -->
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta http-equiv="Access-Control-Allow-Methods" content="GET, POST, PUT, DELETE, OPTIONS">
+    <meta http-equiv="Access-Control-Allow-Headers" content="*">
+    
     <!-- Primary Meta Tags -->
     <title>Blinkly - URL Shortener, Link Management & QR Code Generator</title>
     <meta name="title" content="Blinkly - URL Shortener, Link Management & QR Code Generator">
@@ -63,6 +68,8 @@
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <link rel="dns-prefetch" href="https://images.blinkly.app" />
+    <link rel="preconnect" href="https://cdn.gpteng.co" crossorigin />
+    <link rel="dns-prefetch" href="https://cdn.gpteng.co" />
     
     <!-- Critical CSS -->
     <style>
@@ -148,8 +155,8 @@
     </div>
     <noscript>You need to enable JavaScript to run this application.</noscript>
     
-    <!-- Add the Lovable script tag -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+    <!-- Add the Lovable script tag with crossorigin attribute -->
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module" crossorigin="anonymous"></script>
     
     <!-- Main Application Script -->
     <script type="module" src="/src/main.tsx"></script>
