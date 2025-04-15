@@ -1,4 +1,5 @@
-import { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig, AxiosRequestHeaders } from 'axios';
+
+import { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import { BaseHttpClient } from './baseHttpClient';
 import { csrfTokenService } from '../csrf/csrfTokenService';
 import { apiErrorHandler } from '../errors/apiErrorHandler';
@@ -19,26 +20,20 @@ class ApiClient extends BaseHttpClient {
           // Add authentication token
           const configWithAuth = this.addAuthToken(config);
           
-          // Add client hints
-          const configWithHints = this.addClientHints(configWithAuth);
-
-          // Add Cloudflare headers
-          const configWithCloudflare = this.addCloudflareHeaders(configWithHints);
-
           // Add CSRF token for mutations
           if (['post', 'put', 'delete', 'patch'].includes(config.method?.toLowerCase() || '')) {
             try {
               const csrfToken = await csrfTokenService.fetchCsrfToken();
-              configWithCloudflare.headers = configWithCloudflare.headers || {};
-              configWithCloudflare.headers['x-csrf-token'] = csrfToken;
+              configWithAuth.headers = configWithAuth.headers || {};
+              configWithAuth.headers['x-csrf-token'] = csrfToken;
             } catch (csrfError) {
               console.error('Error fetching CSRF token:', csrfError);
               // Continue without CSRF token, the response interceptor will handle this
             }
           }
 
-          console.log('Request config:', configWithCloudflare.url, configWithCloudflare.method);
-          return configWithCloudflare as InternalAxiosRequestConfig;
+          console.log('Request config:', configWithAuth.url, configWithAuth.method);
+          return configWithAuth as InternalAxiosRequestConfig;
         } catch (error) {
           console.error('Request interceptor error:', error);
           return config as InternalAxiosRequestConfig;
@@ -68,10 +63,7 @@ class ApiClient extends BaseHttpClient {
           if (originalRequest) {
             try {
               const csrfToken = await csrfTokenService.fetchCsrfToken();
-              // Ensure headers is initialized properly before assignment
-              if (!originalRequest.headers) {
-                originalRequest.headers = {} as AxiosRequestHeaders;
-              }
+              originalRequest.headers = originalRequest.headers || {};
               originalRequest.headers['x-csrf-token'] = csrfToken;
               return this.client(originalRequest);
             } catch (tokenError) {

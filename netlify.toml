@@ -5,7 +5,7 @@
 
 [[redirects]]
   from = "/api/*"
-  to = "http://localhost:3000/:splat"
+  to = "https://api.blinkly.app/:splat"
   status = 200
   force = true
   headers = {X-From = "Netlify"}
@@ -23,6 +23,8 @@
     Access-Control-Allow-Origin = "*"
     Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
     Access-Control-Allow-Headers = "*"
+    Access-Control-Allow-Credentials = "true"
+    Access-Control-Max-Age = "86400"
 
 # Important: Specific redirect for sitemap.xml BEFORE the wildcard redirect
 [[redirects]]
