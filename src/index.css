@@ -15,7 +15,7 @@
         --popover: 0 0% 100%;
         --popover-foreground: 222 47% 11%;
 
-        --primary: 239 83% 66%; /* #5D5FEF */
+        --primary: 239 83% 66%; /* #4d58ff */
         --primary-foreground: 210 40% 98%;
 
         --secondary: 180 67% 47%; /* #28C8C8 */
@@ -38,21 +38,14 @@
     }
 
     .dark {
-        /* Dark mode colors with soft, muted tones */
-        --background: 222 47% 11%;
-        --foreground: 210 40% 98%;
+        --primary: 239 83% 66%; /* #4d58ff for dark mode */
+        --primary-foreground: 210 40% 98%;
 
         --card: 222 47% 11%;
         --card-foreground: 210 40% 98%;
 
         --popover: 222 47% 11%;
         --popover-foreground: 210 40% 98%;
-
-        --primary: 239 83% 66%;
-        --primary-foreground: 210 40% 98%;
-
-        --secondary: 180 67% 47%;
-        --secondary-foreground: 210 40% 98%;
 
         --muted: 217 33% 18%;
         --muted-foreground: 215 20% 65%;
@@ -82,7 +75,6 @@
         @apply font-heading font-semibold;
     }
 
-    /* Fix for transparent buttons */
     button, input:where([type=button]), input:where([type=reset]), input:where([type=submit]) {
         -webkit-appearance: button;
         background-color: #5D5FEF; /* Default brand purple color */
@@ -120,7 +112,6 @@
         @apply border border-gray-300 bg-white text-gray-800 hover:bg-gray-50 transition-colors duration-200;
     }
 
-    /* Navigation styles */
     .nav-link {
         @apply text-gray-700 hover:text-brand-purple transition-colors duration-200;
     }
@@ -129,7 +120,6 @@
         @apply text-brand-purple font-medium;
     }
 
-    /* Card styles */
     .card {
         @apply bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden;
     }
@@ -146,7 +136,6 @@
         @apply p-4 border-t border-gray-100;
     }
 
-    /* Form styles */
     .form-group {
         @apply mb-4;
     }
@@ -159,7 +148,6 @@
         @apply w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-purple focus:border-transparent;
     }
 
-    /* Badge styles */
     .badge {
         @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
     }

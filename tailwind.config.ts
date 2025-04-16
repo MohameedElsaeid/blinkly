@@ -30,7 +30,7 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         brand: {
-          purple: '#5D5FEF',
+          purple: '#4d58ff',
           teal: '#28C8C8',
           gold: '#F4C06C',
           red: '#FF6B6B',
@@ -38,42 +38,42 @@ export default {
         },
         blinkly: {
           purple: {
-            light: '#D3D1F9',    // Soft lavender
-            DEFAULT: '#8B7FD4',   // Gentle periwinkle
-            dark: '#6A5ACD',      // Soft slate blue
+            light: '#D3D1F9',
+            DEFAULT: '#8B7FD4',
+            dark: '#6A5ACD',
           },
           teal: {
-            light: '#B3E5FC',    // Soft sky blue
-            DEFAULT: '#4FBCDF',   // Soft azure
-            dark: '#2E8B57',      // Soft sea green
+            light: '#B3E5FC',
+            DEFAULT: '#4FBCDF',
+            dark: '#2E8B57',
           },
           orange: {
-            light: '#FFE4CA',    // Soft peach
-            DEFAULT: '#FBB477',   // Soft coral
-            dark: '#F4A460',      // Soft sandy brown
+            light: '#FFE4CA',
+            DEFAULT: '#FBB477',
+            dark: '#F4A460',
           },
           green: {
-            light: '#E8F5E9',    // Soft mint
-            DEFAULT: '#81C784',   // Soft sage green
-            dark: '#2E7D32',      // Soft forest green
+            light: '#E8F5E9',
+            DEFAULT: '#81C784',
+            dark: '#2E7D32',
           },
           gray: {
-            50: '#F9FAFB',       // Almost white, very soft gray
-            100: '#F5F7FA',      // Very light gray with a hint of blue
-            200: '#E9EEF4',      // Soft gray with a touch of blue
-            300: '#D1D9E6',      // Muted gray-blue
-            400: '#A0AEC0',      // Soft slate gray
-            500: '#718096',      // Medium gray with blue undertones
-            600: '#4A5568',      // Dark gray with blue hint
-            700: '#2D3748',      // Deep gray-blue
-            800: '#1A202C',      // Very deep gray-blue
-            900: '#0F1625',      // Almost black with blue undertones
+            50: '#F9FAFB',
+            100: '#F5F7FA',
+            200: '#E9EEF4',
+            300: '#D1D9E6',
+            400: '#A0AEC0',
+            500: '#718096',
+            600: '#4A5568',
+            700: '#2D3748',
+            800: '#1A202C',
+            900: '#0F1625',
           },
         },
       },
       backgroundImage: {
-        'brand-gradient': 'linear-gradient(135deg, #5D5FEF 0%, #28C8C8 100%)',
-        'brand-gradient-reversed': 'linear-gradient(135deg, #28C8C8 0%, #5D5FEF 100%)',
+        'brand-gradient': 'linear-gradient(135deg, #4d58ff 0%, #28C8C8 100%)',
+        'brand-gradient-reversed': 'linear-gradient(135deg, #28C8C8 0%, #4d58ff 100%)',
         'soft-purple-gradient': 'linear-gradient(135deg, #D3D1F9 0%, #8B7FD4 100%)',
         'soft-blue-gradient': 'linear-gradient(135deg, #B3E5FC 0%, #4FBCDF 100%)',
         'soft-peach-gradient': 'linear-gradient(135deg, #FFE4CA 0%, #FBB477 100%)',
