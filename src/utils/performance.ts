@@ -1,196 +1,173 @@
 
-import { MetricsObserver, MetricsOptions, PerformanceMetric } from './performance/interfaces';
+import { enhanceEventData } from './metaPixelUtils';
 
-/**
- * Initialize performance monitoring
- * @param options Configuration options
- */
-export const initPerformanceMonitoring = (options: Partial<MetricsOptions> = {}) => {
-    const defaultOptions: MetricsOptions = {
-        sampleRate: 0.1, // Only sample 10% of users by default
-        reportToConsole: true,
-        reportToAnalytics: true,
-        reportToMetaPixel: true
-    };
-
-    const config = { ...defaultOptions, ...options };
-
-    // Only monitor performance for the sampling rate percentage of users
-    if (Math.random() > config.sampleRate) {
-        console.debug('Performance monitoring skipped due to sampling');
-        return;
-    }
-
-    try {
-        // Check if the browser supports the Performance Observer API
-        if (typeof PerformanceObserver !== 'undefined') {
-            // Create observer for Core Web Vitals and other performance metrics
-            const performanceObserver = createPerformanceObserver(config);
-            
-            // Start observing important performance metrics
-            performanceObserver.observe({ entryTypes: [
-                'navigation',
-                'resource',
-                'longtask',
-                'paint',
-                'layout-shift',
-                'largest-contentful-paint',
-                'first-input',
-                'element'
-            ]});
-            
-            console.debug('Performance monitoring started');
-        } else {
-            console.debug('Performance Observer API not supported in this browser');
-        }
-    } catch (error) {
-        console.warn('Failed to initialize performance monitoring:', error);
-    }
-};
-
-/**
- * Create a performance observer to track key metrics
- */
-function createPerformanceObserver(options: MetricsOptions): MetricsObserver {
-    const metrics: Record<string, PerformanceMetric> = {};
-
-    const observer = new PerformanceObserver((entryList) => {
-        const entries = entryList.getEntries();
-        
-        for (const entry of entries) {
-            let metricValue: number = 0;
-            let metricName: string = entry.entryType;
-            
-            // Process different entry types
-            switch (entry.entryType) {
-                case 'navigation':
-                    const navigationEntry = entry as PerformanceNavigationTiming;
-                    
-                    // Track key navigation timings
-                    recordMetric('time-to-first-byte', navigationEntry.responseStart, options);
-                    recordMetric('dom-content-loaded', navigationEntry.domContentLoadedEventEnd, options);
-                    recordMetric('load-time', navigationEntry.loadEventEnd, options);
-                    break;
-                    
-                case 'paint':
-                    const paintEntry = entry as PerformancePaintTiming;
-                    metricName = paintEntry.name;
-                    metricValue = paintEntry.startTime;
-                    recordMetric(metricName, metricValue, options);
-                    break;
-                    
-                case 'largest-contentful-paint':
-                    const lcpEntry = entry as any; // LCP entry type
-                    metricName = 'largest-contentful-paint';
-                    metricValue = lcpEntry.startTime;
-                    recordMetric(metricName, metricValue, options);
-                    break;
-                    
-                case 'first-input':
-                    const fiEntry = entry as any; // FID entry type
-                    metricName = 'first-input-delay';
-                    metricValue = fiEntry.processingStart - fiEntry.startTime;
-                    recordMetric(metricName, metricValue, options);
-                    break;
-                    
-                case 'layout-shift':
-                    const lsEntry = entry as any; // CLS entry type
-                    if (!metrics['cumulative-layout-shift']) {
-                        metrics['cumulative-layout-shift'] = {
-                            name: 'cumulative-layout-shift',
-                            value: 0,
-                            timestamp: Date.now()
-                        };
-                    }
-                    
-                    // Accumulate CLS
-                    metrics['cumulative-layout-shift'].value += lsEntry.value;
-                    recordMetric('cumulative-layout-shift', metrics['cumulative-layout-shift'].value, options);
-                    break;
-                    
-                case 'longtask':
-                    const ltEntry = entry as PerformanceLongTaskTiming;
-                    metricName = 'long-task';
-                    metricValue = ltEntry.duration;
-                    recordMetric(metricName, metricValue, options, true);
-                    break;
-            }
-        }
-    });
-    
-    return observer as MetricsObserver;
+interface PerformanceOptions {
+    sampleRate?: number; // Between 0 and 1
+    reportToConsole?: boolean;
+    reportToMetaPixel?: boolean;
+    trackLongTasks?: boolean;
 }
 
-/**
- * Record a performance metric and report it based on options
- */
-function recordMetric(name: string, value: number, options: MetricsOptions, skipDeduplication = false) {
-    if (value <= 0) return;
+// Create a more detailed performance report
+function capturePerformanceMetrics() {
+    const metrics: Record<string, any> = {};
     
-    // Skip if this metric has already been recorded (unless explicitly told to allow duplicates)
-    if (!skipDeduplication && window.sessionStorage.getItem(`metric_${name}`)) {
-        return;
+    // Only proceed if the browser supports the Performance API
+    if (!window.performance) {
+        return { error: 'Performance API not supported in this browser' };
     }
     
-    const metric: PerformanceMetric = {
-        name,
-        value,
-        timestamp: Date.now()
-    };
-    
-    // Mark this metric as recorded
-    if (!skipDeduplication) {
-        window.sessionStorage.setItem(`metric_${name}`, 'recorded');
-    }
-    
-    // Report to console if enabled
-    if (options.reportToConsole) {
-        console.debug(`Performance metric: ${name} = ${value.toFixed(2)}`);
-    }
-    
-    // Report to analytics if enabled
-    if (options.reportToAnalytics) {
-        if (typeof window.gtag === 'function') {
-            window.gtag('event', 'performance_metric', {
-                metric_name: name,
-                metric_value: value,
-                event_category: 'Performance',
-                event_label: name,
-                non_interaction: true
+    try {
+        const timing = window.performance.timing;
+        const navigationStart = timing.navigationStart;
+        
+        // Calculate primary timing metrics
+        metrics.dns_lookup = timing.domainLookupEnd - timing.domainLookupStart;
+        metrics.tcp_connection = timing.connectEnd - timing.connectStart;
+        metrics.tls_negotiation = timing.secureConnectionStart > 0 
+            ? (timing.connectEnd - timing.secureConnectionStart) 
+            : 0;
+        metrics.request_time = timing.responseStart - timing.requestStart;
+        metrics.response_time = timing.responseEnd - timing.responseStart;
+        metrics.dom_interactive = timing.domInteractive - navigationStart;
+        metrics.dom_complete = timing.domComplete - navigationStart;
+        metrics.dom_content_loaded = timing.domContentLoadedEventEnd - timing.domContentLoadedEventStart;
+        metrics.load_event = timing.loadEventEnd - timing.loadEventStart;
+        metrics.first_byte = timing.responseStart - navigationStart;
+        metrics.total_page_load = timing.loadEventEnd - navigationStart;
+        
+        // Get resource timing data if available
+        if (window.performance.getEntriesByType) {
+            const resources = window.performance.getEntriesByType('resource');
+            metrics.resource_count = resources.length;
+            
+            // Sum total resource bytes if available
+            metrics.total_resource_size = resources.reduce((total, resource: any) => {
+                return total + (resource.encodedBodySize || 0);
+            }, 0);
+            
+            // Calculate average resource load time
+            metrics.avg_resource_time = resources.reduce((total, resource: any) => {
+                return total + resource.duration;
+            }, 0) / (resources.length || 1);
+            
+            // Identify slowest resources
+            if (resources.length > 0) {
+                const sortedResources = [...resources].sort((a: any, b: any) => b.duration - a.duration);
+                metrics.slowest_resources = sortedResources.slice(0, 3).map((resource: any) => ({
+                    url: resource.name,
+                    type: resource.initiatorType,
+                    duration: Math.round(resource.duration)
+                }));
+            }
+        }
+        
+        // Add Paint Timing if available (requires PerformanceObserver support)
+        if (window.performance.getEntriesByType('paint').length > 0) {
+            const paintMetrics = window.performance.getEntriesByType('paint');
+            paintMetrics.forEach((paint: any) => {
+                metrics[paint.name] = Math.round(paint.startTime);
             });
         }
-    }
-    
-    // Report to Meta Pixel if enabled
-    if (options.reportToMetaPixel) {
-        if (typeof window.fbq === 'function') {
-            // Only send certain metrics to avoid too many events
-            const importantMetrics = [
-                'first-contentful-paint',
-                'largest-contentful-paint',
-                'first-input-delay',
-                'cumulative-layout-shift',
-                'load-time'
-            ];
-            
-            if (importantMetrics.includes(name)) {
-                window.fbq('track', 'CustomizeProduct', {
-                    content_name: 'performance_metric',
-                    content_category: 'performance',
-                    metric_name: name,
-                    metric_value: Math.round(value),
-                    page_url: window.location.href
-                });
+        
+        // Round numeric values for readability
+        Object.keys(metrics).forEach(key => {
+            if (typeof metrics[key] === 'number') {
+                metrics[key] = Math.round(metrics[key]);
             }
-        }
+        });
+        
+        // Add current timestamp
+        metrics.timestamp = new Date().toISOString();
+        
+        return metrics;
+    } catch (err) {
+        console.error('Error capturing performance metrics:', err);
+        return { error: 'Failed to capture performance metrics' };
     }
-    
-    return metric;
 }
 
-// Custom window globals for TypeScript
-declare global {
-    interface Window {
-        gtag: (command: string, event: string, params?: any) => void;
+export function initPerformanceMonitoring(options: PerformanceOptions = {}) {
+    const {
+        sampleRate = 0.1, // Default sample 10% of sessions
+        reportToConsole = false,
+        reportToMetaPixel = false,
+        trackLongTasks = true
+    } = options;
+    
+    // Skip based on sampling rate
+    if (Math.random() > sampleRate) {
+        return;
+    }
+    
+    // Track page load performance when the window has loaded
+    window.addEventListener('load', () => {
+        // Wait for things to settle a bit
+        setTimeout(() => {
+            const metrics = capturePerformanceMetrics();
+            
+            if (reportToConsole) {
+                console.log('Performance metrics:', metrics);
+            }
+            
+            if (reportToMetaPixel && typeof window.fbq === 'function') {
+                window.fbq('trackCustom', 'PerformanceMetrics', enhanceEventData(metrics));
+            }
+        }, 2000);
+    });
+    
+    // Track long tasks if browser supports it and option is enabled
+    if (trackLongTasks && window.PerformanceObserver) {
+        try {
+            // We need to define the LongTaskTiming interface
+            interface LongTaskTiming extends PerformanceEntry {
+                attribution: Array<{
+                    name: string;
+                    entryType: string;
+                    startTime: number;
+                    duration: number;
+                    containerType?: string;
+                    containerName?: string;
+                    containerId?: string;
+                    containerSrc?: string;
+                }>;
+            }
+            
+            const longTaskObserver = new PerformanceObserver((list) => {
+                list.getEntries().forEach((entry) => {
+                    const longTask = entry as unknown as LongTaskTiming; // Cast to our interface
+                    
+                    // Only report significant tasks (longer than 100ms by default)
+                    if (longTask.duration > 100) {
+                        const taskInfo = {
+                            duration: Math.round(longTask.duration),
+                            startTime: Math.round(longTask.startTime),
+                            culprit: longTask.attribution && longTask.attribution[0] 
+                                ? longTask.attribution[0].name 
+                                : 'unknown'
+                        };
+                        
+                        if (reportToConsole) {
+                            console.warn('Long task detected:', taskInfo);
+                        }
+                        
+                        if (reportToMetaPixel && typeof window.fbq === 'function') {
+                            window.fbq('trackCustom', 'LongTask', enhanceEventData({
+                                task_duration_ms: taskInfo.duration,
+                                task_culprit: taskInfo.culprit,
+                                url: window.location.href,
+                                page_title: document.title
+                            }));
+                        }
+                    }
+                });
+            });
+            
+            // Start observing long tasks
+            longTaskObserver.observe({ entryTypes: ['longtask'] });
+            
+        } catch (e) {
+            console.error('Long task monitoring not supported:', e);
+        }
     }
 }

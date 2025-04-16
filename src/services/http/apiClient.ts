@@ -1,5 +1,5 @@
 
-import axios, { AxiosError, AxiosHeaders, AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosHeaders, AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
 import axiosRetry from 'axios-retry';
 import { BaseHttpClient } from './baseHttpClient';
 import { authService } from '../authService';
@@ -46,7 +46,9 @@ class ApiClient extends BaseHttpClient {
                 // Add auth token if available
                 const token = authService.getToken();
                 if (token) {
-                    config.headers = config.headers || {};
+                    if (!config.headers) {
+                        config.headers = new AxiosHeaders();
+                    }
                     config.headers.Authorization = `Bearer ${token}`;
                 }
                 
@@ -57,7 +59,9 @@ class ApiClient extends BaseHttpClient {
                     ?.split('=')[1];
                 
                 if (csrfToken) {
-                    config.headers = config.headers || {};
+                    if (!config.headers) {
+                        config.headers = new AxiosHeaders();
+                    }
                     config.headers['X-XSRF-TOKEN'] = csrfToken;
                 }
                 
@@ -82,7 +86,9 @@ class ApiClient extends BaseHttpClient {
                     if (newToken && error.config) {
                         // Retry the original request with the new token
                         const newConfig = { ...error.config };
-                        newConfig.headers = newConfig.headers || {};
+                        if (!newConfig.headers) {
+                            newConfig.headers = new AxiosHeaders();
+                        }
                         newConfig.headers.Authorization = `Bearer ${newToken}`;
                         return this.instance(newConfig);
                     } else {
@@ -96,7 +102,7 @@ class ApiClient extends BaseHttpClient {
                 this.retrying = false;
                 
                 // Process error through handler
-                const processedError = apiErrorHandler(error);
+                const processedError = apiErrorHandler.handleError(error);
                 
                 // Handle all other errors
                 return Promise.reject(processedError);
@@ -105,11 +111,23 @@ class ApiClient extends BaseHttpClient {
     }
 
     async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-        return this.instance.get(url, config);
+        try {
+            console.log(`API GET request to: ${url}`);
+            return this.instance.get(url, config);
+        } catch (error) {
+            console.error(`API GET error for ${url}:`, error);
+            throw error;
+        }
     }
 
     async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-        return this.instance.post(url, data, config);
+        try {
+            console.log(`API POST request to: ${url}`, { data });
+            return this.instance.post(url, data, config);
+        } catch (error) {
+            console.error(`API POST error for ${url}:`, error);
+            throw error;
+        }
     }
 
     async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {

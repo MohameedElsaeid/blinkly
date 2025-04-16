@@ -4,7 +4,7 @@ import App from './App.tsx';
 import './index.css';
 import {ServiceFactory} from './services';
 import {initPerformanceMonitoring} from './utils/performance';
-import { getFacebookBrowserId, getFacebookClickId } from './utils/metaPixelUtils';
+import { getFacebookBrowserId, getFacebookClickId, enhanceEventData } from './utils/metaPixelUtils';
 
 // Define Meta Pixel types for global window object
 declare global {
@@ -21,43 +21,53 @@ declare global {
 // Helper to track initial page load with enhanced data
 function trackInitialPageLoad() {
     // Only track if Meta Pixel is available
-    if (typeof window.fbq !== 'function') return;
-    
-    // Get Facebook tracking IDs
-    const fbp = getFacebookBrowserId();
-    const fbc = getFacebookClickId();
-    
-    // Get performance data if available
-    let performanceData = {};
-    if (window.performance) {
-        const timing = window.performance.timing;
-        const navigationStart = timing.navigationStart;
-        
-        performanceData = {
-            dns_lookup: timing.domainLookupEnd - timing.domainLookupStart,
-            tcp_connection: timing.connectEnd - timing.connectStart,
-            request_time: timing.responseStart - timing.requestStart,
-            response_time: timing.responseEnd - timing.responseStart,
-            dom_interactive: timing.domInteractive - navigationStart,
-            dom_complete: timing.domComplete - navigationStart,
-            page_load_time: timing.loadEventEnd - navigationStart
-        };
+    if (typeof window.fbq !== 'function') {
+        console.warn('Meta Pixel not found. Make sure the Meta Pixel script is loaded correctly.');
+        return;
     }
     
-    // Track with all available data
-    window.fbq('track', 'PageView', {
-        page_url: window.location.href,
-        referrer: document.referrer,
-        language: navigator.language,
-        screen_resolution: `${window.screen.width}x${window.screen.height}`,
-        user_agent: navigator.userAgent,
-        platform: navigator.platform,
+    // Track with all available data using our enhanced data helper
+    window.fbq('track', 'PageView', enhanceEventData({
         content_name: 'application_load',
-        content_type: 'initial_load',
-        ...(fbp ? { fbp } : {}),
-        ...(fbc ? { fbc } : {}),
-        ...performanceData
-    });
+        content_category: 'application',
+        status: 'loaded'
+    }));
+    
+    console.log('Initial PageView tracked with Meta Pixel');
+}
+
+// Helper to initialize Meta Pixel if not already loaded
+function initMetaPixel() {
+    if (typeof window.fbq === 'function') {
+        console.log('Meta Pixel already initialized');
+        return;
+    }
+    
+    try {
+        // Initialize Facebook Pixel
+        (function(f: any, b, e, v, n, t, s) {
+            if (f.fbq) return;
+            n = f.fbq = function() {
+                n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n;
+            n.push = n;
+            n.loaded = !0;
+            n.version = '2.0';
+            n.queue = [];
+            t = b.createElement(e);
+            t.async = !0;
+            t.src = v;
+            s = b.getElementsByTagName(e)[0];
+            s.parentNode?.insertBefore(t, s);
+        })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+        
+        // Initialize with your Pixel ID
+        window.fbq('init', '1136789268131903');
+        console.log('Meta Pixel initialized');
+    } catch (error) {
+        console.error('Failed to initialize Meta Pixel:', error);
+    }
 }
 
 // Initialize services
@@ -66,6 +76,9 @@ ServiceFactory.init({
     logLevel: import.meta.env.DEV ? 'debug' : 'error',
     cacheTTL: 5 * 60 * 1000 // 5 minutes
 });
+
+// Initialize Meta Pixel
+initMetaPixel();
 
 // Initialize performance monitoring
 if (import.meta.env.PROD) {
@@ -83,8 +96,11 @@ if (import.meta.env.PROD) {
 }
 
 // Track initial page load after a short delay to ensure Meta Pixel is loaded
-if (import.meta.env.PROD) {
-    setTimeout(trackInitialPageLoad, 1000);
-}
+setTimeout(trackInitialPageLoad, 1000);
+
+// Log to verify the app initialization
+console.log('App initializing...');
+console.log('API URL:', import.meta.env.VITE_API_URL || 'https://api.blinkly.app');
+console.log('Environment:', import.meta.env.DEV ? 'Development' : 'Production');
 
 createRoot(document.getElementById("root")!).render(<App/>);

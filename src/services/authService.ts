@@ -32,7 +32,13 @@ class AuthService {
 
     async register(params: SignUpDto): Promise<IAuthResponse> {
         try {
-            console.log('AuthService register called with params:', params);
+            console.log('AuthService register called with params:', { ...params, password: '***HIDDEN***' });
+            
+            // Add debugging to verify data format before sending
+            console.log('API base URL:', import.meta.env.VITE_API_URL || 'https://api.blinkly.app');
+            console.log('Registration endpoint:', '/auth/signup');
+            console.log('Is params valid object?', params && typeof params === 'object');
+            
             const response = await apiClient.post<IAuthResponse>('/auth/signup', params);
             console.log('Register API response:', response);
 
@@ -42,7 +48,16 @@ class AuthService {
 
             return response;
         } catch (error) {
-            console.error('Registration error:', error);
+            console.error('Registration error details:', error);
+            // More detailed error logging
+            if ((error as any).response) {
+                console.error('Server response:', (error as any).response.data);
+                console.error('Status code:', (error as any).response.status);
+            } else if ((error as any).request) {
+                console.error('No response received. Request details:', (error as any).request);
+            } else {
+                console.error('Error setting up request:', (error as any).message);
+            }
             throw error;
         }
     }
@@ -69,11 +84,16 @@ class AuthService {
 
     async refreshToken(): Promise<string | null> {
         try {
+            console.log('Attempting to refresh token');
             const response = await apiClient.post<{ success: boolean, user: { token: string } }>('/auth/refresh-token');
+            console.log('Refresh token response:', response);
+            
             if (response.success && response.user?.token) {
+                console.log('Token refreshed successfully');
                 localStorage.setItem('token', response.user.token);
                 return response.user.token;
             }
+            console.log('Failed to refresh token: Invalid response format');
             return null;
         } catch (error) {
             console.error('Failed to refresh token:', error);
@@ -83,6 +103,7 @@ class AuthService {
     }
 
     logout(): void {
+        console.log('Logging out user');
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         window.dispatchEvent(new Event('storage'));
@@ -102,7 +123,7 @@ class AuthService {
     }
 
     private saveAuthData(user: any): void {
-        console.log('Saving auth data:', user);
+        console.log('Saving auth data:', { ...user, token: user.token ? '***HIDDEN***' : undefined });
         localStorage.setItem('token', user.token);
         localStorage.setItem('user', JSON.stringify(user));
         window.dispatchEvent(new Event('storage'));
