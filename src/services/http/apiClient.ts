@@ -16,13 +16,14 @@ class ApiClient extends BaseHttpClient {
         super(baseURL);
         this.baseURL = baseURL;
         
+        // Create headers using the BaseHttpClient method
+        const standardHeaders = this.createStandardHeaders ? this.createStandardHeaders() : {};
+        
         this.instance = axios.create({
             baseURL: this.baseURL,
             timeout: 60000,
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            }
+            headers: standardHeaders,
+            withCredentials: true
         });
 
         // Configure retry logic
@@ -45,14 +46,8 @@ class ApiClient extends BaseHttpClient {
         // Add request interceptor
         this.instance.interceptors.request.use(
             async (config) => {
-                // Add auth token if available
-                const token = authService.getToken();
-                if (token) {
-                    if (!config.headers) {
-                        config.headers = new AxiosHeaders();
-                    }
-                    config.headers.Authorization = `Bearer ${token}`;
-                }
+                // Apply all headers from BaseHttpClient
+                config = this.addAuthToken(config);
                 
                 // Add CSRF token if available (from cookie)
                 const csrfToken = document.cookie
@@ -60,13 +55,11 @@ class ApiClient extends BaseHttpClient {
                     .find(row => row.startsWith('XSRF-TOKEN='))
                     ?.split('=')[1];
                 
-                if (csrfToken) {
-                    if (!config.headers) {
-                        config.headers = new AxiosHeaders();
-                    }
+                if (csrfToken && config.headers) {
                     config.headers['X-XSRF-TOKEN'] = csrfToken;
                 }
                 
+                console.log(`Request headers for ${config.url}:`, config.headers);
                 return config;
             },
             (error) => {
@@ -110,6 +103,32 @@ class ApiClient extends BaseHttpClient {
                 return Promise.reject(processedError);
             }
         );
+    }
+
+    // Helper method to access standardized headers (used by the constructor)
+    private createStandardHeaders(): Record<string, string> {
+        try {
+            // Use super's method if possible, otherwise create a new set
+            if (super['createStandardHeaders']) {
+                return super['createStandardHeaders']();
+            }
+            
+            // Fallback if the super method doesn't exist
+            const headers: Record<string, string> = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-Request-ID': crypto.randomUUID(),
+                'X-Request-Time': new Date().toISOString()
+            };
+            
+            return headers;
+        } catch (error) {
+            console.error('Error creating standard headers:', error);
+            return {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            };
+        }
     }
 
     async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
