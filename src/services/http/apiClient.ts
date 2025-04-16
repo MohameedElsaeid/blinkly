@@ -1,4 +1,3 @@
-
 import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import { BaseHttpClient } from './baseHttpClient';
 import { csrfTokenService } from '../csrf/csrfTokenService';
@@ -76,9 +75,7 @@ class ApiClient extends BaseHttpClient {
             try {
               // Fetch a fresh CSRF token
               const csrfToken = await csrfTokenService.fetchCsrfToken();
-              if (!originalRequest.headers) {
-                originalRequest.headers = {};
-              }
+              originalRequest.headers = originalRequest.headers || {};
               originalRequest.headers['x-csrf-token'] = csrfToken;
               originalRequest.withCredentials = true;
               
