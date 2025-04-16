@@ -37,7 +37,7 @@ class LoggingService {
 
         // Send to monitoring service in production
         if (process.env.NODE_ENV === 'production') {
-            this.sendToMonitoring(entry);
+            // this.sendToMonitoring(entry);
         }
 
         // Log to console in development
