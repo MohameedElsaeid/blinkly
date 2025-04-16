@@ -35,19 +35,19 @@ class ApiClient extends BaseHttpClient {
         configWithAuth.headers = configWithAuth.headers || new AxiosHeaders();
         
         // Add required headers
-        if (configWithAuth.headers) {
+        if (configWithAuth.headers instanceof AxiosHeaders) {
           Object.entries({
             'Content-Type': 'application/json',
             ...getTrackingHeaders(),
           }).forEach(([key, value]) => {
-            configWithAuth.headers.set(key, value);
+            (configWithAuth.headers as AxiosHeaders).set(key, value);
           });
         }
 
         if (['post', 'put', 'patch', 'delete'].includes((config.method || '').toLowerCase())) {
           try {
             const csrfToken = await csrfTokenService.fetchCsrfToken();
-            if (configWithAuth.headers) {
+            if (configWithAuth.headers instanceof AxiosHeaders) {
               configWithAuth.headers.set('x-csrf-token', csrfToken);
             }
           } catch (csrfError) {
@@ -80,7 +80,9 @@ class ApiClient extends BaseHttpClient {
             // Fetch a fresh CSRF token
             const csrfToken = await csrfTokenService.fetchCsrfToken();
             originalRequest.headers = originalRequest.headers || new AxiosHeaders();
-            originalRequest.headers.set('x-csrf-token', csrfToken);
+            if (originalRequest.headers instanceof AxiosHeaders) {
+              originalRequest.headers.set('x-csrf-token', csrfToken);
+            }
             originalRequest.withCredentials = true;
             
             console.log('Retrying request with new CSRF token');

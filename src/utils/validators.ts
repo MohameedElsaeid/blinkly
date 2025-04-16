@@ -1,5 +1,4 @@
-
-import { parsePhoneNumber, isValidPhoneNumber } from 'libphonenumber-js';
+import { parsePhoneNumber, isValidPhoneNumber, getCountries, getCountryCallingCode } from 'libphonenumber-js';
 import * as countries from 'i18n-iso-countries';
 
 // Initialize the countries library with English language
@@ -70,28 +69,52 @@ export const getCountriesList = () => {
   }
 };
 
-export const getCountryCodesList = () => [
-  { code: '+1', name: 'United States & Canada (+1)' },
-  { code: '+44', name: 'United Kingdom (+44)' },
-  { code: '+61', name: 'Australia (+61)' },
-  { code: '+33', name: 'France (+33)' },
-  { code: '+49', name: 'Germany (+49)' },
-  { code: '+81', name: 'Japan (+81)' },
-  { code: '+86', name: 'China (+86)' },
-  { code: '+91', name: 'India (+91)' },
-  { code: '+55', name: 'Brazil (+55)' },
-  { code: '+52', name: 'Mexico (+52)' },
-  { code: '+27', name: 'South Africa (+27)' },
-  { code: '+7', name: 'Russia (+7)' },
-  { code: '+971', name: 'United Arab Emirates (+971)' },
-  { code: '+966', name: 'Saudi Arabia (+966)' },
-  { code: '+82', name: 'South Korea (+82)' },
-  { code: '+65', name: 'Singapore (+65)' },
-  { code: '+64', name: 'New Zealand (+64)' },
-  { code: '+31', name: 'Netherlands (+31)' },
-  { code: '+39', name: 'Italy (+39)' },
-  { code: '+34', name: 'Spain (+34)' },
-];
+export const getCountryCodesList = () => {
+  try {
+    // Get all country codes from libphonenumber-js
+    const countryCodes = getCountries().map(countryCode => {
+      try {
+        const callingCode = getCountryCallingCode(countryCode);
+        const countryName = countries.getName(countryCode, 'en') || countryCode;
+        return {
+          code: `+${callingCode}`,
+          name: `${countryName} (+${callingCode})`,
+          countryCode: countryCode
+        };
+      } catch (error) {
+        console.error(`Error getting calling code for ${countryCode}:`, error);
+        return null;
+      }
+    }).filter(Boolean);
+    
+    return countryCodes.sort((a, b) => a.name.localeCompare(b.name));
+  } catch (error) {
+    console.error('Error getting country codes list:', error);
+    // Return a basic list as fallback
+    return [
+      { code: '+1', name: 'United States & Canada (+1)', countryCode: 'US' },
+      { code: '+44', name: 'United Kingdom (+44)', countryCode: 'GB' },
+      { code: '+61', name: 'Australia (+61)' },
+      { code: '+33', name: 'France (+33)' },
+      { code: '+49', name: 'Germany (+49)' },
+      { code: '+81', name: 'Japan (+81)' },
+      { code: '+86', name: 'China (+86)' },
+      { code: '+91', name: 'India (+91)' },
+      { code: '+55', name: 'Brazil (+55)' },
+      { code: '+52', name: 'Mexico (+52)' },
+      { code: '+27', name: 'South Africa (+27)' },
+      { code: '+7', name: 'Russia (+7)' },
+      { code: '+971', name: 'United Arab Emirates (+971)' },
+      { code: '+966', name: 'Saudi Arabia (+966)' },
+      { code: '+82', name: 'South Korea (+82)' },
+      { code: '+65', name: 'Singapore (+65)' },
+      { code: '+64', name: 'New Zealand (+64)' },
+      { code: '+31', name: 'Netherlands (+31)' },
+      { code: '+39', name: 'Italy (+39)' },
+      { code: '+34', name: 'Spain (+34)' },
+    ];
+  }
+};
 
 export const getPasswordStrength = (password: string): { score: number; feedback: string } => {
   if (!password) {

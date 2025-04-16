@@ -55,11 +55,8 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        // Fix TypeScript error by properly typing the components
-        nav: {
-          prev: (props) => <ChevronLeft className="h-4 w-4" {...props} />,
-          next: (props) => <ChevronRight className="h-4 w-4" {...props} />,
-        }
+        IconLeft: () => <ChevronLeft className="h-4 w-4" />,
+        IconRight: () => <ChevronRight className="h-4 w-4" />,
       }}
       {...props}
     />

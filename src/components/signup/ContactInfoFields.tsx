@@ -2,7 +2,9 @@
 import { Mail, Phone, Globe } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchableSelect } from "./SearchableSelect";
+import { getCountriesList, getCountryCodesList } from "@/utils/validators";
+import { useEffect, useState } from "react";
 
 interface ContactInfoFieldsProps {
   email: string;
@@ -15,31 +17,6 @@ interface ContactInfoFieldsProps {
   setCountry: (value: string) => void;
 }
 
-const COUNTRY_OPTIONS = [
-  { value: "us", label: "United States" },
-  { value: "ca", label: "Canada" },
-  { value: "uk", label: "United Kingdom" },
-  { value: "au", label: "Australia" },
-  { value: "fr", label: "France" },
-  { value: "de", label: "Germany" },
-  { value: "jp", label: "Japan" },
-  { value: "cn", label: "China" },
-  { value: "in", label: "India" },
-  { value: "br", label: "Brazil" },
-];
-
-const COUNTRY_CODES = [
-  { value: "+1", label: "+1 (US/CA)" },
-  { value: "+44", label: "+44 (UK)" },
-  { value: "+61", label: "+61 (AU)" },
-  { value: "+33", label: "+33 (FR)" },
-  { value: "+49", label: "+49 (DE)" },
-  { value: "+81", label: "+81 (JP)" },
-  { value: "+86", label: "+86 (CN)" },
-  { value: "+91", label: "+91 (IN)" },
-  { value: "+55", label: "+55 (BR)" },
-];
-
 export const ContactInfoFields = ({
   email,
   setEmail,
@@ -50,6 +27,25 @@ export const ContactInfoFields = ({
   country,
   setCountry
 }: ContactInfoFieldsProps) => {
+  const [countries, setCountries] = useState<Array<{value: string, label: string}>>([]);
+  const [countryCodes, setCountryCodes] = useState<Array<{value: string, label: string}>>([]);
+  
+  useEffect(() => {
+    // Convert country list to the format expected by SearchableSelect
+    const countryList = getCountriesList().map(country => ({
+      value: country.code,
+      label: country.name
+    }));
+    setCountries(countryList);
+    
+    // Convert country codes list to the format expected by SearchableSelect
+    const codesList = getCountryCodesList().map(code => ({
+      value: code.code,
+      label: code.name
+    }));
+    setCountryCodes(codesList);
+  }, []);
+
   return (
     <>
       <div className="space-y-2">
@@ -73,18 +69,14 @@ export const ContactInfoFields = ({
         <Label htmlFor="phone">Phone Number</Label>
         <div className="flex space-x-2">
           <div className="w-1/3">
-            <Select value={countryCode} onValueChange={setCountryCode}>
-              <SelectTrigger>
-                <SelectValue placeholder="Code" />
-              </SelectTrigger>
-              <SelectContent>
-                {COUNTRY_CODES.map((code) => (
-                  <SelectItem key={code.value} value={code.value}>
-                    {code.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <SearchableSelect
+              items={countryCodes}
+              value={countryCode}
+              onChange={setCountryCode}
+              placeholder="Code"
+              emptyMessage="No country code found"
+              triggerClassName="h-10"
+            />
           </div>
           <div className="relative w-2/3">
             <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
@@ -105,19 +97,16 @@ export const ContactInfoFields = ({
       <div className="space-y-2">
         <Label htmlFor="country">Country</Label>
         <div className="relative">
-          <Globe className="absolute left-3 top-3 h-4 w-4 text-gray-400 pointer-events-none" />
-          <Select value={country} onValueChange={setCountry}>
-            <SelectTrigger className="pl-10">
-              <SelectValue placeholder="Select your country" />
-            </SelectTrigger>
-            <SelectContent>
-              {COUNTRY_OPTIONS.map((country) => (
-                <SelectItem key={country.value} value={country.value}>
-                  {country.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Globe className="absolute left-3 top-3 h-4 w-4 text-gray-400 pointer-events-none z-10" />
+          <SearchableSelect
+            items={countries}
+            value={country}
+            onChange={setCountry}
+            placeholder="Select your country"
+            emptyMessage="No country found"
+            prefix={<div className="w-4" />} // Space for the Globe icon
+            triggerClassName="pl-10 h-10"
+          />
         </div>
       </div>
     </>
