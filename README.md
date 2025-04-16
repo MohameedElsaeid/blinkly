@@ -1,5 +1,5 @@
 
-# LinkAlchemy - URL Shortener
+# Blinkly - URL Shortener
 
 A modern URL shortening service with analytics built with React and NestJS.
 

@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: linkalchemy
+      POSTGRES_DB: Blinkly
     volumes:
       - postgres_data:/var/lib/postgresql/data
 

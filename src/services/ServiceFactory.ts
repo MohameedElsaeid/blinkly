@@ -1,57 +1,54 @@
-
-import { apiClient } from './http/apiClient';
-import { logger } from './LoggingService';
-import { cache } from './CacheService';
-import { security } from './SecurityService';
+import {logger} from './LoggingService';
+import {security} from './SecurityService';
 
 export interface ServiceConfig {
-  baseURL: string;
-  logLevel: 'debug' | 'info' | 'warn' | 'error';
-  cacheTTL: number;
+    baseURL: string;
+    logLevel: 'debug' | 'info' | 'warn' | 'error';
+    cacheTTL: number;
 }
 
 class ServiceFactory {
-  private static instance: ServiceFactory;
-  private config: ServiceConfig;
+    private static instance: ServiceFactory;
+    private config: ServiceConfig;
 
-  private constructor(config: ServiceConfig) {
-    this.config = config;
-  }
-
-  static init(config: ServiceConfig): void {
-    if (!ServiceFactory.instance) {
-      ServiceFactory.instance = new ServiceFactory(config);
-      ServiceFactory.instance.setupServices();
+    private constructor(config: ServiceConfig) {
+        this.config = config;
     }
-  }
 
-  static getInstance(): ServiceFactory {
-    if (!ServiceFactory.instance) {
-      throw new Error('ServiceFactory must be initialized with config first');
+    static init(config: ServiceConfig): void {
+        if (!ServiceFactory.instance) {
+            ServiceFactory.instance = new ServiceFactory(config);
+            ServiceFactory.instance.setupServices();
+        }
     }
-    return ServiceFactory.instance;
-  }
 
-  private setupServices(): void {
-    // Set up global error handler
-    window.addEventListener('unhandledrejection', (event) => {
-      logger.log('error', 'Unhandled Promise Rejection', {
-        reason: event.reason,
-        stack: event.reason?.stack
-      });
-    });
+    static getInstance(): ServiceFactory {
+        if (!ServiceFactory.instance) {
+            throw new Error('ServiceFactory must be initialized with config first');
+        }
+        return ServiceFactory.instance;
+    }
 
-    // Set up session validation
-    setInterval(() => {
-      security.validateSession().catch(() => {
-        logger.log('warn', 'Session validation failed');
-      });
-    }, 5 * 60 * 1000); // Check every 5 minutes
-  }
+    getConfig(): ServiceConfig {
+        return {...this.config};
+    }
 
-  getConfig(): ServiceConfig {
-    return { ...this.config };
-  }
+    private setupServices(): void {
+        // Set up global error handler
+        window.addEventListener('unhandledrejection', (event) => {
+            logger.log('error', 'Unhandled Promise Rejection', {
+                reason: event.reason,
+                stack: event.reason?.stack
+            });
+        });
+
+        // Set up session validation
+        setInterval(() => {
+            security.validateSession().catch(() => {
+                logger.log('warn', 'Session validation failed');
+            });
+        }, 5 * 60 * 1000); // Check every 5 minutes
+    }
 }
 
-export { ServiceFactory };
+export {ServiceFactory};

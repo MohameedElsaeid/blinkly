@@ -1,12 +1,12 @@
-import { BlogPost } from "@/types/blog";
+import {BlogPost} from "@/types/blog";
 
 export const blogPosts: BlogPost[] = [
-  {
-    id: "3",
-    title: "How to Motivate In-Store Buyers to Scan QR Codes",
-    slug: "motivate-in-store-qr-code-scans",
-    excerpt: "Discover creative strategies to encourage shoppers to scan QR codes in-store, turning casual browsers into engaged digital visitors.",
-    content: `Imagine a shopper strolling through your store, eyes darting over products, when they spot a quirky sign next to a QR code that says “Scan me for a surprise!” Chances are, their curiosity will kick in – phone out, camera on, scan. In that moment, you’ve bridged the gap between the physical and digital shopping experience. QR codes are everywhere now, but how do you get those in-store customers to actually pull out their phones and scan? Today, we’re diving into fun and effective ways to motivate your in-store buyers to scan QR codes, turning casual browsers into engaged digital visitors.
+    {
+        id: "3",
+        title: "How to Motivate In-Store Buyers to Scan QR Codes",
+        slug: "motivate-in-store-qr-code-scans",
+        excerpt: "Discover creative strategies to encourage shoppers to scan QR codes in-store, turning casual browsers into engaged digital visitors.",
+        content: `Imagine a shopper strolling through your store, eyes darting over products, when they spot a quirky sign next to a QR code that says “Scan me for a surprise!” Chances are, their curiosity will kick in – phone out, camera on, scan. In that moment, you’ve bridged the gap between the physical and digital shopping experience. QR codes are everywhere now, but how do you get those in-store customers to actually pull out their phones and scan? Today, we’re diving into fun and effective ways to motivate your in-store buyers to scan QR codes, turning casual browsers into engaged digital visitors.
 Why Scanning QR Codes In-Store Matters
 QR codes might look like just funky squares, but they can pack a serious punch for your business. With about 91% of U.S. adults owning a smartphone​
 BITLY.COM
@@ -80,21 +80,21 @@ Promote the heck out of it: Let customers know your loyalty program just got eas
 Wrap-Up: Loyalty Love + Blinkly Magic
 QR codes and loyalty programs are a match made in marketing heaven. They make joining and engaging with your program effortless – which means more loyal customers and more revenue for you. It’s all about reducing friction and adding a dash of fun (scanning feels a bit like a treasure hunt, after all). By embracing QR codes with Blinkly, you’re giving your customers a modern, convenient loyalty experience. No more fumbling for cards or forgetting to redeem rewards; everything they need is just a quick scan away. And for you, every scan is an opportunity to learn more about your customers and keep them coming back. Ready to boost retention and sales? Blinkly’s dynamic QR codes and short links make implementing a high-tech loyalty program a breeze. Get started today and watch your customers light up with every scan – turning one-time buyers into lifelong fans!
 `,
-    coverImage: "https://images.unsplash.com/photo-1556740758-90b47b7d6a29?q=80&w=2071", // A relevant stock image about QR codes or shopping
-    category: "Marketing",
-    author: {
-      name: "Jordan Smith",
-      avatar: "https://randomuser.me/api/portraits/men/45.jpg",
+        coverImage: "https://images.unsplash.com/photo-1556740758-90b47b7d6a29?q=80&w=2071", // A relevant stock image about QR codes or shopping
+        category: "Marketing",
+        author: {
+            name: "Jordan Smith",
+            avatar: "https://randomuser.me/api/portraits/men/45.jpg",
+        },
+        publishedAt: "2025-04-08",
+        readingTime: "6 min read",
     },
-    publishedAt: "2025-04-08",
-    readingTime: "6 min read",
-  },
-  {
-    id: "1",
-    title: "The Ultimate Guide to Using QR Codes for Loyalty Programs",
-    slug: "qr-codes-loyalty-programs",
-    excerpt: "Discover how QR codes are revolutionizing loyalty programs, increasing customer engagement, and boosting business revenue with easy implementation.",
-    content: `
+    {
+        id: "1",
+        title: "The Ultimate Guide to Using QR Codes for Loyalty Programs",
+        slug: "qr-codes-loyalty-programs",
+        excerpt: "Discover how QR codes are revolutionizing loyalty programs, increasing customer engagement, and boosting business revenue with easy implementation.",
+        content: `
 # The Ultimate Guide to Using QR Codes for Loyalty Programs
 
 Remember the days of carrying punch cards or keychain tags for every coffee shop and grocery store loyalty program? 🗝️ Those days are fading fast. Now, your customers' smartphones and a simple QR code can do the job with zero hassle. Welcome to the ultimate guide on blending QR codes with loyalty programs – a combo that's boosting customer engagement and business revenue in a big way.
@@ -171,21 +171,21 @@ By embracing QR codes with Blinkly, you're giving your customers a modern, conve
 
 Ready to boost retention and sales? Blinkly's dynamic QR codes and short links make implementing a high-tech loyalty program a breeze. Get started today and watch your customers light up with every scan – turning one-time buyers into lifelong fans!
 `,
-    coverImage: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=2070",
-    category: "Marketing",
-    author: {
-      name: "Morgan Lee",
-      avatar: "https://randomuser.me/api/portraits/women/62.jpg",
+        coverImage: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=2070",
+        category: "Marketing",
+        author: {
+            name: "Morgan Lee",
+            avatar: "https://randomuser.me/api/portraits/women/62.jpg",
+        },
+        publishedAt: "2025-04-07",
+        readingTime: "8 min read",
     },
-    publishedAt: "2025-04-07",
-    readingTime: "8 min read",
-  },
-  {
-    id: "2",
-    title: "How Print Marketing Fits Into a Digital World",
-    slug: "print-marketing-digital-world",
-    excerpt: "Explore how print marketing can thrive in our digital age by leveraging QR codes and short links to create measurable, engaging campaigns.",
-    content: `
+    {
+        id: "2",
+        title: "How Print Marketing Fits Into a Digital World",
+        slug: "print-marketing-digital-world",
+        excerpt: "Explore how print marketing can thrive in our digital age by leveraging QR codes and short links to create measurable, engaging campaigns.",
+        content: `
 # How Does Print Marketing Fit Into a Digital World?
 
 "Print is dead," they said. "Everyone is glued to screens now," they said. And yet – have you checked your mail or picked up a flyer lately? Print marketing is very much alive, but it's no longer just about traditional ink on paper. In our hyper-digital age, print has found a new groove by teaming up with digital tools like short links and QR codes. The result? Old-school media with a modern twist, driving people online and delivering measurable results. Let's explore how print marketing fits (and thrives) in today's digital landscape.
@@ -256,29 +256,29 @@ The bottom line: Don't toss out print as "old news." Instead, supercharge it wit
 
 Ready to blend offline and online marketing? Give Blinkly a whirl to create trackable short URLs and QR codes for all your print campaigns. Watch as your brochures and banners start generating clicks, conversions, and real ROI in our digital world. Print isn't dead – it just put on a digital superhero cape!
 `,
-    coverImage: "https://images.unsplash.com/photo-1586339949216-35c2747cc36d?q=80&w=2070",
-    category: "Marketing",
-    author: {
-      name: "Alex Johnson",
-      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    },
-    publishedAt: "2025-04-02",
-    readingTime: "7 min read",
-  }
+        coverImage: "https://images.unsplash.com/photo-1586339949216-35c2747cc36d?q=80&w=2070",
+        category: "Marketing",
+        author: {
+            name: "Alex Johnson",
+            avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+        },
+        publishedAt: "2025-04-02",
+        readingTime: "7 min read",
+    }
 ];
 
 export const getBlogPostBySlug = (slug: string): BlogPost | undefined => {
-  return blogPosts.find(post => post.slug === slug);
+    return blogPosts.find(post => post.slug === slug);
 };
 
 export const getRecentPosts = (count: number = 3): BlogPost[] => {
-  return [...blogPosts]
-    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
-    .slice(0, count);
+    return [...blogPosts]
+        .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+        .slice(0, count);
 };
 
 export const getRelatedPosts = (currentPostId: string, category: string, count: number = 2): BlogPost[] => {
-  return blogPosts
-    .filter(post => post.id !== currentPostId && post.category === category)
-    .slice(0, count);
+    return blogPosts
+        .filter(post => post.id !== currentPostId && post.category === category)
+        .slice(0, count);
 };
