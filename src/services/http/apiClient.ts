@@ -130,9 +130,14 @@ class ApiClient extends BaseHttpClient {
 
     private async fetchCsrfToken(): Promise<void> {
         try {
+
+            const headers = { ...this.createStandardHeaders() };
+            delete headers['x-csrf-token'];
+            delete headers['X-XSRF-TOKEN'];
+
             const response = await axios.get(`${this.baseURL}/auth/csrf-token`, {
                 withCredentials: true,
-                headers: this.createStandardHeaders()
+                headers
             });
 
             // Get token from multiple possible sources
