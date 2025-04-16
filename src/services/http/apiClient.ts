@@ -1,40 +1,32 @@
-
-import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
+import axios, {AxiosError, AxiosRequestConfig} from 'axios';
 import axiosRetry from 'axios-retry';
-import { BaseHttpClient } from './baseHttpClient';
-import { authService } from '../authService';
-import { apiErrorHandler } from '../errors/apiErrorHandler';
+import {BaseHttpClient} from './baseHttpClient';
+import {authService} from '../authService';
+import {apiErrorHandler} from '../errors/apiErrorHandler';
 
 class ApiClient extends BaseHttpClient {
-    private instance: any; // Using 'any' to avoid TS errors with headers
+    private instance: any;
     private retrying: boolean = false;
     private baseURL: string;
+    private csrfToken: string | null = null;
 
     constructor() {
-        // Use a consistent base URL with fallback
         const baseURL = import.meta.env.VITE_API_URL || 'https://api.blinkly.app';
         super(baseURL);
         this.baseURL = baseURL;
-        
-        // Create headers using the BaseHttpClient method
-        const standardHeaders = this.createStandardHeaders();
-        
+
         this.instance = axios.create({
             baseURL: this.baseURL,
             timeout: 60000,
-            headers: standardHeaders,
             withCredentials: true
         });
 
         // Configure retry logic
         axiosRetry(this.instance, {
             retries: 3,
-            retryDelay: (retryCount) => {
-                return retryCount * 1000; // Exponential back-off
-            },
+            retryDelay: (retryCount) => retryCount * 1000,
             retryCondition: (error) => {
-                // Retry on network errors or 5xx server errors
-                return axiosRetry.isNetworkOrIdempotentRequestError(error) || 
+                return axiosRetry.isNetworkOrIdempotentRequestError(error) ||
                     (error.response && error.response.status >= 500);
             },
             onRetry: (retryCount, error) => {
@@ -43,55 +35,71 @@ class ApiClient extends BaseHttpClient {
             },
         });
 
-        // Add request interceptor
+        // Request interceptor
         this.instance.interceptors.request.use(
             async (config: any) => {
-                // Apply all headers from BaseHttpClient
-                config = this.addAuthToken(config);
-                config = this.addCloudflareHeaders(config);
-                config = this.addClientHints(config);
-                
-                // Add CSRF token if available (from cookie)
-                const csrfToken = document.cookie
-                    .split('; ')
-                    .find(row => row.startsWith('XSRF-TOKEN='))
-                    ?.split('=')[1];
-                
-                if (csrfToken && config.headers) {
-                    config.headers['X-XSRF-TOKEN'] = csrfToken;
+                // Ensure we have a CSRF token before making non-GET requests
+                if (config.method?.toLowerCase() !== 'get') {
+                    await this.ensureCsrfToken();
                 }
-                
-                console.log(`Request headers for ${config.url}:`, config.headers);
+
+                // Start with standard headers
+                config.headers = this.createStandardHeaders();
+
+                // Add CSRF tokens
+                if (this.csrfToken) {
+                    config.headers['x-csrf-token'] = this.csrfToken;
+                    config.headers['X-XSRF-TOKEN'] = this.csrfToken;
+                }
+
+                // Add auth token if available
+                const token = localStorage.getItem('token');
+                if (token) {
+                    config.headers['Authorization'] = `Bearer ${token}`;
+                }
+
+                // Additional Cloudflare headers that might be dynamic
+                config.headers['CF-Metro-Code'] = localStorage.getItem('cf-metro-code') || '';
+                config.headers['CF-Region'] = localStorage.getItem('cf-region') || '';
+                config.headers['CF-Region-Code'] = localStorage.getItem('cf-region-code') || '';
+                config.headers['CF-Connecting-IP'] = localStorage.getItem('cf-ip') || '';
+                config.headers['CF-IPCity'] = localStorage.getItem('cf-city') || '';
+                config.headers['CF-IPContinent'] = localStorage.getItem('cf-continent') || '';
+                config.headers['CF-IPLatitude'] = localStorage.getItem('cf-lat') || '';
+                config.headers['CF-IPLongitude'] = localStorage.getItem('cf-lon') || '';
+                config.headers['CF-IPTimeZone'] = localStorage.getItem('cf-tz') || '';
+
+                console.log(config.headers)
                 return config;
             },
-            (error: any) => {
-                return Promise.reject(error);
-            }
+            (error: any) => Promise.reject(error)
         );
 
-        // Add response interceptor
+        // Response interceptor
         this.instance.interceptors.response.use(
-            (response: any) => {
-                // Any status code within the range of 2xx
-                return response.data;
-            },
+            (response: any) => response.data,
             async (error: AxiosError) => {
+                // Handle CSRF token mismatch
+                if (error.response?.status === 403 && error.response?.data?.code === 'EBADCSRFTOKEN') {
+                    console.log('CSRF token invalid, fetching new token');
+                    await this.fetchCsrfToken();
+                    if (error.config) {
+                        return this.instance.request(error.config);
+                    }
+                }
+
                 // Handle token expiration
                 if (error.response?.status === 401 && !this.retrying) {
                     try {
-                        // Try to refresh the token
                         const newToken = await authService.refreshToken();
                         if (newToken && error.config) {
-                            // Retry the original request with the new token
-                            const newConfig = { ...error.config };
-                            if (newConfig.headers) {
-                                newConfig.headers.Authorization = `Bearer ${newToken}`;
-                            } else {
-                                newConfig.headers = { Authorization: `Bearer ${newToken}` };
-                            }
+                            const newConfig = {...error.config};
+                            newConfig.headers = {
+                                ...newConfig.headers,
+                                Authorization: `Bearer ${newToken}`
+                            };
                             return this.instance(newConfig);
                         } else {
-                            // If refresh token fails, log out user
                             authService.logout();
                             return Promise.reject(error);
                         }
@@ -101,18 +109,44 @@ class ApiClient extends BaseHttpClient {
                         return Promise.reject(error);
                     }
                 }
-                
-                // Reset retrying flag
+
                 this.retrying = false;
-                
-                // Process error through handler
                 const processedError = apiErrorHandler.handleApiError(error);
-                
-                // Handle all other errors
                 return Promise.reject(processedError);
             }
         );
+
+        // Fetch CSRF token on initial load
+        this.fetchCsrfToken();
     }
+
+    private async ensureCsrfToken(): Promise<void> {
+        if (!this.csrfToken) {
+            await this.fetchCsrfToken();
+        }
+    }
+
+    private async fetchCsrfToken(): Promise<void> {
+        try {
+            // Make a GET request to a CSRF endpoint or any safe endpoint
+            const response = await axios.get(`${this.baseURL}/api/csrf-token`, {
+                withCredentials: true
+            });
+
+            // The token should be in cookies (set by backend) or response
+            const token = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('XSRF-TOKEN='))
+                ?.split('=')[1];
+
+            if (token) {
+                this.csrfToken = token;
+            }
+        } catch (error) {
+            console.error('Error fetching CSRF token:', error);
+        }
+    }
+
 
     async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
         try {
@@ -126,7 +160,7 @@ class ApiClient extends BaseHttpClient {
 
     async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
         try {
-            console.log(`API POST request to: ${url}`, { data });
+            console.log(`API POST request to: ${url}`, {data});
             return this.instance.post(url, data, config);
         } catch (error) {
             console.error(`API POST error for ${url}:`, error);

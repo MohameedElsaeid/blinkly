@@ -1,7 +1,7 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
 import axiosRetry from 'axios-retry';
-import { v4 as uuidv4 } from 'uuid';
-import { getBrowserInfo } from '../../utils/metaPixelUtils';
+import {v4 as uuidv4} from 'uuid';
+import {getBrowserInfo} from '../../utils/metaPixelUtils';
 
 const REQUEST_TIMEOUT = 30000;
 const MAX_RETRIES = 1;
@@ -14,7 +14,7 @@ export class BaseHttpClient {
     constructor(baseURL?: string) {
         // Create standardized headers that will be sent with every request
         const headers = this.createStandardHeaders();
-        
+
         this.client = axios.create({
             baseURL: baseURL || import.meta.env.VITE_API_URL || 'https://api.blinkly.app',
             timeout: REQUEST_TIMEOUT,
@@ -56,103 +56,75 @@ export class BaseHttpClient {
         const requestTime = new Date().toISOString();
         const requestId = uuidv4();
         const browserInfo = getBrowserInfo();
-        
-        // Standard headers
+
+        // All headers must match exactly with backend's allowedHeaders
         const headers: Record<string, string> = {
+            // Standard HTTP headers
             'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
+
+            // Request identification
             'X-Request-ID': requestId,
             'X-Request-Time': requestTime,
-            'DNT': navigator.doNotTrack || '1',
-            'X-Custom-Header': localStorage.getItem('custom-header') || 'default-value',
-            
-            // Optional priority header
+
+            // Tracking preferences
+            // 'DNT': browserInfo.doNotTrack ? '1' : '0',
+
+            // Security headers
+            // 'Sec-CH-UA': 'userAgentData' in navigator ?
+            //     (navigator as any).userAgentData.brands.map((b: any) => `"${b.brand}";v="${b.version}"`).join(', ') : '',
+            // 'Sec-CH-UA-Mobile': 'userAgentData' in navigator ?
+            //     (navigator as any).userAgentData.mobile ? '?1' : '?0' : '?0',
+            // 'Sec-CH-UA-Platform': 'userAgentData' in navigator ?
+            //     `"${(navigator as any).userAgentData.platform}"` : '',
+            // 'Sec-Fetch-Site': this.getSecFetchSite(browserInfo.referrer),
+            // 'Sec-Fetch-Mode': 'cors',
+            // 'Sec-Fetch-Dest': 'empty',
+
+            // Cloudflare headers
+            'CF-IPCountry': this.getCookieValue('cf-country') || localStorage.getItem('cf-country') || '',
+            'CF-Ray': this.getCookieValue('cf-ray') || localStorage.getItem('cf-ray') || '',
+            'CF-Visitor': JSON.stringify({scheme: 'https'}),
+            'CF-Device-Type': this.getDeviceType(browserInfo),
+            'x-forward-cloudflare-headers': 'true',
+
+            // Device information
+            'X-User-Agent': browserInfo.userAgent,
+            'X-Language': browserInfo.language,
+            'X-Platform': browserInfo.platform,
+            'X-Screen-Width': browserInfo.screenWidth.toString(),
+            'X-Screen-Height': browserInfo.screenHeight.toString(),
+            'X-Time-Zone': browserInfo.timezone,
+            'X-Color-Depth': browserInfo.colorDepth.toString(),
+            'X-Hardware-Concurrency': browserInfo.hardwareConcurrency?.toString() || 'unknown',
+            'X-Device-Memory': browserInfo.deviceMemory?.toString() || 'unknown',
+
+            // Custom headers
+            'X-Custom-Header': localStorage.getItem('custom-header') || 'default',
+            'Device-ID': localStorage.getItem('device-id') || '',
             'Priority': 'u=1, i',
-            
-            // Browser and device information
-            'User-Agent': navigator.userAgent,
-            'Accept-Language': navigator.language,
-            'Language': navigator.language,
-            'X-Platform': navigator.platform,
-            'X-Screen-Width': window.screen.width.toString(),
-            'X-Screen-Height': window.screen.height.toString(),
-            'X-Color-Depth': window.screen.colorDepth.toString(),
-            'X-Time-Zone': Intl.DateTimeFormat().resolvedOptions().timeZone,
-            'Referer': document.referrer,
-            'Origin': window.location.origin,
+
+            // Facebook tracking
+            'X-FB-Browser-ID': this.getCookieValue('_fbp') || '',
+            'X-FB-Click-ID': this.getCookieValue('_fbc') || '',
+
+            // Navigation headers
+            // 'Referer': browserInfo.referrer,
+            // 'Origin': window.location.origin
         };
 
-        // Add hardware information if available
-        if (navigator.hardwareConcurrency) {
-            headers['X-Hardware-Concurrency'] = navigator.hardwareConcurrency.toString();
-        }
-        
-        if ('deviceMemory' in navigator) {
-            headers['X-Device-Memory'] = (navigator as any).deviceMemory?.toString() || '';
-        }
-        
-        // Add device ID if available
-        const deviceId = localStorage.getItem('device-id');
-        if (deviceId) {
-            headers['Device-ID'] = deviceId;
-        }
-        
-        // Try to add client hints using User-Agent Client Hints API if available
-        try {
-            // Check if userAgentData is available in a type-safe way
-            if ('userAgentData' in navigator) {
-                const uaData = (navigator as any).userAgentData;
-                if (uaData) {
-                    headers['Sec-CH-UA-Mobile'] = uaData.mobile ? '?1' : '?0';
-                    headers['Sec-CH-UA-Platform'] = `"${uaData.platform}"`;
-                }
-            }
-        } catch (error) {
-            console.error('Error getting userAgentData:', error);
-        }
-        
-        // Extract any security headers
-        if (document.referrer) {
-            headers['Sec-Fetch-Site'] = this.getSecFetchSite(document.referrer);
-        }
-        
-        headers['Sec-Fetch-Mode'] = 'cors';
-        headers['Sec-Fetch-Dest'] = 'empty';
-        
-        // Add CloudFlare headers if available from cookies
-        const cfCountry = this.getCookieValue('cf-country') || localStorage.getItem('cf-country');
-        if (cfCountry) {
-            headers['CF-Country'] = cfCountry;
-            headers['CF-IPCountry'] = cfCountry;
-        }
-        
-        const cfRay = this.getCookieValue('cf-ray') || localStorage.getItem('cf-ray');
-        if (cfRay) {
-            headers['CF-Ray'] = cfRay;
-        }
-        
-        // Add custom header to indicate we want Cloudflare headers returned
-        headers['X-Forward-Cloudflare-Headers'] = 'true';
-        
-        // Add Facebook browser & click IDs if available
-        const fbp = this.getCookieValue('_fbp');
-        if (fbp) {
-            headers['X-FB-Browser-ID'] = fbp;
-        }
-        
-        const fbc = this.getCookieValue('_fbc');
-        if (fbc) {
-            headers['X-FB-Click-ID'] = fbc;
-        }
-        
-        // Add CSRF token if available
-        const csrfToken = this.getCookieValue('XSRF-TOKEN');
-        if (csrfToken) {
-            headers['X-CSRF-TOKEN'] = csrfToken;
-        }
-        
+        // Add CSRF token if available (will be added by interceptor)
+        // Note: x-csrf-token and X-XSRF-TOKEN are added by the request interceptor
+
         return headers;
     }
-    
+
+    private getDeviceType(browserInfo: ReturnType<typeof getBrowserInfo>): string {
+        if (browserInfo.isMobile) return 'mobile';
+        if (browserInfo.isTablet) return 'tablet';
+        return 'desktop';
+    }
+
     /**
      * Gets a cookie value by name
      */
@@ -160,7 +132,7 @@ export class BaseHttpClient {
         const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
         return match ? match[2] : null;
     }
-    
+
     /**
      * Determines Sec-Fetch-Site value based on referrer
      */
@@ -168,14 +140,14 @@ export class BaseHttpClient {
         try {
             const referrerOrigin = new URL(referrer).origin;
             const currentOrigin = window.location.origin;
-            
+
             if (!referrer) return 'none';
             if (referrerOrigin === currentOrigin) return 'same-origin';
-            
+
             // Check if it's same-site (different subdomain)
             const referrerDomain = new URL(referrer).hostname.split('.').slice(-2).join('.');
             const currentDomain = window.location.hostname.split('.').slice(-2).join('.');
-            
+
             return referrerDomain === currentDomain ? 'same-site' : 'cross-site';
         } catch (e) {
             return 'none';
@@ -192,10 +164,10 @@ export class BaseHttpClient {
                 config.headers = config.headers || {};
                 config.headers.Authorization = `Bearer ${token}`;
             }
-            
+
             // Merge with standard headers for every request
-            config.headers = { ...this.createStandardHeaders(), ...config.headers };
-            
+            config.headers = {...this.createStandardHeaders(), ...config.headers};
+
             // Ensure withCredentials is set
             config.withCredentials = true;
         } catch (error) {
@@ -211,7 +183,7 @@ export class BaseHttpClient {
         try {
             // Ensure headers object exists
             config.headers = config.headers || {};
-            
+
             // Pass through all Cloudflare headers directly from the document request
             const cloudflareHeaders = [
                 'CF-IPCountry',
@@ -228,17 +200,17 @@ export class BaseHttpClient {
                 'CF-IPLongitude',
                 'CF-IPTimeZone'
             ];
-            
+
             // Log attempt to add CF headers for debugging
             console.log('Attempting to add Cloudflare headers to request');
-            
+
             // For now, manually add them if they're available in cookies or local storage
             // This is a fallback until we can properly capture the headers
             const cfCountry = localStorage.getItem('cf-country');
             if (cfCountry) {
                 config.headers['CF-IPCountry'] = cfCountry;
             }
-            
+
             // Add a custom header to indicate we want Cloudflare headers returned
             config.headers['X-Forward-Cloudflare-Headers'] = 'true';
         } catch (error) {
@@ -255,13 +227,13 @@ export class BaseHttpClient {
             if (typeof window !== 'undefined' && 'userAgentData' in navigator) {
                 const userAgentData = (navigator as any).userAgentData;
                 config.headers = config.headers || {};
-                
+
                 if (userAgentData && userAgentData.brands) {
                     config.headers['Sec-CH-UA'] = userAgentData.brands
                         ?.map((b: { brand: string; version: string }) => `"${b.brand}";v="${b.version}"`)
                         .join(', ') || '';
                 }
-                
+
                 if (userAgentData) {
                     config.headers['Sec-CH-UA-Mobile'] = userAgentData.mobile ? '?1' : '?0';
                     config.headers['Sec-CH-UA-Platform'] = userAgentData.platform || '';
