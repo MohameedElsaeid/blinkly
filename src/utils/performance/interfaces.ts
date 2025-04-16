@@ -8,6 +8,7 @@ export interface MetricsOptions {
     sampleRate: number;
     reportToConsole: boolean;
     reportToAnalytics: boolean;
+    reportToMetaPixel?: boolean;
 }
 
 export interface PerformanceMetric {

@@ -22,18 +22,26 @@ export const LazyComponent: React.FC<LazyComponentProps> = ({
             customData: {
                 content_name: `lazy_${name}`,
                 content_type: 'component',
-                status: 'loading'
+                status: 'loading',
+                component_name: name
             }
         });
         
+        const loadTime = performance.now();
+        
         return () => {
-            // Track component unload
+            // Track component unload with timing data
+            const unloadTime = performance.now();
+            const displayDuration = Math.round(unloadTime - loadTime);
+            
             trackEvent({
                 event: 'ViewContent',
                 customData: {
                     content_name: `lazy_${name}`,
                     content_type: 'component',
-                    status: 'unloaded'
+                    status: 'unloaded',
+                    component_name: name,
+                    display_duration_ms: displayDuration
                 }
             });
         };

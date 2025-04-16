@@ -32,14 +32,14 @@ const PricingView: React.FC<PricingViewProps> = ({plans, billingPeriod}: Pricing
             ? parseFloat(plan.monthlyPrice.replace(/[^0-9.]/g, ''))
             : parseFloat(plan.yearlyPrice.replace(/[^0-9.]/g, ''));
         
-        // Track plan selection with Meta Pixel
+        // Track plan selection with Meta Pixel - Subscription event
         trackSubscription(
             plan.name, 
             planPrice || 0,
             'USD'
         );
         
-        // Additional detailed tracking
+        // Additional detailed tracking - InitiateCheckout event
         trackEvent({
             event: 'InitiateCheckout',
             customData: {
@@ -48,7 +48,9 @@ const PricingView: React.FC<PricingViewProps> = ({plans, billingPeriod}: Pricing
                 content_category: 'subscription',
                 value: planPrice || 0,
                 currency: 'USD',
-                billing_period: billingPeriod
+                billing_period: billingPeriod,
+                predicted_ltv: billingPeriod === 'yearly' ? planPrice * 1.2 : planPrice * 12,
+                num_items: 1
             }
         });
     };

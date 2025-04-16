@@ -41,6 +41,42 @@ const SignupForm = () => {
     });
 
     const watchPassword = form.watch('password');
+    
+    // Track form field changes for key fields
+    const trackFieldChange = (field: string, value: string) => {
+        if (value && value.length > 3) {
+            trackEvent({
+                event: 'CustomizeProduct',
+                customData: {
+                    content_name: 'signup_field_interaction',
+                    field_name: field,
+                    has_value: Boolean(value),
+                    status: 'in_progress'
+                }
+            });
+        }
+    };
+    
+    // Start tracking form interactions on mount
+    useState(() => {
+        trackEvent({
+            event: 'ViewContent',
+            customData: {
+                content_name: 'signup_form',
+                content_category: 'registration',
+                status: 'viewed'
+            }
+        });
+        
+        // Setup field tracking
+        const trackableFields = ['email', 'firstName', 'lastName', 'country'];
+        trackableFields.forEach(field => {
+            const value = form.watch(field as any);
+            form.register(field as any, {
+                onChange: () => trackFieldChange(field, value)
+            });
+        });
+    });
 
     const handleSubmit = async (data: z.infer<typeof SignupSchema>) => {
         setIsSubmitting(true);
@@ -60,7 +96,8 @@ const SignupForm = () => {
                 },
                 customData: {
                     content_name: 'signup_form',
-                    status: 'initiated'
+                    content_category: 'registration',
+                    status: 'submitted'
                 }
             });
 
@@ -94,6 +131,7 @@ const SignupForm = () => {
                 },
                 customData: {
                     content_name: 'signup_failure',
+                    content_category: 'registration',
                     status: 'failed',
                     error_message: errorMessage
                 }
@@ -133,6 +171,19 @@ const SignupForm = () => {
                         type="submit"
                         className="w-full bg-indigo-600 hover:bg-indigo-700"
                         disabled={isSubmitting}
+                        onClick={() => {
+                            // Track signup button click
+                            if (!isSubmitting) {
+                                trackEvent({
+                                    event: 'InitiateCheckout',
+                                    customData: {
+                                        content_name: 'signup_button_click',
+                                        content_category: 'registration',
+                                        status: 'clicked'
+                                    }
+                                });
+                            }
+                        }}
                     >
                         {isSubmitting ? (
                             <>

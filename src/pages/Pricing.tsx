@@ -1,5 +1,5 @@
 
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -14,6 +14,18 @@ import {useMetaPixel} from "@/hooks";
 const Pricing = () => {
     const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
     const {trackEvent} = useMetaPixel();
+
+    // Track page view
+    useEffect(() => {
+        trackEvent({
+            event: 'ViewContent',
+            customData: {
+                content_name: 'pricing_page',
+                content_category: 'pricing',
+                content_type: 'pricing_plans'
+            }
+        });
+    }, [trackEvent]);
 
     // Generate FAQ data for schema markup
     const faqItems = [
@@ -42,9 +54,10 @@ const Pricing = () => {
         trackEvent({
             event: 'CustomizeProduct',
             customData: {
-                content_name: 'billing_period',
+                content_name: 'billing_period_selection',
                 content_category: 'pricing',
-                billing_period: period
+                billing_period: period,
+                value: period === 'yearly' ? plans[0].yearlyDiscount : 0
             }
         });
     };
@@ -54,9 +67,22 @@ const Pricing = () => {
         trackEvent({
             event: 'ViewContent',
             customData: {
-                content_name: 'pricing_plans',
+                content_name: 'pricing_plans_view',
                 content_type: viewType,
-                content_category: 'pricing'
+                content_category: 'pricing',
+                view_mode: viewType
+            }
+        });
+    };
+
+    const handleFaqItemClick = (question: string) => {
+        // Track FAQ interactions
+        trackEvent({
+            event: 'Search',
+            customData: {
+                content_name: 'pricing_faq',
+                content_category: 'pricing',
+                search_string: question
             }
         });
     };
@@ -113,8 +139,15 @@ const Pricing = () => {
                             </TabsContent>
                         </Tabs>
 
-                        <div className="mt-16 text-center">
-                            <FAQ/>
+                        <div className="mt-16 text-center" onClick={(e) => {
+                            // Track FAQ interaction
+                            const target = e.target as HTMLElement;
+                            const question = target.closest('[data-faq-question]')?.getAttribute('data-faq-question');
+                            if (question) {
+                                handleFaqItemClick(question);
+                            }
+                        }}>
+                            <FAQ />
                         </div>
                     </div>
                 </div>

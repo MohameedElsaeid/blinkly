@@ -1,146 +1,123 @@
-import {AxiosError, AxiosHeaders, AxiosRequestConfig, InternalAxiosRequestConfig} from 'axios';
-import {BaseHttpClient} from './baseHttpClient';
-import {csrfTokenService} from '../csrf/csrfTokenService';
-import {apiErrorHandler} from '../errors/apiErrorHandler';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://api.blinkly.app';
-
-function getTrackingHeaders(): Record<string, string> {
-    return {
-        'X-User-Agent': navigator.userAgent,
-        'X-Language': navigator.language,
-        'X-Platform': navigator.platform || 'unknown',
-        'X-Screen-Width': window.screen.width.toString(),
-        'X-Screen-Height': window.screen.height.toString(),
-        'X-Time-Zone': Intl.DateTimeFormat().resolvedOptions().timeZone,
-        'X-Color-Depth': window.screen.colorDepth.toString(),
-        'X-Hardware-Concurrency': navigator.hardwareConcurrency ? navigator.hardwareConcurrency.toString() : 'unknown',
-        'X-Device-Memory': (navigator as any).deviceMemory ? (navigator as any).deviceMemory.toString() : 'unknown',
-    };
-}
+import axios, { AxiosError, AxiosHeaders, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axiosRetry from 'axios-retry';
+import { BaseHttpClient } from './baseHttpClient';
+import { authService } from '../authService';
+import { apiErrorHandler } from '../errors/apiErrorHandler';
+import { ServiceFactory } from '../ServiceFactory';
 
 class ApiClient extends BaseHttpClient {
-    constructor(baseURL: string) {
-        super(baseURL);
-        this.setupInterceptors();
-    }
+    private instance: AxiosInstance;
+    private retrying: boolean = false;
 
-    async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-        return this.client.get(url, {
-            ...config,
-            headers: config?.headers || {},
-            withCredentials: true
-        }) as Promise<T>;
-    }
+    constructor() {
+        super();
+        this.instance = axios.create({
+            baseURL: ServiceFactory.config?.baseURL,
+            timeout: 60000,
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            }
+        });
 
-    async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-        return this.client.post(url, data, {
-            ...config,
-            headers: config?.headers || {},
-            withCredentials: true
-        }) as Promise<T>;
-    }
+        // Configure retry logic
+        axiosRetry(this.instance, {
+            retries: 3,
+            retryDelay: (retryCount) => {
+                return retryCount * 1000; // Exponential back-off
+            },
+            retryCondition: (error) => {
+                // Retry on network errors or 5xx server errors
+                return axiosRetry.isNetworkOrIdempotentRequestError(error) || 
+                    (error.response && error.response.status >= 500);
+            },
+            onRetry: (retryCount, error, requestConfig) => {
+                console.log(`Retrying request (${retryCount}/3): ${error.config?.url}`);
+                this.retrying = true;
+            },
+        });
 
-    async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-        return this.client.put(url, data, {
-            ...config,
-            headers: config?.headers || {},
-            withCredentials: true
-        }) as Promise<T>;
-    }
-
-    async patch<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-        return this.client.patch(url, data, {
-            ...config,
-            headers: config?.headers || {},
-            withCredentials: true
-        }) as Promise<T>;
-    }
-
-    async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-        return this.client.delete(url, {
-            ...config,
-            headers: config?.headers || {},
-            withCredentials: true
-        }) as Promise<T>;
-    }
-
-    private setupInterceptors() {
-        this.client.interceptors.request.use(
+        // Add request interceptor
+        this.instance.interceptors.request.use(
             async (config) => {
-                const configWithAuth = this.addAuthToken(config);
-
-                // Ensure headers is initialized as AxiosHeaders
-                configWithAuth.headers = configWithAuth.headers || new AxiosHeaders();
-
-                // Add required headers
-                if (configWithAuth.headers instanceof AxiosHeaders) {
-                    Object.entries({
-                        'Content-Type': 'application/json',
-                        ...getTrackingHeaders(),
-                    }).forEach(([key, value]) => {
-                        (configWithAuth.headers as AxiosHeaders).set(key, value);
-                    });
+                // Add auth token if available
+                const token = authService.getToken();
+                if (token) {
+                    config.headers = config.headers || {};
+                    (config.headers as AxiosHeaders).set('Authorization', `Bearer ${token}`);
                 }
-
-                if (['post', 'put', 'patch', 'delete'].includes((config.method || '').toLowerCase())) {
-                    try {
-                        const csrfToken = await csrfTokenService.fetchCsrfToken();
-                        if (configWithAuth.headers instanceof AxiosHeaders) {
-                            configWithAuth.headers.set('x-csrf-token', csrfToken);
-                        }
-                    } catch (csrfError) {
-                        console.error('Error fetching CSRF token:', csrfError);
-                    }
+                
+                // Add CSRF token if available (from cookie)
+                const csrfToken = document.cookie
+                    .split('; ')
+                    .find(row => row.startsWith('XSRF-TOKEN='))
+                    ?.split('=')[1];
+                
+                if (csrfToken) {
+                    config.headers = config.headers || {};
+                    (config.headers as AxiosHeaders).set('X-XSRF-TOKEN', csrfToken);
                 }
-                return configWithAuth as InternalAxiosRequestConfig;
+                
+                return config;
             },
-            (error) => Promise.reject(error)
-        );
-
-        this.client.interceptors.response.use(
-            (response) => {
-                console.log('API Response for', response.config.url, ':', response.status);
-                return response.data;
-            },
-            async (error: AxiosError) => {
-                console.error('API Error:', error.message, error.response?.status);
-                const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
-
-                // If the response status is 403 and we haven't retried already,
-                // then refresh the CSRF token and retry only once.
-                if (error.response?.status === 403 && !originalRequest._retry) {
-                    console.log('403 Forbidden response - refreshing CSRF token and retrying.');
-                    originalRequest._retry = true;
-                    // Invalidate the current token
-                    csrfTokenService.invalidateToken();
-                    try {
-                        // Fetch a new CSRF token from your endpoint
-                        const csrfToken = await csrfTokenService.fetchCsrfToken();
-                        originalRequest.headers = originalRequest.headers || {};
-                        originalRequest.headers['x-csrf-token'] = csrfToken;
-                        originalRequest.withCredentials = true;
-                        console.log('Retrying request with updated CSRF token.');
-                        return this.client(originalRequest);
-                    } catch (tokenError) {
-                        console.error('Failed to refresh CSRF token:', tokenError);
-                    }
-                }
-
-                if (!error.response) {
-                    console.error('Network error details:', {
-                        message: error.message,
-                        code: error.code,
-                        requestURL: error.config?.url,
-                        requestMethod: error.config?.method,
-                    });
-                }
-
-                apiErrorHandler.handleApiError(error);
+            (error) => {
                 return Promise.reject(error);
             }
         );
+
+        // Add response interceptor
+        this.instance.interceptors.response.use(
+            (response) => {
+                // Any status code within the range of 2xx
+                return response.data;
+            },
+            async (error: AxiosError) => {
+                // Handle token expiration
+                if (error.response?.status === 401 && !this.retrying) {
+                    // Try to refresh the token
+                    const newToken = await authService.refreshToken();
+                    if (newToken && error.config) {
+                        // Retry the original request with the new token
+                        const newConfig = { ...error.config };
+                        newConfig.headers = newConfig.headers || {};
+                        (newConfig.headers as AxiosHeaders).set('Authorization', `Bearer ${newToken}`);
+                        return this.instance(newConfig);
+                    } else {
+                        // If refresh token fails, log out user
+                        authService.logout();
+                        return Promise.reject(error);
+                    }
+                }
+                
+                // Reset retrying flag
+                this.retrying = false;
+                
+                // Handle all other errors
+                return Promise.reject(apiErrorHandler(error));
+            }
+        );
+    }
+
+    async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+        return this.instance.get(url, config);
+    }
+
+    async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+        return this.instance.post(url, data, config);
+    }
+
+    async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+        return this.instance.put(url, data, config);
+    }
+
+    async patch<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+        return this.instance.patch(url, data, config);
+    }
+
+    async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+        return this.instance.delete(url, config);
     }
 }
 
-export const apiClient = new ApiClient(API_URL);
+export const apiClient = new ApiClient();

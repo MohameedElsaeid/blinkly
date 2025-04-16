@@ -1,5 +1,5 @@
 
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
@@ -19,20 +19,59 @@ const Login = () => {
     const {login} = useAuth();
     const {trackEvent} = useMetaPixel();
 
+    // Track page view and form load
+    useEffect(() => {
+        trackEvent({
+            event: 'ViewContent',
+            customData: {
+                content_name: 'login_form',
+                content_category: 'authentication',
+                status: 'viewed'
+            }
+        });
+    }, [trackEvent]);
+
     const validateForm = () => {
         if (!email) {
             setFormError("Email is required");
+            trackEvent({
+                event: 'CustomizeProduct',
+                customData: {
+                    content_name: 'login_validation_error',
+                    content_category: 'authentication',
+                    error_field: 'email',
+                    error_message: 'Email is required'
+                }
+            });
             return false;
         }
 
         if (!password) {
             setFormError("Password is required");
+            trackEvent({
+                event: 'CustomizeProduct',
+                customData: {
+                    content_name: 'login_validation_error',
+                    content_category: 'authentication',
+                    error_field: 'password',
+                    error_message: 'Password is required'
+                }
+            });
             return false;
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             setFormError("Please enter a valid email address");
+            trackEvent({
+                event: 'CustomizeProduct',
+                customData: {
+                    content_name: 'login_validation_error',
+                    content_category: 'authentication',
+                    error_field: 'email',
+                    error_message: 'Invalid email format'
+                }
+            });
             return false;
         }
 
@@ -48,7 +87,7 @@ const Login = () => {
         }
 
         setIsSubmitting(true);
-        console.log('Login form submission with:', {email, password});
+        console.log('Login form submission with:', {email});
 
         // Track login attempt
         trackEvent({
@@ -58,7 +97,8 @@ const Login = () => {
             },
             customData: {
                 content_name: 'login_form',
-                status: 'initiated'
+                content_category: 'authentication',
+                status: 'submitted'
             }
         });
 
@@ -82,12 +122,44 @@ const Login = () => {
                 },
                 customData: {
                     content_name: 'login_failure',
+                    content_category: 'authentication',
                     status: 'failed',
                     error_message: errorMessage
                 }
             });
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    // Track form field changes
+    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setEmail(e.target.value);
+        if (e.target.value && e.target.value.length > 3) {
+            trackEvent({
+                event: 'CustomizeProduct',
+                customData: {
+                    content_name: 'login_field_interaction',
+                    field_name: 'email',
+                    has_value: Boolean(e.target.value),
+                    status: 'in_progress'
+                }
+            });
+        }
+    };
+
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value);
+        if (e.target.value) {
+            trackEvent({
+                event: 'CustomizeProduct',
+                customData: {
+                    content_name: 'login_field_interaction',
+                    field_name: 'password',
+                    has_value: Boolean(e.target.value),
+                    status: 'in_progress'
+                }
+            });
         }
     };
 
@@ -131,7 +203,7 @@ const Login = () => {
                                             type="email"
                                             placeholder="your@email.com"
                                             value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
+                                            onChange={handleEmailChange}
                                             className="pl-10"
                                             autoComplete="email"
                                             required
@@ -142,8 +214,19 @@ const Login = () => {
                                 <div className="space-y-2">
                                     <div className="flex items-center justify-between">
                                         <Label htmlFor="password">Password</Label>
-                                        <Link to="/forgot-password"
-                                              className="text-xs text-alchemy-purple hover:underline">
+                                        <Link 
+                                            to="/forgot-password"
+                                            className="text-xs text-alchemy-purple hover:underline"
+                                            onClick={() => {
+                                                trackEvent({
+                                                    event: 'Lead',
+                                                    customData: {
+                                                        content_name: 'forgot_password_click',
+                                                        content_category: 'authentication'
+                                                    }
+                                                });
+                                            }}
+                                        >
                                             Forgot password?
                                         </Link>
                                     </div>
@@ -154,7 +237,7 @@ const Login = () => {
                                             type="password"
                                             placeholder="••••••••"
                                             value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
+                                            onChange={handlePasswordChange}
                                             className="pl-10"
                                             autoComplete="current-password"
                                             required
@@ -166,6 +249,18 @@ const Login = () => {
                                     type="submit"
                                     className="w-full bg-alchemy-purple hover:bg-alchemy-purple-dark"
                                     disabled={isSubmitting}
+                                    onClick={() => {
+                                        if (!isSubmitting) {
+                                            trackEvent({
+                                                event: 'InitiateCheckout',
+                                                customData: {
+                                                    content_name: 'login_button_click',
+                                                    content_category: 'authentication',
+                                                    status: 'clicked'
+                                                }
+                                            });
+                                        }
+                                    }}
                                 >
                                     {isSubmitting ? (
                                         <>
@@ -185,7 +280,20 @@ const Login = () => {
                         <CardFooter className="flex justify-center border-t p-6">
                             <p className="text-sm text-gray-600">
                                 Don't have an account?{" "}
-                                <Link to="/signup" className="text-alchemy-purple hover:underline font-medium">
+                                <Link 
+                                    to="/signup" 
+                                    className="text-alchemy-purple hover:underline font-medium"
+                                    onClick={() => {
+                                        trackEvent({
+                                            event: 'Lead',
+                                            customData: {
+                                                content_name: 'signup_referral',
+                                                content_category: 'authentication',
+                                                referral_source: 'login_page'
+                                            }
+                                        });
+                                    }}
+                                >
                                     Sign up
                                 </Link>
                             </p>

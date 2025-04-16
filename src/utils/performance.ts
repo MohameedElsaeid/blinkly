@@ -1,187 +1,196 @@
 
-import {MetricsObserver, MetricsOptions} from './performance/interfaces';
+import { MetricsObserver, MetricsOptions, PerformanceMetric } from './performance/interfaces';
 
-// Initialize metrics observers
-const observers: MetricsObserver[] = [];
-
-// Track Meta Pixel event for performance
-const trackPerformanceEvent = (name: string, value: number) => {
-    if (typeof window !== 'undefined' && window.fbq) {
-        window.fbq('trackCustom', 'Performance', {
-            metric_name: name,
-            metric_value: value,
-            timestamp: Date.now()
-        });
-    }
-}
-
-// Initialize performance monitoring
-export function initPerformanceMonitoring(options?: Partial<MetricsOptions>) {
-    if (typeof window === 'undefined' || !window.performance) {
-        console.warn('Performance API not supported');
-        return;
-    }
-
-    // Combine default options with provided options
-    const settings: MetricsOptions = {
+/**
+ * Initialize performance monitoring
+ * @param options Configuration options
+ */
+export const initPerformanceMonitoring = (options: Partial<MetricsOptions> = {}) => {
+    const defaultOptions: MetricsOptions = {
         sampleRate: 0.1, // Only sample 10% of users by default
-        reportToConsole: false,
+        reportToConsole: true,
         reportToAnalytics: true,
-        ...options
+        reportToMetaPixel: true
     };
 
-    // Only proceed if we're within the sample rate
-    if (Math.random() > settings.sampleRate) {
+    const config = { ...defaultOptions, ...options };
+
+    // Only monitor performance for the sampling rate percentage of users
+    if (Math.random() > config.sampleRate) {
+        console.debug('Performance monitoring skipped due to sampling');
         return;
     }
 
     try {
-        // Check for browser support of various APIs
-        const hasPerformanceObserver = 'PerformanceObserver' in window;
-        const hasPerformanceTimeline = 'performance' in window && 'getEntriesByType' in window.performance;
-
-        if (!hasPerformanceObserver && !hasPerformanceTimeline) {
-            console.warn('Performance measurement APIs not supported');
-            return;
+        // Check if the browser supports the Performance Observer API
+        if (typeof PerformanceObserver !== 'undefined') {
+            // Create observer for Core Web Vitals and other performance metrics
+            const performanceObserver = createPerformanceObserver(config);
+            
+            // Start observing important performance metrics
+            performanceObserver.observe({ entryTypes: [
+                'navigation',
+                'resource',
+                'longtask',
+                'paint',
+                'layout-shift',
+                'largest-contentful-paint',
+                'first-input',
+                'element'
+            ]});
+            
+            console.debug('Performance monitoring started');
+        } else {
+            console.debug('Performance Observer API not supported in this browser');
         }
+    } catch (error) {
+        console.warn('Failed to initialize performance monitoring:', error);
+    }
+};
 
-        // Register Performance Observer if supported
-        if (hasPerformanceObserver) {
-            try {
-                // Observe paint timing metrics (FP, FCP)
-                const paintObserver = new PerformanceObserver((entryList) => {
-                    for (const entry of entryList.getEntries()) {
-                        const metric = entry as PerformanceEntry;
-                        
-                        if (settings.reportToConsole) {
-                            console.log(`Paint Metric: ${metric.name} = ${metric.startTime}ms`);
-                        }
-                        
-                        if (settings.reportToAnalytics) {
-                            trackPerformanceEvent(metric.name, metric.startTime);
-                        }
-                    }
-                });
-                paintObserver.observe({entryTypes: ['paint']});
-                observers.push(paintObserver);
+/**
+ * Create a performance observer to track key metrics
+ */
+function createPerformanceObserver(options: MetricsOptions): MetricsObserver {
+    const metrics: Record<string, PerformanceMetric> = {};
 
-                // Observe largest contentful paint (LCP)
-                const lcpObserver = new PerformanceObserver((entryList) => {
-                    const entries = entryList.getEntries();
-                    const lastEntry = entries[entries.length - 1];
+    const observer = new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        
+        for (const entry of entries) {
+            let metricValue: number = 0;
+            let metricName: string = entry.entryType;
+            
+            // Process different entry types
+            switch (entry.entryType) {
+                case 'navigation':
+                    const navigationEntry = entry as PerformanceNavigationTiming;
                     
-                    if (settings.reportToConsole) {
-                        console.log(`LCP: ${lastEntry.startTime}ms`);
-                    }
+                    // Track key navigation timings
+                    recordMetric('time-to-first-byte', navigationEntry.responseStart, options);
+                    recordMetric('dom-content-loaded', navigationEntry.domContentLoadedEventEnd, options);
+                    recordMetric('load-time', navigationEntry.loadEventEnd, options);
+                    break;
                     
-                    if (settings.reportToAnalytics) {
-                        trackPerformanceEvent('LCP', lastEntry.startTime);
-                    }
-                });
-                lcpObserver.observe({entryTypes: ['largest-contentful-paint']});
-                observers.push(lcpObserver);
-
-                // Observe first input delay (FID)
-                const fidObserver = new PerformanceObserver((entryList) => {
-                    for (const entry of entryList.getEntries()) {
-                        const metric = entry as PerformanceEventTiming;
-                        const delay = metric.processingStart - metric.startTime;
-                        
-                        if (settings.reportToConsole) {
-                            console.log(`FID: ${delay}ms`);
-                        }
-                        
-                        if (settings.reportToAnalytics) {
-                            trackPerformanceEvent('FID', delay);
-                        }
-                    }
-                });
-                fidObserver.observe({entryTypes: ['first-input']});
-                observers.push(fidObserver);
-
-                // Observe cumulative layout shift (CLS)
-                let clsValue = 0;
-                let clsEntries: PerformanceEntry[] = [];
-                
-                const clsObserver = new PerformanceObserver((entryList) => {
-                    for (const entry of entryList.getEntries()) {
-                        // Only count layout shifts without recent user input
-                        if (!(entry as any).hadRecentInput) {
-                            const currentEntry = entry as any;
-                            clsValue += currentEntry.value;
-                            clsEntries.push(currentEntry);
-                        }
+                case 'paint':
+                    const paintEntry = entry as PerformancePaintTiming;
+                    metricName = paintEntry.name;
+                    metricValue = paintEntry.startTime;
+                    recordMetric(metricName, metricValue, options);
+                    break;
+                    
+                case 'largest-contentful-paint':
+                    const lcpEntry = entry as any; // LCP entry type
+                    metricName = 'largest-contentful-paint';
+                    metricValue = lcpEntry.startTime;
+                    recordMetric(metricName, metricValue, options);
+                    break;
+                    
+                case 'first-input':
+                    const fiEntry = entry as any; // FID entry type
+                    metricName = 'first-input-delay';
+                    metricValue = fiEntry.processingStart - fiEntry.startTime;
+                    recordMetric(metricName, metricValue, options);
+                    break;
+                    
+                case 'layout-shift':
+                    const lsEntry = entry as any; // CLS entry type
+                    if (!metrics['cumulative-layout-shift']) {
+                        metrics['cumulative-layout-shift'] = {
+                            name: 'cumulative-layout-shift',
+                            value: 0,
+                            timestamp: Date.now()
+                        };
                     }
                     
-                    if (settings.reportToConsole) {
-                        console.log(`CLS: ${clsValue}`);
-                    }
+                    // Accumulate CLS
+                    metrics['cumulative-layout-shift'].value += lsEntry.value;
+                    recordMetric('cumulative-layout-shift', metrics['cumulative-layout-shift'].value, options);
+                    break;
                     
-                    if (settings.reportToAnalytics) {
-                        trackPerformanceEvent('CLS', clsValue);
-                    }
-                });
-                clsObserver.observe({entryTypes: ['layout-shift']});
-                observers.push(clsObserver);
-                
-                // Report values on page unload
-                window.addEventListener('visibilitychange', () => {
-                    if (document.visibilityState === 'hidden') {
-                        if (settings.reportToAnalytics) {
-                            trackPerformanceEvent('Final_CLS', clsValue);
-                        }
-                    }
-                });
-            } catch (e) {
-                console.error('Error setting up performance monitoring:', e);
+                case 'longtask':
+                    const ltEntry = entry as PerformanceLongTaskTiming;
+                    metricName = 'long-task';
+                    metricValue = ltEntry.duration;
+                    recordMetric(metricName, metricValue, options, true);
+                    break;
             }
         }
-
-        // Fallbacks for browsers without PerformanceObserver
-        if (!hasPerformanceObserver && hasPerformanceTimeline) {
-            window.addEventListener('load', () => {
-                // Use Performance Timeline API as fallback
-                setTimeout(() => {
-                    const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-                    
-                    if (navEntry) {
-                        if (settings.reportToConsole) {
-                            console.log(`DCL: ${navEntry.domContentLoadedEventEnd}ms`);
-                            console.log(`Load: ${navEntry.loadEventEnd}ms`);
-                        }
-                        
-                        if (settings.reportToAnalytics) {
-                            trackPerformanceEvent('DCL', navEntry.domContentLoadedEventEnd);
-                            trackPerformanceEvent('Load', navEntry.loadEventEnd);
-                        }
-                    }
-                    
-                    const paintEntries = performance.getEntriesByType('paint');
-                    for (const entry of paintEntries) {
-                        if (settings.reportToConsole) {
-                            console.log(`${entry.name}: ${entry.startTime}ms`);
-                        }
-                        
-                        if (settings.reportToAnalytics) {
-                            trackPerformanceEvent(entry.name, entry.startTime);
-                        }
-                    }
-                }, 0);
-            });
-        }
-    } catch (err) {
-        console.error('Failed to initialize performance monitoring:', err);
-    }
+    });
+    
+    return observer as MetricsObserver;
 }
 
-// Clean up observers
-export function cleanupPerformanceMonitoring() {
-    observers.forEach(observer => {
-        try {
-            observer.disconnect();
-        } catch (e) {
-            console.error('Error disconnecting observer:', e);
+/**
+ * Record a performance metric and report it based on options
+ */
+function recordMetric(name: string, value: number, options: MetricsOptions, skipDeduplication = false) {
+    if (value <= 0) return;
+    
+    // Skip if this metric has already been recorded (unless explicitly told to allow duplicates)
+    if (!skipDeduplication && window.sessionStorage.getItem(`metric_${name}`)) {
+        return;
+    }
+    
+    const metric: PerformanceMetric = {
+        name,
+        value,
+        timestamp: Date.now()
+    };
+    
+    // Mark this metric as recorded
+    if (!skipDeduplication) {
+        window.sessionStorage.setItem(`metric_${name}`, 'recorded');
+    }
+    
+    // Report to console if enabled
+    if (options.reportToConsole) {
+        console.debug(`Performance metric: ${name} = ${value.toFixed(2)}`);
+    }
+    
+    // Report to analytics if enabled
+    if (options.reportToAnalytics) {
+        if (typeof window.gtag === 'function') {
+            window.gtag('event', 'performance_metric', {
+                metric_name: name,
+                metric_value: value,
+                event_category: 'Performance',
+                event_label: name,
+                non_interaction: true
+            });
         }
-    });
-    observers.length = 0;
+    }
+    
+    // Report to Meta Pixel if enabled
+    if (options.reportToMetaPixel) {
+        if (typeof window.fbq === 'function') {
+            // Only send certain metrics to avoid too many events
+            const importantMetrics = [
+                'first-contentful-paint',
+                'largest-contentful-paint',
+                'first-input-delay',
+                'cumulative-layout-shift',
+                'load-time'
+            ];
+            
+            if (importantMetrics.includes(name)) {
+                window.fbq('track', 'CustomizeProduct', {
+                    content_name: 'performance_metric',
+                    content_category: 'performance',
+                    metric_name: name,
+                    metric_value: Math.round(value),
+                    page_url: window.location.href
+                });
+            }
+        }
+    }
+    
+    return metric;
+}
+
+// Custom window globals for TypeScript
+declare global {
+    interface Window {
+        gtag: (command: string, event: string, params?: any) => void;
+    }
 }

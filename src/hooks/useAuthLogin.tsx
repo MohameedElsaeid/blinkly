@@ -23,13 +23,24 @@ interface AuthResponseUser {
 
 export function useAuthLogin() {
     const {setUser, setIsAuthenticated, setIsLoading} = useAuthState();
-    const {trackLogin, trackRegistration} = useMetaPixel();
+    const {trackLogin, trackRegistration, trackEvent} = useMetaPixel();
     const navigate = useNavigate();
 
     const login = useCallback(async (params: LoginDto) => {
         setIsLoading(true);
         console.log('useAuth login called with params:', params);
         try {
+            // First track login attempt
+            trackEvent({
+                event: 'InitiateCheckout',
+                userData: { email: params.email },
+                customData: {
+                    content_name: 'login_attempt',
+                    content_category: 'authentication',
+                    status: 'initiated'
+                }
+            });
+            
             const response = await authService.login(params);
             console.log('useAuth login response:', response);
             if (response.success && response.user) {
@@ -53,7 +64,7 @@ export function useAuthLogin() {
                 setUser(userData);
                 setIsAuthenticated(true);
                 
-                // Track login event with Meta Pixel
+                // Track login success with Meta Pixel
                 trackLogin({
                     email: userData.email,
                     firstName: userData.firstName,
@@ -65,21 +76,62 @@ export function useAuthLogin() {
                 navigate('/dashboard');
             } else {
                 toast.error(response.message || 'Login failed. Please check your credentials.');
+                
+                // Track login failure
+                trackEvent({
+                    event: 'Lead',
+                    userData: { email: params.email },
+                    customData: {
+                        content_name: 'login_failure',
+                        content_category: 'authentication',
+                        status: 'failed',
+                        error_message: response.message || 'Login failed'
+                    }
+                });
             }
             return response;
         } catch (error: any) {
             console.error("Login error in useAuth:", error);
             const message = error.response?.data?.message || 'Login failed. Please check your credentials.';
             toast.error(message);
+            
+            // Track login error
+            trackEvent({
+                event: 'Lead',
+                userData: { email: params.email },
+                customData: {
+                    content_name: 'login_error',
+                    content_category: 'authentication',
+                    status: 'error',
+                    error_message: message
+                }
+            });
+            
             throw error;
         } finally {
             setIsLoading(false);
         }
-    }, [navigate, setUser, setIsAuthenticated, setIsLoading, trackLogin]);
+    }, [navigate, setUser, setIsAuthenticated, setIsLoading, trackLogin, trackEvent]);
 
     const register = useCallback(async (params: SignUpDto) => {
         setIsLoading(true);
         try {
+            // Track registration attempt
+            trackEvent({
+                event: 'InitiateCheckout',
+                userData: {
+                    email: params.email,
+                    firstName: params.firstName,
+                    lastName: params.lastName,
+                    country: params.country
+                },
+                customData: {
+                    content_name: 'registration_attempt',
+                    content_category: 'authentication',
+                    status: 'initiated'
+                }
+            });
+            
             const response = await authService.register(params);
             if (response.success && response.user) {
                 // Safely cast or extract data from response.user
@@ -102,36 +154,91 @@ export function useAuthLogin() {
                 setUser(userData);
                 setIsAuthenticated(true);
                 
-                // Track registration event with Meta Pixel
+                // Track registration success with Meta Pixel
                 trackRegistration({
                     email: userData.email,
                     firstName: userData.firstName,
                     lastName: userData.lastName,
                     country: userData.country
+                }, {
+                    content_category: 'authentication',
+                    user_type: userRole || 'standard'
                 });
                 
                 toast.success(response.message || 'Registration successful!');
                 navigate('/dashboard');
             } else {
                 toast.error(response.message || 'Registration failed. Please try again.');
+                
+                // Track registration failure
+                trackEvent({
+                    event: 'Lead',
+                    userData: {
+                        email: params.email,
+                        firstName: params.firstName,
+                        lastName: params.lastName
+                    },
+                    customData: {
+                        content_name: 'registration_failure',
+                        content_category: 'authentication',
+                        status: 'failed',
+                        error_message: response.message || 'Registration failed'
+                    }
+                });
             }
             return response;
         } catch (error: any) {
             const message = error.response?.data?.message || 'Registration failed. Please try again.';
             toast.error(message);
+            
+            // Track registration error
+            trackEvent({
+                event: 'Lead',
+                userData: {
+                    email: params.email,
+                    firstName: params.firstName,
+                    lastName: params.lastName
+                },
+                customData: {
+                    content_name: 'registration_error',
+                    content_category: 'authentication',
+                    status: 'error',
+                    error_message: message
+                }
+            });
+            
             throw error;
         } finally {
             setIsLoading(false);
         }
-    }, [navigate, setUser, setIsAuthenticated, setIsLoading, trackRegistration]);
+    }, [navigate, setUser, setIsAuthenticated, setIsLoading, trackRegistration, trackEvent]);
 
     const logout = useCallback(() => {
+        const user = authService.getCurrentUser();
         authService.logout();
         setUser(null);
         setIsAuthenticated(false);
+        
+        // Track logout event
+        if (user) {
+            trackEvent({
+                event: 'CustomizeProduct',
+                userData: {
+                    email: user.email,
+                    firstName: user.firstName,
+                    lastName: user.lastName
+                },
+                customData: {
+                    content_name: 'logout',
+                    content_category: 'authentication',
+                    status: 'success'
+                }
+            });
+        }
+        
         toast.success('Successfully logged out!');
         navigate('/');
-    }, [navigate, setUser, setIsAuthenticated]);
+    }, [navigate, setUser, setIsAuthenticated, trackEvent]);
 
     return {
         login,
