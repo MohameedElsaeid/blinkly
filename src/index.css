@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
 
 @tailwind base;
@@ -78,7 +79,7 @@
     button, input:where([type=button]), input:where([type=reset]), input:where([type=submit]) {
         -webkit-appearance: button;
         background-color: #5D5FEF; /* Default brand purple color */
-        /*color: white; !* Text color for visibility *!*/
+        color: white; /* Ensuring text on buttons is white for contrast */
         background-image: none;
     }
 }

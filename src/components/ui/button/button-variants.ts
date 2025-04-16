@@ -1,3 +1,4 @@
+
 import {cva} from "class-variance-authority"
 
 export const buttonVariants = cva(
@@ -9,10 +10,10 @@ export const buttonVariants = cva(
                 destructive:
                     "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
                 outline:
-                    "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+                    "border border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground",
                 secondary:
                     "bg-brand-teal text-white shadow-sm hover:bg-brand-teal/80",
-                ghost: "hover:bg-accent hover:text-accent-foreground",
+                ghost: "text-foreground hover:bg-accent hover:text-accent-foreground",
                 link: "text-brand-purple underline-offset-4 hover:underline",
                 accent: "bg-brand-gold text-white shadow-sm hover:bg-brand-gold/90",
                 success: "bg-blinkly-green text-white shadow-sm hover:bg-blinkly-green-dark",

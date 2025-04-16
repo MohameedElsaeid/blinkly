@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 import tailwindAnimate from "tailwindcss-animate";
 
@@ -72,7 +73,7 @@ export default {
         },
       },
       backgroundImage: {
-        'brand-gradient': 'linear-gradient(135deg, #4d58ff 0%, #4d58ff 100%)',
+        'brand-gradient': 'linear-gradient(135deg, #4d58ff 0%, #5D6AFF 100%)',
         'brand-gradient-reversed': 'linear-gradient(135deg, #28C8C8 0%, #4d58ff 100%)',
         'soft-purple-gradient': 'linear-gradient(135deg, #D3D1F9 0%, #8B7FD4 100%)',
         'soft-blue-gradient': 'linear-gradient(135deg, #B3E5FC 0%, #4FBCDF 100%)',
