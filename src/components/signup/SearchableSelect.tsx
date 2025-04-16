@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
 
 interface Item {
   value: string;
@@ -48,14 +47,28 @@ export const SearchableSelect = ({
 }: SearchableSelectProps) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [filteredItems, setFilteredItems] = useState<Item[]>(items);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Filter items based on search input
+  useEffect(() => {
+    if (!search) {
+      setFilteredItems(items);
+    } else {
+      const filtered = items.filter(item => 
+        item.label.toLowerCase().includes(search.toLowerCase())
+      );
+      setFilteredItems(filtered);
+    }
+  }, [search, items]);
 
   // Reset search when opening/closing
   useEffect(() => {
     if (!open) {
       setSearch("");
+      setFilteredItems(items);
     }
-  }, [open]);
+  }, [open, items]);
   
   // Focus input on open
   useEffect(() => {
@@ -88,9 +101,19 @@ export const SearchableSelect = ({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className={`p-0 ${contentClassName || ""}`} align="start" sideOffset={5} style={{ width: 'var(--radix-popover-trigger-width)', maxHeight: '60vh' }}>
-        <Command className={className}>
-          <div className="flex items-center border-b px-3">
+      <PopoverContent 
+        className={`p-0 ${contentClassName || ""} bg-white shadow-lg border border-gray-200`} 
+        align="start" 
+        sideOffset={5} 
+        style={{ 
+          width: 'var(--radix-popover-trigger-width)', 
+          maxHeight: '60vh',
+          backgroundColor: 'white',
+          zIndex: 50
+        }}
+      >
+        <Command className={`bg-white ${className || ""}`}>
+          <div className="flex items-center border-b px-3 bg-white">
             <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
             <CommandInput 
               ref={inputRef}
@@ -111,10 +134,10 @@ export const SearchableSelect = ({
             )}
           </div>
           <ScrollArea className="max-h-[300px]">
-            <CommandList>
-              <CommandEmpty>{emptyMessage}</CommandEmpty>
-              <CommandGroup>
-                {items.map((item) => (
+            <CommandList className="bg-white">
+              <CommandEmpty className="bg-white py-2 px-1">{emptyMessage}</CommandEmpty>
+              <CommandGroup className="bg-white">
+                {filteredItems.map((item) => (
                   <CommandItem
                     key={item.value}
                     value={item.value}
@@ -122,7 +145,7 @@ export const SearchableSelect = ({
                       onChange(item.value);
                       setOpen(false);
                     }}
-                    className="flex items-center"
+                    className="flex items-center bg-white hover:bg-gray-100"
                   >
                     <Check
                       className={`mr-2 h-4 w-4 ${

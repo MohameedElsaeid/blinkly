@@ -41,7 +41,7 @@ export const ContactInfoFields = ({
     // Convert country codes list to the format expected by SearchableSelect
     const codesList = getCountryCodesList().map(code => ({
       value: code.code,
-      label: code.name
+      label: `${code.code} ${code.name}`
     }));
     setCountryCodes(codesList);
   }, []);
@@ -76,6 +76,7 @@ export const ContactInfoFields = ({
               placeholder="Code"
               emptyMessage="No country code found"
               triggerClassName="h-10"
+              contentClassName="bg-white"
             />
           </div>
           <div className="relative w-2/3">
@@ -106,6 +107,7 @@ export const ContactInfoFields = ({
             emptyMessage="No country found"
             prefix={<div className="w-4" />} // Space for the Globe icon
             triggerClassName="pl-10 h-10"
+            contentClassName="bg-white"
           />
         </div>
       </div>

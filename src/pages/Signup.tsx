@@ -13,7 +13,7 @@ const Signup = () => {
         <div className="max-w-xl w-full space-y-8">
           <div className="text-center">
             <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-              Join LinkAlchemy Lab
+              Join Blinkly
             </h2>
             <p className="mt-2 text-base text-gray-600">
               Create your free account and start transforming your links today
