@@ -136,7 +136,7 @@ class ApiClient extends BaseHttpClient {
             delete headers['X-XSRF-TOKEN'];
 
             const response = await axios.get(`${this.baseURL}/auth/csrf-token`, {
-                withCredentials: true,
+                withCredentials: false,
                 headers
             });
 
