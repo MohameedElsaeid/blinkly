@@ -9,18 +9,13 @@ class ApiClient extends BaseHttpClient {
     private retrying: boolean = false;
     private baseURL: string;
     private csrfToken: string | null = null;
-    private csrfTokenExpires: Date;
+    private csrfTokenExpires: Date | null = null;
 
     constructor() {
         const baseURL = import.meta.env.VITE_API_URL || 'https://api.blinkly.app';
         super(baseURL);
         this.baseURL = baseURL;
-        console.log({
-            url: import.meta.env.VITE_API_URL,
-            env: import.meta.env.VITE_ENV,
-            csrf: import.meta.env.VITE_CSRF_ENDPOINT,
-            origin: import.meta.env.VITE_ALLOWED_ORIGINS
-        });
+
         this.instance = axios.create({
             baseURL: this.baseURL,
             timeout: 60000,
@@ -44,48 +39,33 @@ class ApiClient extends BaseHttpClient {
         // Request interceptor
         this.instance.interceptors.request.use(
             async (config: any) => {
-
-                // Get Cloudflare headers from incoming request (if behind proxy)
-                const cfHeaders = {
-                    'CF-IPCountry': config.headers['cf-ipcountry'] || '',
-                    'CF-Region': config.headers['cf-region'] || '',
-                    'CF-Region-Code': config.headers['cf-region-code'] || '',
-                    'CF-Connecting-IP': config.headers['cf-connecting-ip'] || '',
-                    'CF-IPCity': config.headers['cf-ipcity'] || '',
-                    'CF-IPContinent': config.headers['cf-ipcontinent'] || '',
-                    'CF-IPLatitude': config.headers['cf-iplatitude'] || '',
-                    'CF-IPLongitude': config.headers['cf-iplongitude'] || '',
-                    'CF-IPTimeZone': config.headers['cf-iptimezone'] || ''
-                };
-
-                // Ensure we have a CSRF token before making non-GET requests
-                if (config.method?.toLowerCase() !== 'get') {
-                    await this.ensureCsrfToken();
+                // Skip for GET requests and CSRF endpoint
+                if (config.method?.toLowerCase() === 'get' ||
+                    config.url?.includes('csrf-token')) {
+                    return config;
                 }
 
-                // Start with standard headers
-                config.headers = this.createStandardHeaders();
+                // Ensure fresh CSRF token
+                await this.ensureCsrfToken();
 
-                // Add CSRF tokens
-                if (this.csrfToken) {
-                    config.headers['x-csrf-token'] = this.csrfToken;
-                    config.headers['X-XSRF-TOKEN'] = this.csrfToken;
+                // Verify token exists
+                if (!this.csrfToken) {
+                    throw new Error('No CSRF token available');
                 }
 
-                // Add auth token if available
-                const token = localStorage.getItem('token');
-                if (token) {
-                    config.headers['Authorization'] = `Bearer ${token}`;
-                }
-
-                // Merge with existing headers
+                // Merge with standard headers
                 config.headers = {
-                    ...cfHeaders,
+                    ...this.createStandardHeaders(),
                     ...config.headers,
                     'x-csrf-token': this.csrfToken,
-                    'X-XSRF-TOKEN': this.csrfToken,
-                    'X-Requested-With': 'XMLHttpRequest'
+                    'X-XSRF-TOKEN': this.csrfToken
                 };
+
+                // Add auth token if available
+                const authToken = localStorage.getItem('token');
+                if (authToken) {
+                    config.headers['Authorization'] = `Bearer ${authToken}`;
+                }
 
                 return config;
             },
@@ -138,83 +118,88 @@ class ApiClient extends BaseHttpClient {
     }
 
     private async ensureCsrfToken(): Promise<void> {
-        if (!this.csrfToken) {
+        if (!this.csrfToken || this.isCsrfTokenExpired()) {
             await this.fetchCsrfToken();
         }
+    }
+
+    private isCsrfTokenExpired(): boolean {
+        if (!this.csrfTokenExpires) return false;
+        return new Date() > this.csrfTokenExpires;
     }
 
     private async fetchCsrfToken(): Promise<void> {
         try {
             const response = await axios.get(`${this.baseURL}/auth/csrf-token`, {
                 withCredentials: true,
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
+                headers: this.createStandardHeaders()
             });
 
-            // First try to get token from response body (preferred)
-            const responseToken = response.data?.token ||
+            // Get token from multiple possible sources
+            const token = response.data?.token ||
                 response.headers['x-csrf-token'] ||
                 this.getCookie('XSRF-TOKEN');
 
-            // Fallback to cookie if response token not available
-            const cookieToken = document.cookie
-                .split('; ')
-                .find(row => row.startsWith('XSRF-TOKEN='))
-                ?.split('=')[1];
-
-            // Use response token if available, otherwise fallback to cookie
-            const token = responseToken || cookieToken;
-
             if (!token) {
-                throw new Error('No CSRF token found in response or cookies');
+                throw new Error('No CSRF token received');
             }
 
             this.csrfToken = token;
 
-            // Optionally store expiration if needed
+            // Store expiration if provided
             if (response.data?.expiresAt) {
                 this.csrfTokenExpires = new Date(response.data.expiresAt);
             }
         } catch (error) {
             console.error('Error fetching CSRF token:', error);
-            throw error; // Re-throw to allow error handling upstream
+            throw error;
         }
     }
 
-
+    // Implement all HTTP methods
     async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
         try {
-            console.log(`API GET request to: ${url}`);
             return this.instance.get(url, config);
         } catch (error) {
-            console.error(`API GET error for ${url}:`, error);
+            console.error(`GET request failed to ${url}:`, error);
             throw error;
         }
     }
 
     async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
         try {
-            console.log(`API POST request to: ${url}`, {data});
             return this.instance.post(url, data, config);
         } catch (error) {
-            console.error(`API POST error for ${url}:`, error);
+            console.error(`POST request failed to ${url}:`, error);
             throw error;
         }
     }
 
     async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-        return this.instance.put(url, data, config);
+        try {
+            return this.instance.put(url, data, config);
+        } catch (error) {
+            console.error(`PUT request failed to ${url}:`, error);
+            throw error;
+        }
     }
 
     async patch<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-        return this.instance.patch(url, data, config);
+        try {
+            return this.instance.patch(url, data, config);
+        } catch (error) {
+            console.error(`PATCH request failed to ${url}:`, error);
+            throw error;
+        }
     }
 
     async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-        return this.instance.delete(url, config);
+        try {
+            return this.instance.delete(url, config);
+        } catch (error) {
+            console.error(`DELETE request failed to ${url}:`, error);
+            throw error;
+        }
     }
 }
 
