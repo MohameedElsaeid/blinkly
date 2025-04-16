@@ -1,69 +1,90 @@
 
-import { sendToAnalyticsService } from './metrics';
-import { PerformanceMetrics, TimingMetric } from './interfaces';
+import { collectPerformanceMetrics, trackTimingMetric } from './metrics';
+import { PerformanceMetrics, CustomTimingMetric } from './interfaces';
+
+let metricsCollection: PerformanceMetrics | null = null;
+let customTimings: CustomTimingMetric[] = [];
 
 /**
- * Initialize performance monitoring for the application
+ * Initialize performance monitoring
  */
-export const initPerformanceMonitoring = () => {
-    // Listen for performance entries
-    if ('PerformanceObserver' in window) {
-        try {
-            // Create observer for navigation and resource timing
-            const perfObserver = new PerformanceObserver((entries) => {
-                entries.getEntries().forEach((entry) => {
-                    if (entry.entryType === 'navigation') {
-                        const navEntry = entry as PerformanceNavigationTiming;
-                        const metrics: PerformanceMetrics = {
-                            // Ensure type safety with explicit casting
-                            domComplete: navEntry.domComplete as number,
-                            domInteractive: navEntry.domInteractive as number,
-                            loadEventStart: navEntry.loadEventStart as number,
-                            domContentLoadedEventStart: navEntry.domContentLoadedEventStart as number,
-                            type: 'navigation'
-                        };
-                        sendToAnalyticsService(metrics);
-                    }
-                    
-                    if (entry.entryType === 'resource') {
-                        // Only send metrics for key resources like JS, CSS, and fonts
-                        const resourceEntry = entry as PerformanceResourceTiming;
-                        const url = resourceEntry.name;
-                        const isImportantResource = (
-                            url.endsWith('.js') || 
-                            url.endsWith('.css') || 
-                            url.includes('fonts')
-                        );
-                        
-                        if (isImportantResource) {
-                            const metric: TimingMetric = {
-                                // Ensure type safety with explicit casting
-                                duration: resourceEntry.duration as number,
-                                transferSize: resourceEntry.transferSize as number,
-                                url: resourceEntry.name,
-                                type: 'resource'
-                            };
-                            sendToAnalyticsService(metric);
-                        }
-                    }
-                });
-            });
-            
-            // Observe navigation and resource timings
-            perfObserver.observe({ entryTypes: ['navigation', 'resource'] });
-            
-            // Listen for errors to track frontend stability
-            window.addEventListener('error', (event) => {
-                const errorMetric = {
-                    message: event.message,
-                    source: event.filename,
-                    type: 'error'
-                };
-                sendToAnalyticsService(errorMetric);
-            });
-            
-        } catch (error) {
-            console.warn('Performance monitoring could not be initialized:', error);
-        }
-    }
+export const initPerformanceMonitoring = (): void => {
+  if (typeof window === 'undefined') return;
+
+  // Collect metrics after page load
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      metricsCollection = collectPerformanceMetrics();
+      
+      // Log metrics in development
+      if (import.meta.env.DEV) {
+        console.log('Performance metrics:', metricsCollection);
+      }
+      
+      // Track page load in Google Analytics
+      if (window.gtag) {
+        window.gtag('event', 'timing_complete', {
+          name: 'page_load',
+          value: metricsCollection.loadComplete,
+          event_category: 'Performance',
+        });
+      }
+      
+      // Track page load in Meta Pixel
+      if (window.fbq) {
+        window.fbq('trackCustom', 'PerformanceMetrics', {
+          timeToFirstByte: metricsCollection.timeToFirstByte,
+          timeToFirstPaint: metricsCollection.timeToFirstPaint,
+          timeToFirstContentfulPaint: metricsCollection.timeToFirstContentfulPaint,
+          domInteractive: metricsCollection.domInteractive,
+          loadComplete: metricsCollection.loadComplete
+        });
+      }
+    }, 0);
+  });
+};
+
+/**
+ * Track custom timing metric
+ */
+export const trackTiming = (name: string, duration: number): void => {
+  const metric: CustomTimingMetric = {
+    name,
+    duration,
+    timestamp: Date.now()
+  };
+  
+  customTimings.push(metric);
+  trackTimingMetric(name, duration);
+  
+  // Send to Google Analytics
+  if (window.gtag) {
+    window.gtag('event', 'timing_complete', {
+      name,
+      value: duration,
+      event_category: 'Custom Timing'
+    });
+  }
+  
+  // Send to Meta Pixel
+  if (window.fbq) {
+    window.fbq('trackCustom', 'PerformanceTiming', {
+      metricName: name,
+      duration: duration
+    });
+  }
+};
+
+/**
+ * Get current performance metrics
+ */
+export const getPerformanceMetrics = (): PerformanceMetrics | null => {
+  return metricsCollection;
+};
+
+/**
+ * Get all custom timing metrics
+ */
+export const getCustomTimings = (): CustomTimingMetric[] => {
+  return [...customTimings];
 };

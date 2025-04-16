@@ -6,6 +6,18 @@ import './index.css';
 import {ServiceFactory} from './services';
 import {initPerformanceMonitoring} from './utils/performance';
 
+// Declare global fbq type for TypeScript
+declare global {
+    interface Window {
+        fbq: (method: string, eventName: string, params?: any) => void;
+    }
+}
+
+// Initialize Meta Pixel PageView tracking
+if (typeof window !== 'undefined' && window.fbq) {
+    window.fbq('track', 'PageView');
+}
+
 // Initialize services
 ServiceFactory.init({
     baseURL: import.meta.env.VITE_API_URL || 'https://api.blinkly.app',

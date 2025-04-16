@@ -1,3 +1,4 @@
+
 import {useCallback} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {toast} from 'sonner';
@@ -5,6 +6,7 @@ import {authService} from '../services';
 import {useAuthState} from './useAuthState';
 import {User, UserRole} from '../types';
 import {LoginDto, SignUpDto} from '../types/auth';
+import { MetaPixelEventType, trackEvent } from './useMetaPixel';
 
 // Define the auth response user type to match what the backend returns
 interface AuthResponseUser {
@@ -50,15 +52,35 @@ export function useAuthLogin() {
                 setUser(userData);
                 setIsAuthenticated(true);
                 toast.success(response.message || 'Successfully logged in!');
+                
+                // Track login event with Meta Pixel
+                trackEvent(MetaPixelEventType.LOGIN, {
+                    userId: userData.id,
+                    userRole: userData.role,
+                    status: 'success'
+                });
+                
                 navigate('/dashboard');
             } else {
                 toast.error(response.message || 'Login failed. Please check your credentials.');
+                
+                // Track failed login attempt
+                trackEvent(MetaPixelEventType.LOGIN, {
+                    status: 'failed'
+                });
             }
             return response;
         } catch (error: any) {
             console.error("Login error in useAuth:", error);
             const message = error.response?.data?.message || 'Login failed. Please check your credentials.';
             toast.error(message);
+            
+            // Track login error
+            trackEvent(MetaPixelEventType.LOGIN, {
+                status: 'error',
+                errorMessage: message
+            });
+            
             throw error;
         } finally {
             setIsLoading(false);
@@ -90,14 +112,35 @@ export function useAuthLogin() {
                 setUser(userData);
                 setIsAuthenticated(true);
                 toast.success(response.message || 'Registration successful!');
+                
+                // Track registration event with Meta Pixel
+                trackEvent(MetaPixelEventType.COMPLETE_REGISTRATION, {
+                    userId: userData.id,
+                    userRole: userData.role,
+                    country: userData.country,
+                    status: 'success'
+                });
+                
                 navigate('/dashboard');
             } else {
                 toast.error(response.message || 'Registration failed. Please try again.');
+                
+                // Track failed registration
+                trackEvent(MetaPixelEventType.COMPLETE_REGISTRATION, {
+                    status: 'failed'
+                });
             }
             return response;
         } catch (error: any) {
             const message = error.response?.data?.message || 'Registration failed. Please try again.';
             toast.error(message);
+            
+            // Track registration error
+            trackEvent(MetaPixelEventType.COMPLETE_REGISTRATION, {
+                status: 'error',
+                errorMessage: message
+            });
+            
             throw error;
         } finally {
             setIsLoading(false);
@@ -105,6 +148,9 @@ export function useAuthLogin() {
     }, [navigate, setUser, setIsAuthenticated, setIsLoading]);
 
     const logout = useCallback(() => {
+        // Track logout event
+        trackEvent(MetaPixelEventType.LOGOUT);
+        
         authService.logout();
         setUser(null);
         setIsAuthenticated(false);

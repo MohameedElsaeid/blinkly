@@ -13,11 +13,16 @@ export function lazyLoad<T extends React.ComponentType<any>>(
   importCallback: () => Promise<{ default: T }>,
   fallback?: React.ReactNode
 ) {
-  const LazyComponent = lazy(importCallback);
+  const LazyLoadedComponent = lazy(importCallback);
   
-  return (props: React.ComponentProps<T>) => (
-    <LazyComponent {...props} fallback={fallback} />
+  // Create a wrapper component that handles the props correctly
+  const Component = (props: React.ComponentProps<T>) => (
+    <LazyComponent fallback={fallback}>
+      <LazyLoadedComponent {...props} />
+    </LazyComponent>
   );
+  
+  return Component;
 }
 
 /**

@@ -1,4 +1,5 @@
-import React, {useState} from "react";
+
+import React, {useState, useEffect} from "react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -8,9 +9,36 @@ import PricingTable from "@/components/pricing/PricingTable";
 import FAQ from "@/components/pricing/FAQ";
 import {featureCategories, plans} from "@/data/pricingData";
 import {generateStructuredData, SEO} from "@/utils/seo";
+import {useMetaPixel, MetaPixelEventType} from "@/hooks/useMetaPixel";
 
 const Pricing = () => {
     const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
+    const {trackEvent} = useMetaPixel();
+
+    // Track page view with enhanced data
+    useEffect(() => {
+        trackEvent(MetaPixelEventType.PAGE_VIEW, {
+            page_type: 'pricing',
+            initial_view: billingPeriod
+        });
+    }, []);
+
+    // Track billing period changes
+    useEffect(() => {
+        trackEvent('ViewPricingOptions', {
+            billingPeriod: billingPeriod
+        });
+    }, [billingPeriod]);
+
+    // Function to handle plan selection
+    const handlePlanSelect = (planId: string, planName: string, price: number) => {
+        trackEvent(MetaPixelEventType.START_TRIAL, {
+            planId: planId,
+            planName: planName,
+            price: price,
+            billingPeriod: billingPeriod
+        });
+    };
 
     // Generate FAQ data for schema markup
     const faqItems = [
@@ -59,20 +87,40 @@ const Pricing = () => {
 
                             <BillingToggle
                                 billingPeriod={billingPeriod}
-                                onChange={setBillingPeriod}
+                                onChange={(period) => {
+                                    setBillingPeriod(period);
+                                    trackEvent('SwitchBillingPeriod', {
+                                        from: billingPeriod,
+                                        to: period
+                                    });
+                                }}
                             />
                         </div>
 
                         <Tabs defaultValue="cards" className="w-full">
                             <div className="flex justify-center mb-8">
                                 <TabsList>
-                                    <TabsTrigger value="cards">Plan Cards</TabsTrigger>
-                                    <TabsTrigger value="table">Comparison Table</TabsTrigger>
+                                    <TabsTrigger 
+                                        value="cards"
+                                        onClick={() => trackEvent('SwitchPricingView', { view: 'cards' })}
+                                    >
+                                        Plan Cards
+                                    </TabsTrigger>
+                                    <TabsTrigger 
+                                        value="table"
+                                        onClick={() => trackEvent('SwitchPricingView', { view: 'table' })}
+                                    >
+                                        Comparison Table
+                                    </TabsTrigger>
                                 </TabsList>
                             </div>
 
                             <TabsContent value="cards" className="mt-0">
-                                <PricingView plans={plans} billingPeriod={billingPeriod}/>
+                                <PricingView 
+                                    plans={plans} 
+                                    billingPeriod={billingPeriod}
+                                    onPlanSelect={handlePlanSelect}
+                                />
                             </TabsContent>
 
                             <TabsContent value="table" className="mt-0">
@@ -80,6 +128,7 @@ const Pricing = () => {
                                     plans={plans}
                                     featureCategories={featureCategories}
                                     billingPeriod={billingPeriod}
+                                    onPlanSelect={handlePlanSelect}
                                 />
                             </TabsContent>
                         </Tabs>

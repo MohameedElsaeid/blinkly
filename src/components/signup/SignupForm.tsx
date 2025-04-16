@@ -1,3 +1,4 @@
+
 import {useState} from "react";
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useForm} from 'react-hook-form';
@@ -14,10 +15,12 @@ import {ContactInfoSection} from "./ContactInfoSection";
 import {PasswordSection} from "./PasswordSection";
 import {TermsSection} from "./TermsSection";
 import {SignupSchema} from "./SignupSchema";
+import {useMetaPixel, MetaPixelEventType} from "@/hooks/useMetaPixel";
 
 const SignupForm = () => {
     const navigate = useNavigate();
     const {register} = useAuth();
+    const {trackEvent} = useMetaPixel();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [countries] = useState(getCountriesList());
     const [countryCodes] = useState(getCountryCodesList());
@@ -42,6 +45,12 @@ const SignupForm = () => {
 
     const handleSubmit = async (data: z.infer<typeof SignupSchema>) => {
         setIsSubmitting(true);
+
+        // Track signup form submission start
+        trackEvent(MetaPixelEventType.SIGN_UP, {
+            status: 'form_submitted',
+            country: data.country
+        });
 
         try {
             // Format the phone number with country code
@@ -68,6 +77,12 @@ const SignupForm = () => {
                 "Registration failed. Please try again.";
 
             toast.error(errorMessage);
+
+            // Track signup error
+            trackEvent(MetaPixelEventType.SIGN_UP, {
+                status: 'error',
+                errorMessage: errorMessage
+            });
 
             // Reset the form submission state
             setIsSubmitting(false);
