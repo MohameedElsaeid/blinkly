@@ -1,4 +1,3 @@
-
 import {AxiosError, AxiosHeaders, AxiosRequestConfig, InternalAxiosRequestConfig} from 'axios';
 import {BaseHttpClient} from './baseHttpClient';
 import {csrfTokenService} from '../csrf/csrfTokenService';
@@ -118,13 +117,8 @@ class ApiClient extends BaseHttpClient {
                     try {
                         // Fetch a new CSRF token from your endpoint
                         const csrfToken = await csrfTokenService.fetchCsrfToken();
-                        // Using AxiosHeaders to avoid the TypeScript error
-                        if (!originalRequest.headers) {
-                            originalRequest.headers = new AxiosHeaders();
-                        }
-                        if (originalRequest.headers instanceof AxiosHeaders) {
-                            originalRequest.headers.set('x-csrf-token', csrfToken);
-                        }
+                        originalRequest.headers = originalRequest.headers || {};
+                        originalRequest.headers['x-csrf-token'] = csrfToken;
                         originalRequest.withCredentials = true;
                         console.log('Retrying request with updated CSRF token.');
                         return this.client(originalRequest);

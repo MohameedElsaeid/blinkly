@@ -6,8 +6,6 @@ import { componentTagger } from "lovable-tagger";
 import { VitePWA } from 'vite-plugin-pwa';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { compression } from 'vite-plugin-compression2';
-import autoprefixer from 'autoprefixer';
-import cssnano from 'cssnano';
 
 export default defineConfig(({ mode }) => ({
   server: {
@@ -50,7 +48,7 @@ export default defineConfig(({ mode }) => ({
         name: 'Blinkly',
         short_name: 'Blinkly',
         description: 'URL Shortener & Link Management Platform',
-        theme_color: '#4d58ff',
+        theme_color: '#3B82F6',
         background_color: '#ffffff',
         display: 'standalone',
         icons: [
@@ -93,46 +91,25 @@ export default defineConfig(({ mode }) => ({
             'react',
             'react-dom',
             'react-router-dom',
-          ],
-          'tanstack-query': [
-            '@tanstack/react-query'
-          ],
-          charting: [
-            'recharts'
+            '@tanstack/react-query',
+            'axios',
+            'framer-motion'
           ],
           ui: [
             '@radix-ui/react-dialog',
             '@radix-ui/react-dropdown-menu',
             '@radix-ui/react-tabs',
-            '@radix-ui/react-tooltip',
-            'class-variance-authority',
-            'clsx',
-            'tailwind-merge',
-          ],
-          forms: [
-            'react-hook-form',
-            'zod',
-            '@hookform/resolvers'
-          ],
-          utilities: [
-            'date-fns',
-            'axios',
-            'jwt-decode',
-            'uuid'
+            '@radix-ui/react-tooltip'
           ]
-        },
-        // Reduce chunk size for better caching
-        chunkFileNames: 'assets/[name]-[hash].js',
-        entryFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash].[ext]'
+        }
       }
     },
-    sourcemap: mode === 'development',
+    sourcemap: false,
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: mode === 'production',
-        drop_debugger: mode === 'production'
+        drop_console: true,
+        drop_debugger: true
       }
     }
   },
@@ -145,23 +122,5 @@ export default defineConfig(({ mode }) => ({
     'process.env.VITE_ENV': JSON.stringify(process.env.VITE_ENV),
     'process.env.VITE_CSRF_ENDPOINT': JSON.stringify(process.env.VITE_CSRF_ENDPOINT),
     'process.env.VITE_ALLOWED_ORIGINS': JSON.stringify(process.env.VITE_ALLOWED_ORIGINS)
-  },
-  css: {
-    postcss: {
-      plugins: [
-        autoprefixer,
-        cssnano({
-          preset: ['default', {
-            discardComments: {
-              removeAll: true,
-            },
-            discardUnused: true,
-            mergeIdents: true,
-            reduceIdents: true,
-            zindex: false,
-          }]
-        })
-      ]
-    }
   }
 }));

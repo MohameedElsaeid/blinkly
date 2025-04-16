@@ -1,6 +1,4 @@
-
-import React, { Suspense } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
+import React, {Suspense} from 'react';
 
 interface LazyComponentProps {
     children: React.ReactNode;
@@ -8,9 +6,10 @@ interface LazyComponentProps {
 }
 
 export const LazyComponent: React.FC<LazyComponentProps> = ({
-    children,
-    fallback = <Skeleton className="w-full h-32 rounded-md" />
-}) => {
+                                                                children,
+                                                                fallback = <div
+                                                                    className="animate-pulse bg-gray-200 h-32 rounded-md"/>
+                                                            }) => {
     return (
         <Suspense fallback={fallback}>
             {children}

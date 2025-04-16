@@ -1,98 +1,90 @@
 import React from "react";
+import {Link} from "react-router-dom";
 import {Check, X} from "lucide-react";
-import {cn} from "@/lib/utils";
+import {Button} from "@/components/ui/button";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {FeatureCategory, Plan} from "@/types/pricing";
 
-// Export the PricingTableProps interface so it can be imported by other components
-export interface PricingTableProps {
-    plans: any[];
-    featureCategories: any[];
+interface PricingTableProps {
+    plans: Plan[];
+    featureCategories: FeatureCategory[];
     billingPeriod: "monthly" | "yearly";
-    onPlanSelect?: (planId: string, planName: string, price: number) => void;
 }
 
-const PricingTable: React.FC<PricingTableProps> = ({plans, featureCategories, billingPeriod, onPlanSelect}) => {
-    const getPrice = (plan: any) => {
-        return billingPeriod === "monthly" ? plan.monthlyPrice : plan.yearlyPrice;
-    };
-
+const PricingTable = ({plans, featureCategories, billingPeriod}: PricingTableProps) => {
     return (
-        <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-                <thead>
-                <tr>
-                    <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Feature
-                    </th>
-                    {plans.map((plan) => (
-                        <th key={plan.id}
-                            className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            {plan.name}
-                        </th>
-                    ))}
-                </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                {featureCategories.map((category) => (
-                    <React.Fragment key={category.name}>
-                        <tr>
-                            <td colSpan={plans.length + 1}
-                                className="px-6 py-4 whitespace-nowrap bg-gray-100 font-semibold">
-                                {category.name}
-                            </td>
-                        </tr>
-                        {category.features.map((feature) => (
-                            <tr key={feature.id}>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    {feature.name}
-                                </td>
-                                {plans.map((plan) => {
-                                    let featureValue = plan.features[feature.id];
-
-                                    if (typeof featureValue === 'boolean') {
-                                        featureValue = featureValue ? <Check className="h-5 w-5 text-green-500"/> :
-                                            <X className="h-5 w-5 text-red-500"/>;
-                                    } else if (typeof featureValue === 'number' || typeof featureValue === 'string') {
-                                        // Render number or string values directly
-                                    } else {
-                                        featureValue = '-'; // Handle unexpected value types
-                                    }
-
-                                    return (
-                                        <td key={plan.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            <div className="flex justify-center">
-                                                {typeof featureValue === 'boolean' ? featureValue : featureValue}
-                                            </div>
-                                        </td>
-                                    );
-                                })}
-                            </tr>
+        <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+            <Table>
+                <TableHeader className="bg-gray-50">
+                    <TableRow>
+                        <TableHead className="w-1/4 py-4 pl-6 font-medium">Features</TableHead>
+                        {plans.map((plan) => (
+                            <TableHead key={plan.id} className="text-center py-4 font-medium">
+                                <div className="flex flex-col items-center">
+                                    <span className={plan.popular ? "text-alchemy-purple" : ""}>{plan.name}</span>
+                                    <span className="text-xl font-bold mt-1">
+                    {billingPeriod === "monthly" ? plan.monthlyPrice : plan.yearlyPrice}
+                                        {plan.monthlyPrice !== "Custom" && (
+                                            <span
+                                                className="text-sm font-normal">/{billingPeriod === "monthly" ? "mo" : "yr"}</span>
+                                        )}
+                  </span>
+                                </div>
+                            </TableHead>
                         ))}
-                    </React.Fragment>
-                ))}
-                <tr>
-                    <td></td>
-                    {plans.map((plan) => (
-                        <td key={plan.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <button
-                                className={cn(
-                                    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 h-10 py-2 px-4",
-                                    plan.popular ? "bg-secondary text-secondary-foreground" : ""
-                                )}
-                                onClick={() => {
-                                    if (onPlanSelect) {
-                                        const price = getPrice(plan);
-                                        const numericPrice = typeof price === 'string' ? parseFloat(price.replace(/[^0-9.]/g, '')) : price;
-                                        onPlanSelect(plan.id, plan.name, numericPrice);
-                                    }
-                                }}
-                            >
-                                {plan.buttonText}
-                            </button>
-                        </td>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {featureCategories.map((category) => (
+                        <React.Fragment key={category.name}>
+                            <TableRow className="bg-gray-100/50">
+                                <TableCell colSpan={6} className="py-3 pl-6 font-medium">{category.name}</TableCell>
+                            </TableRow>
+                            {category.features.map((feature) => (
+                                <TableRow key={feature.id}>
+                                    <TableCell className="py-4 pl-6">{feature.name}</TableCell>
+                                    {plans.map((plan) => (
+                                        <TableCell key={`${plan.id}-${feature.id}`} className="text-center py-4">
+                                            {typeof plan.features[feature.id] === 'boolean' ? (
+                                                plan.features[feature.id] ? (
+                                                    <Check className="h-5 w-5 text-alchemy-green mx-auto"/>
+                                                ) : (
+                                                    <X className="h-5 w-5 text-gray-300 mx-auto"/>
+                                                )
+                                            ) : (
+                                                <span>{plan.features[feature.id]}</span>
+                                            )}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))}
+                        </React.Fragment>
                     ))}
-                </tr>
-                </tbody>
-            </table>
+                    <TableRow>
+                        <TableCell className="py-6 pl-6"></TableCell>
+                        {plans.map((plan) => (
+                            <TableCell key={`${plan.id}-action`} className="text-center py-6">
+                                <Button
+                                    className={`px-4 py-2 ${
+                                        plan.popular
+                                            ? 'bg-alchemy-purple hover:bg-alchemy-purple-dark'
+                                            : plan.id === 'free'
+                                                ? 'bg-white border-2 border-alchemy-purple text-alchemy-purple hover:bg-alchemy-purple hover:text-white'
+                                                : plan.id === 'enterprise'
+                                                    ? 'bg-blinkly-purple hover:bg-blinkly-purple-dark'
+                                                    : 'bg-alchemy-purple/90 hover:bg-alchemy-purple'
+                                    }`}
+                                    asChild
+                                >
+                                    <Link to={plan.id === 'enterprise' ? "/contact" : "/signup"}>
+                                        {plan.buttonText}
+                                    </Link>
+                                </Button>
+                            </TableCell>
+                        ))}
+                    </TableRow>
+                </TableBody>
+            </Table>
         </div>
     );
 };

@@ -1,5 +1,9 @@
-
-import { ResourcePerformanceEntry } from '../performance/interfaces';
+// Define interface for resource performance entries
+interface ResourcePerformanceEntry extends PerformanceEntry {
+    initiatorType: string;
+    transferSize: number;
+    duration: number;
+}
 
 // Helper to estimate page load performance metrics
 export const estimateCoreWebVitals = () => {
@@ -22,12 +26,9 @@ export const estimateCoreWebVitals = () => {
                 }, images[0]);
 
                 const largestImageEntry = largestImage as ResourcePerformanceEntry;
-                
-                if (import.meta.env.DEV) {
-                    console.info('Estimated LCP resource:', largestImage.name,
-                        'Size:', (largestImageEntry.transferSize / 1024).toFixed(2) + 'kb',
-                        'Load Time:', largestImageEntry.duration.toFixed(2) + 'ms');
-                }
+                console.info('Estimated LCP resource:', largestImage.name,
+                    'Size:', (largestImageEntry.transferSize / 1024).toFixed(2) + 'kb',
+                    'Load Time:', largestImageEntry.duration.toFixed(2) + 'ms');
             }
         };
 
@@ -44,10 +45,7 @@ export const estimateCoreWebVitals = () => {
                     clsEntries.push(entry);
                 }
             }
-            
-            if (import.meta.env.DEV) {
-                console.info('Current CLS:', clsValue);
-            }
+            console.info('Current CLS:', clsValue);
         });
 
         if (PerformanceObserver.supportedEntryTypes.includes('layout-shift')) {

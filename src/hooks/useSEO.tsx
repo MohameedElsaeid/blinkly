@@ -1,4 +1,3 @@
-
 import {useEffect} from 'react';
 import {useLocation} from 'react-router-dom';
 import {seoConfig, SEOProps} from '@/utils/seo';
@@ -33,7 +32,7 @@ export const useSEO = (seoProps: SEOProps = {}) => {
         }
 
         // You could also log to console during development
-        if (import.meta.env.DEV) {
+        if (process.env.NODE_ENV === 'development') {
             console.log(`Page view: ${currentPath}`, combinedSEO);
         }
     }, [currentPath, combinedSEO.title]);
