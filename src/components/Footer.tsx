@@ -1,7 +1,6 @@
-
 import { Link } from "react-router-dom";
-import { Mail, Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
 import Logo from "./Logo";
+import SocialMediaLinks from "./SocialMediaLinks";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -13,46 +12,7 @@ const Footer = () => {
           <Link to="/" className="mb-4 md:mb-0">
             <Logo size="large" className="text-white" />
           </Link>
-          <div className="flex space-x-4">
-            <a 
-              href="https://www.facebook.com/blinklyapp/" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-gray-400 hover:text-white transition-colors"
-            >
-              <Facebook className="h-5 w-5" />
-            </a>
-            <a 
-              href="https://www.instagram.com/blinklyapp/" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-gray-400 hover:text-white transition-colors"
-            >
-              <Instagram className="h-5 w-5" />
-            </a>
-            <a 
-              href="https://www.linkedin.com/company/blinklyapp/about" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-gray-400 hover:text-white transition-colors"
-            >
-              <Linkedin className="h-5 w-5" />
-            </a>
-            <a 
-              href="https://x.com/BlinklyApp" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-gray-400 hover:text-white transition-colors"
-            >
-              <Twitter className="h-5 w-5" />
-            </a>
-            <a 
-              href="mailto:support@blinkly.app" 
-              className="text-gray-400 hover:text-white transition-colors"
-            >
-              <Mail className="h-5 w-5" />
-            </a>
-          </div>
+          <SocialMediaLinks />
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-12">
