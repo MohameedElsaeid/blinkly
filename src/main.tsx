@@ -9,7 +9,7 @@ import {initPerformanceMonitoring} from './utils/performance';
 // Declare global fbq type for TypeScript
 declare global {
     interface Window {
-        fbq: (method: string, eventName: string, params?: any) => void;
+        fbq: (method: string, eventName: string, params?: Record<string, any>) => void;
     }
 }
 

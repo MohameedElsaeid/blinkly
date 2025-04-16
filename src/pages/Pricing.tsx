@@ -11,6 +11,21 @@ import {featureCategories, plans} from "@/data/pricingData";
 import {generateStructuredData, SEO} from "@/utils/seo";
 import {useMetaPixel, MetaPixelEventType} from "@/hooks/useMetaPixel";
 
+// Add missing PricingViewProps interface
+interface PricingViewProps {
+    plans: any[];
+    billingPeriod: "monthly" | "yearly";
+    onPlanSelect?: (planId: string, planName: string, price: number) => void;
+}
+
+// Add missing PricingTableProps interface
+interface PricingTableProps {
+    plans: any[];
+    featureCategories: any[];
+    billingPeriod: "monthly" | "yearly";
+    onPlanSelect?: (planId: string, planName: string, price: number) => void;
+}
+
 const Pricing = () => {
     const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
     const {trackEvent} = useMetaPixel();
