@@ -38,22 +38,6 @@ const pricingTiers: PricingTier[] = [
         buttonLink: "/signup"
     },
     {
-        name: "Basic",
-        monthlyPrice: "$9",
-        yearlyPrice: "$90",
-        description: "For creators and small businesses",
-        features: [
-            "All features in the Free Plan",
-            "Up to 500 shortened links per month",
-            "Up to 50 QR Codes per month",
-            "Advanced link analytics",
-            "Customizable QR Codes",
-            "Email support"
-        ],
-        buttonText: "Start 14-Day Free Trial",
-        buttonLink: "/signup"
-    },
-    {
         name: "Professional",
         monthlyPrice: "$29",
         yearlyPrice: "$290",
@@ -71,7 +55,24 @@ const pricingTiers: PricingTier[] = [
         buttonText: "Start 14-Day Free Trial",
         buttonLink: "/signup",
         isPopular: true
-    }
+    },
+    {
+        name: "Basic",
+        monthlyPrice: "$9",
+        yearlyPrice: "$90",
+        description: "For creators and small businesses",
+        features: [
+            "All features in the Free Plan",
+            "Up to 500 shortened links per month",
+            "Up to 50 QR Codes per month",
+            "Advanced link analytics",
+            "Customizable QR Codes",
+            "Email support"
+        ],
+        buttonText: "Start 14-Day Free Trial",
+        buttonLink: "/signup"
+    },
+
 ];
 
 const PricingSection = () => {

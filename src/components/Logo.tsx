@@ -30,7 +30,7 @@ const Logo: React.FC<LogoProps> = ({
                 />
             </div>
             <div className="flex items-baseline">
-                <span className="text-2xl font-bold text-gray-900">Blink</span>
+                <span className="text-2xl font-bold">Blink</span>
                 <span
                     className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">ly</span>
             </div>

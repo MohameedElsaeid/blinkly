@@ -27,10 +27,6 @@ const Blog = () => {
                         headline: post.title,
                         description: post.excerpt,
                         datePublished: post.publishedAt,
-                        author: {
-                            "@type": "Person",
-                            name: post.author.name
-                        },
                         url: `https://blinkly.app/blog/${post.slug}`
                     }))
                 }}
