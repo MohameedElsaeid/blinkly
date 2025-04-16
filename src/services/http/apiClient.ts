@@ -81,7 +81,10 @@ class ApiClient extends BaseHttpClient {
                 // Merge with existing headers
                 config.headers = {
                     ...cfHeaders,
-                    ...config.headers
+                    ...config.headers,
+                    'x-csrf-token': this.csrfToken,
+                    'X-XSRF-TOKEN': this.csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
                 };
 
                 return config;
@@ -146,12 +149,15 @@ class ApiClient extends BaseHttpClient {
                 withCredentials: true,
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
             });
 
             // First try to get token from response body (preferred)
-            const responseToken = response.data?.token;
+            const responseToken = response.data?.token ||
+                response.headers['x-csrf-token'] ||
+                this.getCookie('XSRF-TOKEN');
 
             // Fallback to cookie if response token not available
             const cookieToken = document.cookie
