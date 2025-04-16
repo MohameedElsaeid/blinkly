@@ -1,4 +1,3 @@
-
 import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
@@ -9,12 +8,11 @@ import { getFacebookBrowserId, getFacebookClickId, enhanceEventData } from './ut
 // Define Meta Pixel types for global window object
 declare global {
   interface Window {
-    fbq: (
-      track: string,
-      eventName: string,
-      params?: Record<string, any>,
-      customData?: any
-    ) => void;
+    fbq: {
+      (track: string, eventName: string, params?: Record<string, any>, customData?: any): void;
+      callMethod?: (...args: any[]) => void;
+      queue?: any[];
+    };
     _fbq: any; // Add this to fix the error
   }
 }

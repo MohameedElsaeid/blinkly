@@ -1,7 +1,6 @@
-
-import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import axiosRetry from 'axios-retry';
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { getBrowserInfo } from '../../utils/metaPixelUtils';
 
 const REQUEST_TIMEOUT = 30000;
@@ -65,6 +64,9 @@ export class BaseHttpClient {
             'X-Request-Time': requestTime,
             'DNT': navigator.doNotTrack || '1',
             'X-Custom-Header': localStorage.getItem('custom-header') || 'default-value',
+            
+            // Optional priority header
+            'Priority': 'u=1, i',
             
             // Browser and device information
             'User-Agent': navigator.userAgent,
