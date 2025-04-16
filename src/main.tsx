@@ -1,3 +1,4 @@
+
 import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
@@ -15,5 +16,10 @@ ServiceFactory.init({
 if (import.meta.env.PROD) {
     initPerformanceMonitoring();
 }
+
+// Render app with strict mode in development only
+const Root = import.meta.env.DEV 
+    ? () => <React.StrictMode><App /></React.StrictMode>
+    : App;
 
 createRoot(document.getElementById("root")!).render(<App/>);

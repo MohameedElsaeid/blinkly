@@ -78,7 +78,7 @@
 
     button, input:where([type=button]), input:where([type=reset]), input:where([type=submit]) {
         -webkit-appearance: button;
-        background-color: #5D5FEF; /* Default brand purple color */
+        background-color: #4d58ff; /* Brand purple color */
         color: white; /* Ensuring text on buttons is white for contrast */
         background-image: none;
     }
@@ -119,22 +119,6 @@
 
     .nav-link-active {
         @apply text-brand-purple font-medium;
-    }
-
-    .card {
-        @apply bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden;
-    }
-
-    .card-header {
-        @apply p-4 border-b border-gray-100;
-    }
-
-    .card-body {
-        @apply p-4;
-    }
-
-    .card-footer {
-        @apply p-4 border-t border-gray-100;
     }
 
     .form-group {
