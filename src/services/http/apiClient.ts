@@ -9,12 +9,18 @@ class ApiClient extends BaseHttpClient {
     private retrying: boolean = false;
     private baseURL: string;
     private csrfToken: string | null = null;
+    private csrfTokenExpires: Date;
 
     constructor() {
         const baseURL = import.meta.env.VITE_API_URL || 'https://api.blinkly.app';
         super(baseURL);
         this.baseURL = baseURL;
-
+        console.log({
+            url: import.meta.env.VITE_API_URL,
+            env: import.meta.env.VITE_ENV,
+            csrf: import.meta.env.VITE_CSRF_ENDPOINT,
+            origin: import.meta.env.VITE_ALLOWED_ORIGINS
+        });
         this.instance = axios.create({
             baseURL: this.baseURL,
             timeout: 60000,
@@ -128,22 +134,39 @@ class ApiClient extends BaseHttpClient {
 
     private async fetchCsrfToken(): Promise<void> {
         try {
-            // Make a GET request to a CSRF endpoint or any safe endpoint
             const response = await axios.get(`${this.baseURL}/auth/csrf-token`, {
-                withCredentials: true
+                withCredentials: true,
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
             });
 
-            // The token should be in cookies (set by backend) or response
-            const token = document.cookie
+            // First try to get token from response body (preferred)
+            const responseToken = response.data?.token;
+
+            // Fallback to cookie if response token not available
+            const cookieToken = document.cookie
                 .split('; ')
                 .find(row => row.startsWith('XSRF-TOKEN='))
                 ?.split('=')[1];
 
-            if (token) {
-                this.csrfToken = token;
+            // Use response token if available, otherwise fallback to cookie
+            const token = responseToken || cookieToken;
+
+            if (!token) {
+                throw new Error('No CSRF token found in response or cookies');
+            }
+
+            this.csrfToken = token;
+
+            // Optionally store expiration if needed
+            if (response.data?.expiresAt) {
+                this.csrfTokenExpires = new Date(response.data.expiresAt);
             }
         } catch (error) {
             console.error('Error fetching CSRF token:', error);
+            throw error; // Re-throw to allow error handling upstream
         }
     }
 
