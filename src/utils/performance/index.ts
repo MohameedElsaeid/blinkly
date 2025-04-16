@@ -67,7 +67,7 @@ export const initPerformanceMonitoring = () => {
     window.addEventListener('load', () => {
         // Use requestIdleCallback or setTimeout as a fallback
         if ('requestIdleCallback' in window) {
-            (window as any).requestIdleCallback(() => {
+            window.requestIdleCallback(() => {
                 logPerformanceMetrics();
             });
         } else {

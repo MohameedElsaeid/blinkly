@@ -1,4 +1,5 @@
 
+import React from 'react';
 import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
@@ -22,4 +23,4 @@ const Root = import.meta.env.DEV
     ? () => <React.StrictMode><App /></React.StrictMode>
     : App;
 
-createRoot(document.getElementById("root")!).render(<App/>);
+createRoot(document.getElementById("root")!).render(<Root />);
