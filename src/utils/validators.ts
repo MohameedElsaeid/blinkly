@@ -1,9 +1,22 @@
 
-import { isValidPhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
+import { parsePhoneNumber, isValidPhoneNumber } from 'libphonenumber-js';
 import * as countries from 'i18n-iso-countries';
 
-// Initialize the countries library
-countries.registerLocale(require('i18n-iso-countries/langs/en.json'));
+// Initialize the countries library with English language
+// Using dynamic import for language file to avoid CommonJS require
+export const initCountries = async () => {
+  try {
+    const enLocale = await import('i18n-iso-countries/langs/en.json');
+    countries.registerLocale(enLocale);
+    return true;
+  } catch (error) {
+    console.error('Failed to initialize countries:', error);
+    return false;
+  }
+};
+
+// Ensure countries are initialized
+initCountries();
 
 export const emailValidator = (email: string): boolean => {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -43,13 +56,18 @@ export const formatPhoneWithCountryCode = (phone: string, countryCode: string): 
 };
 
 export const countryValidator = (country: string): boolean => {
-  return !!countries.isValid(country);
+  return countries.isValid(country);
 };
 
 export const getCountriesList = () => {
-  return Object.entries(countries.getNames('en'))
-    .map(([code, name]) => ({ code, name }))
-    .sort((a, b) => a.name.localeCompare(b.name));
+  try {
+    return Object.entries(countries.getNames('en'))
+      .map(([code, name]) => ({ code, name }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  } catch (error) {
+    console.error('Error getting countries list:', error);
+    return [];
+  }
 };
 
 export const getCountryCodesList = () => [
