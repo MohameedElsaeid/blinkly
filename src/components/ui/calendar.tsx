@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -10,11 +11,11 @@ import {buttonVariants} from "./button/button-variants"
 export type CalendarProps = React.ComponentProps<typeof DayPicker>
 
 function Calendar({
-                      className,
-                      classNames,
-                      showOutsideDays = true,
-                      ...props
-                  }: CalendarProps) {
+    className,
+    classNames,
+    showOutsideDays = true,
+    ...props
+}: CalendarProps) {
     return (
         <DayPicker
             showOutsideDays={showOutsideDays}
@@ -54,8 +55,8 @@ function Calendar({
                 ...classNames,
             }}
             components={{
-                IconLeft: () => <ChevronLeft className="h-4 w-4"/>,
-                IconRight: () => <ChevronRight className="h-4 w-4"/>,
+                IconLeft: () => <ChevronLeft className="h-4 w-4" />,
+                IconRight: () => <ChevronRight className="h-4 w-4" />
             }}
             {...props}
         />
