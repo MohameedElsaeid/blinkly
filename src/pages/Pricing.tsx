@@ -1,4 +1,3 @@
-
 import React, {useState, useEffect} from "react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -57,7 +56,7 @@ const Pricing = () => {
                 content_name: 'billing_period_selection',
                 content_category: 'pricing',
                 billing_period: period,
-                value: period === 'yearly' ? plans[0].yearlyDiscount : 0
+                value: period === 'yearly' ? 20 : 0 // Default discount value
             }
         });
     };

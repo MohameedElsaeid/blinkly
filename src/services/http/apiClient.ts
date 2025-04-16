@@ -1,19 +1,21 @@
 
-import axios, { AxiosError, AxiosHeaders, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosHeaders, AxiosInstance, AxiosRequestConfig } from 'axios';
 import axiosRetry from 'axios-retry';
 import { BaseHttpClient } from './baseHttpClient';
 import { authService } from '../authService';
 import { apiErrorHandler } from '../errors/apiErrorHandler';
-import { ServiceFactory } from '../ServiceFactory';
 
 class ApiClient extends BaseHttpClient {
     private instance: AxiosInstance;
     private retrying: boolean = false;
+    private baseURL: string;
 
     constructor() {
         super();
+        this.baseURL = import.meta.env.VITE_API_URL || 'https://api.blinkly.app';
+        
         this.instance = axios.create({
-            baseURL: ServiceFactory.config?.baseURL,
+            baseURL: this.baseURL,
             timeout: 60000,
             headers: {
                 'Content-Type': 'application/json',
@@ -32,7 +34,7 @@ class ApiClient extends BaseHttpClient {
                 return axiosRetry.isNetworkOrIdempotentRequestError(error) || 
                     (error.response && error.response.status >= 500);
             },
-            onRetry: (retryCount, error, requestConfig) => {
+            onRetry: (retryCount, error) => {
                 console.log(`Retrying request (${retryCount}/3): ${error.config?.url}`);
                 this.retrying = true;
             },
@@ -45,7 +47,7 @@ class ApiClient extends BaseHttpClient {
                 const token = authService.getToken();
                 if (token) {
                     config.headers = config.headers || {};
-                    (config.headers as AxiosHeaders).set('Authorization', `Bearer ${token}`);
+                    config.headers.Authorization = `Bearer ${token}`;
                 }
                 
                 // Add CSRF token if available (from cookie)
@@ -56,7 +58,7 @@ class ApiClient extends BaseHttpClient {
                 
                 if (csrfToken) {
                     config.headers = config.headers || {};
-                    (config.headers as AxiosHeaders).set('X-XSRF-TOKEN', csrfToken);
+                    config.headers['X-XSRF-TOKEN'] = csrfToken;
                 }
                 
                 return config;
@@ -81,7 +83,7 @@ class ApiClient extends BaseHttpClient {
                         // Retry the original request with the new token
                         const newConfig = { ...error.config };
                         newConfig.headers = newConfig.headers || {};
-                        (newConfig.headers as AxiosHeaders).set('Authorization', `Bearer ${newToken}`);
+                        newConfig.headers.Authorization = `Bearer ${newToken}`;
                         return this.instance(newConfig);
                     } else {
                         // If refresh token fails, log out user
@@ -93,8 +95,11 @@ class ApiClient extends BaseHttpClient {
                 // Reset retrying flag
                 this.retrying = false;
                 
+                // Process error through handler
+                const processedError = apiErrorHandler(error);
+                
                 // Handle all other errors
-                return Promise.reject(apiErrorHandler(error));
+                return Promise.reject(processedError);
             }
         );
     }

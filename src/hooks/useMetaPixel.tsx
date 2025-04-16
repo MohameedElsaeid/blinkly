@@ -1,6 +1,7 @@
 
 import { useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
+import { enhanceEventData, getFacebookBrowserId, getFacebookClickId } from '@/utils/metaPixelUtils';
 
 // Define types for Meta Pixel events
 export type MetaPixelEvent = 
@@ -33,6 +34,8 @@ export type MetaPixelUserData = {
   zip?: string;
   country?: string;
   external_id?: string;
+  fbc?: string;
+  fbp?: string;
 };
 
 export type MetaPixelCustomData = {
@@ -71,7 +74,18 @@ export function useMetaPixel() {
   // Track page views on route change
   useEffect(() => {
     if (typeof window !== 'undefined' && window.fbq) {
-      window.fbq('track', 'PageView');
+      // Get fbp and fbc for tracking
+      const fbp = getFacebookBrowserId();
+      const fbc = getFacebookClickId();
+      
+      // Create enhaned event data for PageView
+      const enhancedData = enhanceEventData({
+        content_name: location.pathname,
+        content_type: 'page_view',
+      });
+      
+      // Track with enhanced data
+      window.fbq('track', 'PageView', enhancedData);
       console.log('Meta Pixel: PageView tracked for', location.pathname);
     }
   }, [location.pathname]);
@@ -94,39 +108,14 @@ export function useMetaPixel() {
         if (userData.external_id) params.external_id = userData.external_id;
       }
       
-      // Add standard browser data when possible
-      const mergedCustomData = { ...customData };
-      
-      // Add page URL if not provided
-      if (!mergedCustomData.page_url) {
-        mergedCustomData.page_url = window.location.href;
-      }
-      
-      // Add referrer if not provided
-      if (!mergedCustomData.referrer) {
-        mergedCustomData.referrer = document.referrer;
-      }
-      
-      // Add language if not provided
-      if (!mergedCustomData.language) {
-        mergedCustomData.language = navigator.language;
-      }
-      
-      // Add screen resolution if not provided
-      if (!mergedCustomData.screen_resolution) {
-        mergedCustomData.screen_resolution = `${window.screen.width}x${window.screen.height}`;
-      }
-      
-      // Add user agent if not provided
-      if (!mergedCustomData.user_agent) {
-        mergedCustomData.user_agent = navigator.userAgent;
-      }
+      // Enhance the customData with browser and cookie information
+      const enhancedCustomData = enhanceEventData(customData);
       
       // Track the event
       if (eventId) {
         window.fbq('track', event, params, { eventID: eventId });
       } else {
-        window.fbq('track', event, { ...params, ...mergedCustomData });
+        window.fbq('track', event, { ...params, ...enhancedCustomData });
       }
       
       console.log(`Meta Pixel: ${event} tracked`, { userData, customData });
@@ -252,6 +241,29 @@ export function useMetaPixel() {
     });
   }, [trackEvent]);
 
+  const trackAddToWishlist = useCallback((product: { id: string, name: string, value?: number, currency?: string }) => {
+    trackEvent({
+      event: 'AddToWishlist',
+      customData: {
+        content_name: product.name,
+        content_ids: [product.id],
+        value: product.value,
+        currency: product.currency || 'USD'
+      }
+    });
+  }, [trackEvent]);
+
+  const trackDonate = useCallback((amount: number, currency: string = 'USD', campaign?: string) => {
+    trackEvent({
+      event: 'Donate',
+      customData: {
+        content_name: campaign || 'donation',
+        value: amount,
+        currency
+      }
+    });
+  }, [trackEvent]);
+
   return {
     trackEvent,
     trackRegistration,
@@ -263,7 +275,9 @@ export function useMetaPixel() {
     trackCheckout,
     trackPurchase,
     trackTrialStart,
-    trackContactForm
+    trackContactForm,
+    trackAddToWishlist,
+    trackDonate
   };
 }
 
