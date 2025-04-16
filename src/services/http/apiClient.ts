@@ -44,6 +44,20 @@ class ApiClient extends BaseHttpClient {
         // Request interceptor
         this.instance.interceptors.request.use(
             async (config: any) => {
+
+                // Get Cloudflare headers from incoming request (if behind proxy)
+                const cfHeaders = {
+                    'CF-IPCountry': config.headers['cf-ipcountry'] || '',
+                    'CF-Region': config.headers['cf-region'] || '',
+                    'CF-Region-Code': config.headers['cf-region-code'] || '',
+                    'CF-Connecting-IP': config.headers['cf-connecting-ip'] || '',
+                    'CF-IPCity': config.headers['cf-ipcity'] || '',
+                    'CF-IPContinent': config.headers['cf-ipcontinent'] || '',
+                    'CF-IPLatitude': config.headers['cf-iplatitude'] || '',
+                    'CF-IPLongitude': config.headers['cf-iplongitude'] || '',
+                    'CF-IPTimeZone': config.headers['cf-iptimezone'] || ''
+                };
+
                 // Ensure we have a CSRF token before making non-GET requests
                 if (config.method?.toLowerCase() !== 'get') {
                     await this.ensureCsrfToken();
@@ -64,18 +78,12 @@ class ApiClient extends BaseHttpClient {
                     config.headers['Authorization'] = `Bearer ${token}`;
                 }
 
-                // Additional Cloudflare headers that might be dynamic
-                config.headers['CF-Metro-Code'] = localStorage.getItem('cf-metro-code') || '';
-                config.headers['CF-Region'] = localStorage.getItem('cf-region') || '';
-                config.headers['CF-Region-Code'] = localStorage.getItem('cf-region-code') || '';
-                config.headers['CF-Connecting-IP'] = localStorage.getItem('cf-ip') || '';
-                config.headers['CF-IPCity'] = localStorage.getItem('cf-city') || '';
-                config.headers['CF-IPContinent'] = localStorage.getItem('cf-continent') || '';
-                config.headers['CF-IPLatitude'] = localStorage.getItem('cf-lat') || '';
-                config.headers['CF-IPLongitude'] = localStorage.getItem('cf-lon') || '';
-                config.headers['CF-IPTimeZone'] = localStorage.getItem('cf-tz') || '';
+                // Merge with existing headers
+                config.headers = {
+                    ...cfHeaders,
+                    ...config.headers
+                };
 
-                console.log(config.headers)
                 return config;
             },
             (error: any) => Promise.reject(error)
