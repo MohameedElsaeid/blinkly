@@ -1,3 +1,4 @@
+
 import {useCallback} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {toast} from 'sonner';
@@ -5,6 +6,7 @@ import {authService} from '../services';
 import {useAuthState} from './useAuthState';
 import {User, UserRole} from '../types';
 import {LoginDto, SignUpDto} from '../types/auth';
+import {useMetaPixel} from './useMetaPixel';
 
 // Define the auth response user type to match what the backend returns
 interface AuthResponseUser {
@@ -21,6 +23,7 @@ interface AuthResponseUser {
 
 export function useAuthLogin() {
     const {setUser, setIsAuthenticated, setIsLoading} = useAuthState();
+    const {trackLogin, trackRegistration} = useMetaPixel();
     const navigate = useNavigate();
 
     const login = useCallback(async (params: LoginDto) => {
@@ -49,6 +52,15 @@ export function useAuthLogin() {
                 };
                 setUser(userData);
                 setIsAuthenticated(true);
+                
+                // Track login event with Meta Pixel
+                trackLogin({
+                    email: userData.email,
+                    firstName: userData.firstName,
+                    lastName: userData.lastName,
+                    country: userData.country
+                });
+                
                 toast.success(response.message || 'Successfully logged in!');
                 navigate('/dashboard');
             } else {
@@ -63,7 +75,7 @@ export function useAuthLogin() {
         } finally {
             setIsLoading(false);
         }
-    }, [navigate, setUser, setIsAuthenticated, setIsLoading]);
+    }, [navigate, setUser, setIsAuthenticated, setIsLoading, trackLogin]);
 
     const register = useCallback(async (params: SignUpDto) => {
         setIsLoading(true);
@@ -89,6 +101,15 @@ export function useAuthLogin() {
                 };
                 setUser(userData);
                 setIsAuthenticated(true);
+                
+                // Track registration event with Meta Pixel
+                trackRegistration({
+                    email: userData.email,
+                    firstName: userData.firstName,
+                    lastName: userData.lastName,
+                    country: userData.country
+                });
+                
                 toast.success(response.message || 'Registration successful!');
                 navigate('/dashboard');
             } else {
@@ -102,7 +123,7 @@ export function useAuthLogin() {
         } finally {
             setIsLoading(false);
         }
-    }, [navigate, setUser, setIsAuthenticated, setIsLoading]);
+    }, [navigate, setUser, setIsAuthenticated, setIsLoading, trackRegistration]);
 
     const logout = useCallback(() => {
         authService.logout();

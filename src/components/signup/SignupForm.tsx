@@ -1,3 +1,4 @@
+
 import {useState} from "react";
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useForm} from 'react-hook-form';
@@ -6,7 +7,7 @@ import {Button} from "@/components/ui/button";
 import {toast} from "sonner";
 import {useNavigate} from "react-router-dom";
 import {ArrowRight, Loader2} from "lucide-react";
-import {useAuth} from "@/hooks";
+import {useAuth, useMetaPixel} from "@/hooks";
 import {Form} from "@/components/ui/form";
 import {getCountriesList, getCountryCodesList} from "@/utils/validators";
 import {PersonalInfoSection} from "./PersonalInfoSection";
@@ -18,6 +19,7 @@ import {SignupSchema} from "./SignupSchema";
 const SignupForm = () => {
     const navigate = useNavigate();
     const {register} = useAuth();
+    const {trackEvent} = useMetaPixel();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [countries] = useState(getCountriesList());
     const [countryCodes] = useState(getCountryCodesList());
@@ -47,6 +49,21 @@ const SignupForm = () => {
             // Format the phone number with country code
             const formattedPhone = data.countryCode + data.phoneNumber.replace(/\D/g, '');
 
+            // Track signup form initiation
+            trackEvent({
+                event: 'InitiateCheckout',
+                userData: {
+                    email: data.email,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    country: data.country
+                },
+                customData: {
+                    content_name: 'signup_form',
+                    status: 'initiated'
+                }
+            });
+
             const response = await register({
                 firstName: data.firstName,
                 lastName: data.lastName,
@@ -68,6 +85,19 @@ const SignupForm = () => {
                 "Registration failed. Please try again.";
 
             toast.error(errorMessage);
+
+            // Track signup failure
+            trackEvent({
+                event: 'Lead',
+                userData: {
+                    email: data.email
+                },
+                customData: {
+                    content_name: 'signup_failure',
+                    status: 'failed',
+                    error_message: errorMessage
+                }
+            });
 
             // Reset the form submission state
             setIsSubmitting(false);

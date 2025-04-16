@@ -1,3 +1,4 @@
+
 import {useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -6,7 +7,7 @@ import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} f
 import {Link} from "react-router-dom";
 import {AlertCircle, ArrowRight, Loader2, Lock, Mail} from "lucide-react";
 import {Alert, AlertDescription} from "@/components/ui/alert";
-import {useAuth} from "@/hooks";
+import {useAuth, useMetaPixel} from "@/hooks";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -16,6 +17,7 @@ const Login = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formError, setFormError] = useState("");
     const {login} = useAuth();
+    const {trackEvent} = useMetaPixel();
 
     const validateForm = () => {
         if (!email) {
@@ -48,14 +50,42 @@ const Login = () => {
         setIsSubmitting(true);
         console.log('Login form submission with:', {email, password});
 
+        // Track login attempt
+        trackEvent({
+            event: 'InitiateCheckout',
+            userData: {
+                email: email
+            },
+            customData: {
+                content_name: 'login_form',
+                status: 'initiated'
+            }
+        });
+
         try {
             await login({email, password});
+            // Success tracking is handled in useAuthLogin
         } catch (error: any) {
             console.error("Login error details:", error);
             if (error.response) {
                 console.error("Server response:", error.response.data);
             }
-            setFormError(error.response?.data?.message || "Login failed. Please check your credentials.");
+            
+            const errorMessage = error.response?.data?.message || "Login failed. Please check your credentials.";
+            setFormError(errorMessage);
+            
+            // Track login failure
+            trackEvent({
+                event: 'Lead',
+                userData: {
+                    email: email
+                },
+                customData: {
+                    content_name: 'login_failure',
+                    status: 'failed',
+                    error_message: errorMessage
+                }
+            });
         } finally {
             setIsSubmitting(false);
         }

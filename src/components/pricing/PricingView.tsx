@@ -1,13 +1,17 @@
+
 import React from "react";
 import {Plan} from "@/types/pricing";
 import PlanCard from "./PlanCard";
+import {useMetaPixel} from "@/hooks";
 
 interface PricingViewProps {
     plans: Plan[];
     billingPeriod: "monthly" | "yearly";
 }
 
-const PricingView = ({plans, billingPeriod}: PricingViewProps) => {
+const PricingView: React.FC<PricingViewProps> = ({plans, billingPeriod}: PricingViewProps) => {
+    const {trackSubscription, trackEvent} = useMetaPixel();
+    
     // Find the professional plan and make sure it's in the middle
     const professionalPlanIndex = plans.findIndex(plan => plan.id === "professional");
     let orderedPlans = [...plans];
@@ -23,6 +27,32 @@ const PricingView = ({plans, billingPeriod}: PricingViewProps) => {
         orderedPlans.splice(middleIndex, 0, professionalPlan);
     }
 
+    const handlePlanSelect = (plan: Plan) => {
+        const planPrice = billingPeriod === "monthly" 
+            ? parseFloat(plan.monthlyPrice.replace(/[^0-9.]/g, ''))
+            : parseFloat(plan.yearlyPrice.replace(/[^0-9.]/g, ''));
+        
+        // Track plan selection with Meta Pixel
+        trackSubscription(
+            plan.name, 
+            planPrice || 0,
+            'USD'
+        );
+        
+        // Additional detailed tracking
+        trackEvent({
+            event: 'InitiateCheckout',
+            customData: {
+                content_name: `${plan.name} Plan`,
+                content_type: 'plan',
+                content_category: 'subscription',
+                value: planPrice || 0,
+                currency: 'USD',
+                billing_period: billingPeriod
+            }
+        });
+    };
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             {orderedPlans.map((plan) => (
@@ -30,6 +60,7 @@ const PricingView = ({plans, billingPeriod}: PricingViewProps) => {
                     key={plan.id}
                     plan={plan}
                     billingPeriod={billingPeriod}
+                    onSelect={() => handlePlanSelect(plan)}
                 />
             ))}
         </div>

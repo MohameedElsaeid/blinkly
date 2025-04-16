@@ -1,3 +1,4 @@
+
 import React, {useState} from "react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -8,9 +9,11 @@ import PricingTable from "@/components/pricing/PricingTable";
 import FAQ from "@/components/pricing/FAQ";
 import {featureCategories, plans} from "@/data/pricingData";
 import {generateStructuredData, SEO} from "@/utils/seo";
+import {useMetaPixel} from "@/hooks";
 
 const Pricing = () => {
     const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
+    const {trackEvent} = useMetaPixel();
 
     // Generate FAQ data for schema markup
     const faqItems = [
@@ -31,6 +34,32 @@ const Pricing = () => {
             answer: "Yes, all paid plans come with a 14-day free trial, no credit card required. You can test all features before committing to a subscription."
         }
     ];
+
+    const handleBillingPeriodChange = (period: "monthly" | "yearly") => {
+        setBillingPeriod(period);
+        
+        // Track billing period selection with Meta Pixel
+        trackEvent({
+            event: 'CustomizeProduct',
+            customData: {
+                content_name: 'billing_period',
+                content_category: 'pricing',
+                billing_period: period
+            }
+        });
+    };
+
+    const handleViewPlans = (viewType: string) => {
+        // Track plan view type selection
+        trackEvent({
+            event: 'ViewContent',
+            customData: {
+                content_name: 'pricing_plans',
+                content_type: viewType,
+                content_category: 'pricing'
+            }
+        });
+    };
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -59,11 +88,11 @@ const Pricing = () => {
 
                             <BillingToggle
                                 billingPeriod={billingPeriod}
-                                onChange={setBillingPeriod}
+                                onChange={handleBillingPeriodChange}
                             />
                         </div>
 
-                        <Tabs defaultValue="cards" className="w-full">
+                        <Tabs defaultValue="cards" className="w-full" onValueChange={handleViewPlans}>
                             <div className="flex justify-center mb-8">
                                 <TabsList>
                                     <TabsTrigger value="cards">Plan Cards</TabsTrigger>

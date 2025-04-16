@@ -8,3 +8,5 @@ export * from './useAnalytics';
 export * from './use-mobile';
 export * from './use-toast';
 export * from './useSEO';
+export * from './useMetaPixel';
+export { default as useMetaPixel } from './useMetaPixel';

@@ -1,3 +1,5 @@
+
+import {useEffect} from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import FeaturesSection from "@/components/FeaturesSection";
@@ -7,8 +9,23 @@ import HowItWorksSection from "@/components/HowItWorksSection";
 import Footer from "@/components/Footer";
 import BlogPreviewSection from "@/components/blog/BlogPreviewSection";
 import {generateStructuredData, SEO} from "@/utils/seo";
+import {useMetaPixel} from "@/hooks";
 
 const Landing = () => {
+    const {trackEvent} = useMetaPixel();
+    
+    useEffect(() => {
+        // Track landing page view with detailed info
+        trackEvent({
+            event: 'ViewContent',
+            customData: {
+                content_name: 'homepage',
+                content_type: 'landing_page',
+                content_category: 'marketing'
+            }
+        });
+    }, [trackEvent]);
+    
     return (
         <div className="min-h-screen flex flex-col">
             <SEO

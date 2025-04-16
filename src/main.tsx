@@ -1,8 +1,21 @@
+
 import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 import {ServiceFactory} from './services';
 import {initPerformanceMonitoring} from './utils/performance';
+
+// Define Meta Pixel types for global window object
+declare global {
+  interface Window {
+    fbq: (
+      track: string,
+      eventName: string,
+      params?: Record<string, any>,
+      customData?: any
+    ) => void;
+  }
+}
 
 // Initialize services
 ServiceFactory.init({
