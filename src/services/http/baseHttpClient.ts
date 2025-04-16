@@ -35,16 +35,7 @@ export class BaseHttpClient {
             // Security headers
             'x-csrf-token': this.getCookie('XSRF-TOKEN') || '',
             'X-XSRF-TOKEN': this.getCookie('XSRF-TOKEN') || '',
-            'DNT': browserInfo.doNotTrack ? '1' : '0',
             'Priority': 'u=1, i',
-
-            // Client hints and security
-            'Sec-CH-UA': this.getClientHintHeader(),
-            'Sec-CH-UA-Mobile': browserInfo.isMobile ? '?1' : '?0',
-            'Sec-CH-UA-Platform': `"${browserInfo.platform}"`,
-            'Sec-Fetch-Site': this.getSecFetchSite(browserInfo.referrer),
-            'Sec-Fetch-Mode': 'cors',
-            'Sec-Fetch-Dest': 'empty',
 
             // Device information
             'X-User-Agent': browserInfo.userAgent,
@@ -61,10 +52,6 @@ export class BaseHttpClient {
 
             // Facebook headers
             ...fbHeaders,
-
-            // Navigation headers
-            'Referer': browserInfo.referrer,
-            'Origin': window.location.origin
         };
     }
 
