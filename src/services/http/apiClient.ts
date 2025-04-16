@@ -1,3 +1,4 @@
+
 import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import { BaseHttpClient } from './baseHttpClient';
 import { csrfTokenService } from '../csrf/csrfTokenService';
@@ -32,11 +33,13 @@ class ApiClient extends BaseHttpClient {
         
         // Ensure Content-Type is set to application/json
         configWithAuth.headers = configWithAuth.headers || {};
-        configWithAuth.headers = {
-          ...configWithAuth.headers,
-          'Content-Type': 'application/json',
-          ...getTrackingHeaders(),
-        };
+        if (configWithAuth.headers) {
+          configWithAuth.headers = {
+            ...configWithAuth.headers,
+            'Content-Type': 'application/json',
+            ...getTrackingHeaders(),
+          };
+        }
 
         if (['post', 'put', 'patch', 'delete'].includes((config.method || '').toLowerCase())) {
           try {
