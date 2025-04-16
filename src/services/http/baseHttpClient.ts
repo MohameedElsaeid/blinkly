@@ -1,3 +1,4 @@
+
 import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
 import axiosRetry from 'axios-retry';
 import {v4 as uuidv4} from 'uuid';
@@ -10,9 +11,9 @@ const MAX_RETRY_DELAY = 10000;
 export class BaseHttpClient {
     protected client: AxiosInstance;
 
-    constructor(baseURL: string) {
+    constructor(baseURL?: string) {
         this.client = axios.create({
-            baseURL,
+            baseURL: baseURL || import.meta.env.VITE_API_URL || 'https://api.blinkly.app',
             timeout: REQUEST_TIMEOUT,
             withCredentials: true, // Always send credentials with requests
             headers: {

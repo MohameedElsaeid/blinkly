@@ -1,3 +1,4 @@
+
 import {AxiosError} from 'axios';
 import {toast} from 'sonner';
 import {errorMap} from '../../utils/errorMap';
@@ -6,7 +7,7 @@ export class ApiErrorHandler {
     /**
      * Handles API errors and takes appropriate actions based on error type
      */
-    handleApiError(error: AxiosError): void {
+    handleApiError(error: AxiosError): any {
         // Handle network errors
         if (!error.response) {
             const errorMessage = this.getNetworkErrorMessage(error);
@@ -17,7 +18,7 @@ export class ApiErrorHandler {
                 requestURL: error.config?.url,
                 requestMethod: error.config?.method
             });
-            return;
+            return error;
         }
 
         const status = error.response.status;
@@ -34,7 +35,7 @@ export class ApiErrorHandler {
         // Check for CORS errors
         if (status === 403 && error.response.headers['x-cors-error']) {
             window.location.href = '/cors-error';
-            return;
+            return error;
         }
 
         // Handle authentication errors
@@ -48,7 +49,7 @@ export class ApiErrorHandler {
             } else {
                 toast.error('Your session has expired. Please login again.');
             }
-            return;
+            return error;
         }
 
         // Handle forbidden errors
@@ -72,6 +73,8 @@ export class ApiErrorHandler {
             const errorMessage = errorData?.message || 'An unexpected error occurred.';
             toast.error(errorMessage);
         }
+        
+        return error;
     }
 
     /**

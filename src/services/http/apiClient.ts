@@ -1,5 +1,5 @@
 
-import axios, { AxiosError, AxiosHeaders, AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
+import axios, { AxiosError, AxiosHeaders, AxiosInstance, AxiosRequestConfig } from 'axios';
 import axiosRetry from 'axios-retry';
 import { BaseHttpClient } from './baseHttpClient';
 import { authService } from '../authService';
@@ -11,8 +11,10 @@ class ApiClient extends BaseHttpClient {
     private baseURL: string;
 
     constructor() {
-        super();
-        this.baseURL = import.meta.env.VITE_API_URL || 'https://api.blinkly.app';
+        // Use a consistent base URL with fallback
+        const baseURL = import.meta.env.VITE_API_URL || 'https://api.blinkly.app';
+        super(baseURL);
+        this.baseURL = baseURL;
         
         this.instance = axios.create({
             baseURL: this.baseURL,
@@ -102,7 +104,7 @@ class ApiClient extends BaseHttpClient {
                 this.retrying = false;
                 
                 // Process error through handler
-                const processedError = apiErrorHandler.handleError(error);
+                const processedError = apiErrorHandler.handleApiError(error);
                 
                 // Handle all other errors
                 return Promise.reject(processedError);

@@ -1,3 +1,4 @@
+
 import {apiClient} from './http/apiClient';
 import {User} from '../types';
 import {
@@ -34,11 +35,18 @@ class AuthService {
         try {
             console.log('AuthService register called with params:', { ...params, password: '***HIDDEN***' });
             
-            // Add debugging to verify data format before sending
-            console.log('API base URL:', import.meta.env.VITE_API_URL || 'https://api.blinkly.app');
-            console.log('Registration endpoint:', '/auth/signup');
-            console.log('Is params valid object?', params && typeof params === 'object');
+            // Enhanced debugging for signup
+            console.log('Current base URL:', import.meta.env.VITE_API_URL || 'https://api.blinkly.app');
+            console.log('Signup endpoint:', '/auth/signup');
             
+            // Add additional logging for request headers
+            const headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            };
+            console.log('Request headers:', headers);
+            
+            // Make the API call with explicit URL to ensure correct endpoint
             const response = await apiClient.post<IAuthResponse>('/auth/signup', params);
             console.log('Register API response:', response);
 
@@ -53,6 +61,7 @@ class AuthService {
             if ((error as any).response) {
                 console.error('Server response:', (error as any).response.data);
                 console.error('Status code:', (error as any).response.status);
+                console.error('Response headers:', (error as any).response.headers);
             } else if ((error as any).request) {
                 console.error('No response received. Request details:', (error as any).request);
             } else {
