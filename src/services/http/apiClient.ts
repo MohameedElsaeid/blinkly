@@ -129,7 +129,7 @@ class ApiClient extends BaseHttpClient {
     private async fetchCsrfToken(): Promise<void> {
         try {
             // Make a GET request to a CSRF endpoint or any safe endpoint
-            const response = await axios.get(`${this.baseURL}/api/csrf-token`, {
+            const response = await axios.get(`${this.baseURL}/auth/csrf-token`, {
                 withCredentials: true
             });
 
