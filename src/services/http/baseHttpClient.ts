@@ -53,7 +53,7 @@ export class BaseHttpClient {
     /**
      * Creates standardized headers that should be sent with every request
      */
-    private createStandardHeaders(): Record<string, string> {
+    protected createStandardHeaders(): Record<string, string> {
         const requestTime = new Date().toISOString();
         const requestId = uuidv4();
         const browserInfo = getBrowserInfo();
@@ -69,7 +69,6 @@ export class BaseHttpClient {
             // Browser and device information
             'User-Agent': navigator.userAgent,
             'Accept-Language': navigator.language,
-            'X-Language': navigator.language,
             'Language': navigator.language,
             'X-Platform': navigator.platform,
             'X-Screen-Width': window.screen.width.toString(),
@@ -95,15 +94,18 @@ export class BaseHttpClient {
             headers['Device-ID'] = deviceId;
         }
         
-        // Add Sec-CH-UA headers if available
-        if (navigator.userAgentData) {
-            try {
-                const uaData = navigator.userAgentData;
-                headers['Sec-CH-UA-Mobile'] = uaData.mobile ? '?1' : '?0';
-                headers['Sec-CH-UA-Platform'] = `"${uaData.platform}"`;
-            } catch (error) {
-                console.error('Error getting userAgentData:', error);
+        // Try to add client hints using User-Agent Client Hints API if available
+        try {
+            // Check if userAgentData is available in a type-safe way
+            if ('userAgentData' in navigator) {
+                const uaData = (navigator as any).userAgentData;
+                if (uaData) {
+                    headers['Sec-CH-UA-Mobile'] = uaData.mobile ? '?1' : '?0';
+                    headers['Sec-CH-UA-Platform'] = `"${uaData.platform}"`;
+                }
             }
+        } catch (error) {
+            console.error('Error getting userAgentData:', error);
         }
         
         // Extract any security headers
@@ -115,15 +117,19 @@ export class BaseHttpClient {
         headers['Sec-Fetch-Dest'] = 'empty';
         
         // Add CloudFlare headers if available from cookies
-        const cfCountry = this.getCookieValue('cf-country');
+        const cfCountry = this.getCookieValue('cf-country') || localStorage.getItem('cf-country');
         if (cfCountry) {
             headers['CF-Country'] = cfCountry;
+            headers['CF-IPCountry'] = cfCountry;
         }
         
-        const cfRay = this.getCookieValue('cf-ray');
+        const cfRay = this.getCookieValue('cf-ray') || localStorage.getItem('cf-ray');
         if (cfRay) {
             headers['CF-Ray'] = cfRay;
         }
+        
+        // Add custom header to indicate we want Cloudflare headers returned
+        headers['X-Forward-Cloudflare-Headers'] = 'true';
         
         // Add Facebook browser & click IDs if available
         const fbp = this.getCookieValue('_fbp');
@@ -192,6 +198,75 @@ export class BaseHttpClient {
             config.withCredentials = true;
         } catch (error) {
             console.error('Error adding auth token:', error);
+        }
+        return config;
+    }
+
+    /**
+     * Adds Cloudflare headers to request
+     */
+    protected addCloudflareHeaders(config: AxiosRequestConfig): AxiosRequestConfig {
+        try {
+            // Ensure headers object exists
+            config.headers = config.headers || {};
+            
+            // Pass through all Cloudflare headers directly from the document request
+            const cloudflareHeaders = [
+                'CF-IPCountry',
+                'CF-Ray',
+                'CF-Visitor',
+                'CF-Device-Type',
+                'CF-Metro-Code',
+                'CF-Region',
+                'CF-Region-Code',
+                'CF-Connecting-IP',
+                'CF-IPCity',
+                'CF-IPContinent',
+                'CF-IPLatitude',
+                'CF-IPLongitude',
+                'CF-IPTimeZone'
+            ];
+            
+            // Log attempt to add CF headers for debugging
+            console.log('Attempting to add Cloudflare headers to request');
+            
+            // For now, manually add them if they're available in cookies or local storage
+            // This is a fallback until we can properly capture the headers
+            const cfCountry = localStorage.getItem('cf-country');
+            if (cfCountry) {
+                config.headers['CF-IPCountry'] = cfCountry;
+            }
+            
+            // Add a custom header to indicate we want Cloudflare headers returned
+            config.headers['X-Forward-Cloudflare-Headers'] = 'true';
+        } catch (error) {
+            console.error('Error adding Cloudflare headers:', error);
+        }
+        return config;
+    }
+
+    /**
+     * Adds client hints to request headers
+     */
+    protected addClientHints(config: AxiosRequestConfig): AxiosRequestConfig {
+        try {
+            if (typeof window !== 'undefined' && 'userAgentData' in navigator) {
+                const userAgentData = (navigator as any).userAgentData;
+                config.headers = config.headers || {};
+                
+                if (userAgentData && userAgentData.brands) {
+                    config.headers['Sec-CH-UA'] = userAgentData.brands
+                        ?.map((b: { brand: string; version: string }) => `"${b.brand}";v="${b.version}"`)
+                        .join(', ') || '';
+                }
+                
+                if (userAgentData) {
+                    config.headers['Sec-CH-UA-Mobile'] = userAgentData.mobile ? '?1' : '?0';
+                    config.headers['Sec-CH-UA-Platform'] = userAgentData.platform || '';
+                }
+            }
+        } catch (error) {
+            console.error('Error adding client hints:', error);
         }
         return config;
     }

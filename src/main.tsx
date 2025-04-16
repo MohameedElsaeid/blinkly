@@ -15,6 +15,7 @@ declare global {
       params?: Record<string, any>,
       customData?: any
     ) => void;
+    _fbq: any; // Add this to fix the error
   }
 }
 
@@ -45,15 +46,18 @@ function initMetaPixel() {
     
     try {
         // Initialize Facebook Pixel
-        const f = window;
+        const f = window as any;
         const b = document;
-        const e = 'script';
-        const v = 'https://connect.facebook.net/en_US/fbevents.js';
-        let n, t, s;
+        let n: any, t: any, s: any;
         
         if (f.fbq) return;
-        n = f.fbq = function() {
-            n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+        n = f.fbq = function(...args: any[]) {
+            const callMethod = n.callMethod;
+            if (callMethod) {
+                n.callMethod.apply(n, args);
+            } else {
+                n.queue.push(args);
+            }
         };
         
         if (!f._fbq) f._fbq = n;
@@ -61,10 +65,10 @@ function initMetaPixel() {
         n.loaded = true;
         n.version = '2.0';
         n.queue = [];
-        t = b.createElement(e);
+        t = b.createElement('script');
         t.async = true;
-        t.src = v;
-        s = b.getElementsByTagName(e)[0];
+        t.src = 'https://connect.facebook.net/en_US/fbevents.js';
+        s = b.getElementsByTagName('script')[0];
         s.parentNode?.insertBefore(t, s);
         
         // Initialize with your Pixel ID

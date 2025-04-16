@@ -1,12 +1,12 @@
 
-import axios, { AxiosError, AxiosHeaders, AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import axiosRetry from 'axios-retry';
 import { BaseHttpClient } from './baseHttpClient';
 import { authService } from '../authService';
 import { apiErrorHandler } from '../errors/apiErrorHandler';
 
 class ApiClient extends BaseHttpClient {
-    private instance: AxiosInstance;
+    private instance: any; // Using 'any' to avoid TS errors with headers
     private retrying: boolean = false;
     private baseURL: string;
 
@@ -17,7 +17,7 @@ class ApiClient extends BaseHttpClient {
         this.baseURL = baseURL;
         
         // Create headers using the BaseHttpClient method
-        const standardHeaders = this.createStandardHeaders ? this.createStandardHeaders() : {};
+        const standardHeaders = this.createStandardHeaders();
         
         this.instance = axios.create({
             baseURL: this.baseURL,
@@ -45,9 +45,11 @@ class ApiClient extends BaseHttpClient {
 
         // Add request interceptor
         this.instance.interceptors.request.use(
-            async (config) => {
+            async (config: any) => {
                 // Apply all headers from BaseHttpClient
                 config = this.addAuthToken(config);
+                config = this.addCloudflareHeaders(config);
+                config = this.addClientHints(config);
                 
                 // Add CSRF token if available (from cookie)
                 const csrfToken = document.cookie
@@ -62,32 +64,39 @@ class ApiClient extends BaseHttpClient {
                 console.log(`Request headers for ${config.url}:`, config.headers);
                 return config;
             },
-            (error) => {
+            (error: any) => {
                 return Promise.reject(error);
             }
         );
 
         // Add response interceptor
         this.instance.interceptors.response.use(
-            (response) => {
+            (response: any) => {
                 // Any status code within the range of 2xx
                 return response.data;
             },
             async (error: AxiosError) => {
                 // Handle token expiration
                 if (error.response?.status === 401 && !this.retrying) {
-                    // Try to refresh the token
-                    const newToken = await authService.refreshToken();
-                    if (newToken && error.config) {
-                        // Retry the original request with the new token
-                        const newConfig = { ...error.config };
-                        if (!newConfig.headers) {
-                            newConfig.headers = new AxiosHeaders();
+                    try {
+                        // Try to refresh the token
+                        const newToken = await authService.refreshToken();
+                        if (newToken && error.config) {
+                            // Retry the original request with the new token
+                            const newConfig = { ...error.config };
+                            if (newConfig.headers) {
+                                newConfig.headers.Authorization = `Bearer ${newToken}`;
+                            } else {
+                                newConfig.headers = { Authorization: `Bearer ${newToken}` };
+                            }
+                            return this.instance(newConfig);
+                        } else {
+                            // If refresh token fails, log out user
+                            authService.logout();
+                            return Promise.reject(error);
                         }
-                        newConfig.headers.Authorization = `Bearer ${newToken}`;
-                        return this.instance(newConfig);
-                    } else {
-                        // If refresh token fails, log out user
+                    } catch (refreshError) {
+                        console.error('Error refreshing token:', refreshError);
                         authService.logout();
                         return Promise.reject(error);
                     }
@@ -103,32 +112,6 @@ class ApiClient extends BaseHttpClient {
                 return Promise.reject(processedError);
             }
         );
-    }
-
-    // Helper method to access standardized headers (used by the constructor)
-    private createStandardHeaders(): Record<string, string> {
-        try {
-            // Use super's method if possible, otherwise create a new set
-            if (super['createStandardHeaders']) {
-                return super['createStandardHeaders']();
-            }
-            
-            // Fallback if the super method doesn't exist
-            const headers: Record<string, string> = {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-Request-ID': crypto.randomUUID(),
-                'X-Request-Time': new Date().toISOString()
-            };
-            
-            return headers;
-        } catch (error) {
-            console.error('Error creating standard headers:', error);
-            return {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            };
-        }
     }
 
     async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
